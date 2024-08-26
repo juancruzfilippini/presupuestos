@@ -1,0 +1,531 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+<x-app-layout>
+
+    <x-slot name="title">Crear Presupuesto</x-slot>
+
+
+
+    <form method="POST" action="{{ route('presupuestos.store') }}"
+        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg"  enctype="multipart/form-data">
+        @csrf
+
+        <h1 class="text-2xl font-bold mb-6">CREAR PRESUPUESTO</h1>
+
+        <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
+        <p></p>
+
+        <label for="file">Subir archivo (PDF o Imagen)</label>
+        <input type="file" name="file" id="file" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
+
+        <p></p>
+
+
+        <div class="flex justify-between mb-4">
+            <div>
+                <label for="fecha" class="font-semibold">FECHA:</label>
+                <input type="date" id="fecha" name="fecha" class="border rounded p-2 w-full" value="{{ $today }}"
+                    required>
+            </div>
+            <div>
+                <label for="fecha" class="font-semibold">MEDICO:</label>
+                <input type="text" id="medico" name="medico" class="border rounded p-2 w-full" value="">
+            </div>
+        </div>
+
+
+        <div class="mb-4">
+            <h2 class="text-lg font-semibold mb-2">DATOS DEL PACIENTE</h2>
+
+            <div class="form-group">
+                <label for="search-input">DNI: </label>
+                <div class="input-group">
+                    <input type="text" id="search-input" name="documento" class="form-control"
+                        placeholder="Ingrese DNI del paciente">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" id="search-button">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+
+            <div id="results"></div>
+            <p></p>
+            <input type="text" id="selected-person" name="paciente" class="form-control"
+                placeholder="Nombre del paciente seleccionado">
+            <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
+            <p></p>
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label for="obra_social">Obra Social:</label>
+                    <select class="form-control" name="obra_social" id="obra_social">
+                        <option value="">Seleccione Obra Social</option>
+                        @foreach($obrasSociales as $obraSocial)
+                            <option value="{{ $obraSocial['id'] }}" data-id="{{ $obraSocial['nombre'] }}">
+                                {{ $obraSocial['nombre'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="convenio">Convenio:</label>
+                    <select class="form-control" name="convenio" id="convenio">
+                        <option value="">Seleccione Convenio</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <p></p>
+        </div>
+
+        <div class="mb-6">
+
+
+            <table class="table-auto w-full mb-4" id="presupuesto-table">
+                <thead>
+                    <tr>
+                        <th class="border px-4 py-2"></th>
+                        <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
+                        <th class="fixed-width border px-4 py-2 text-center">
+                            <input id="especialidad" name="especialidad" class="w-full text-center"
+                                placeholder="Ingrese Especialidad" />
+                        </th>
+
+                        <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
+                        <th class="border px-4 py-2 text-center">OXÍGENO (B)</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+            <button type="button" id="add-row" class="btn btn-success text-white p-2 rounded-full mb-4 ml-1"> <i
+                    class="fas fa-plus"></i> Prestación </button>
+        </div>
+
+        <input type="hidden" id="hidden_anestesia_id" name="anestesia_id" value="0">
+
+        <div class="mb-4">
+            <h2 class="text-lg font-semibold mb-2">OPCIONES</h2>
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <label for="anestesia" class="font-semibold mr-2">Anestesia</label>
+                    <label class="switch">
+                        <input type="checkbox" id="anestesia" name="anestesia">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div id="anestesia-select" style="display:none;">
+                    <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
+                    <select id="anestesia_id" class="border rounded p-2 ml-2" style="width: 250px;">
+                        <option value="1">Local</option>
+                        <option value="2">Periférica</option>
+                        <option value="3">Central</option>
+                        <option value="4">Total</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla que debería mostrarse solo cuando el switch está activado -->
+        <div class="mb-4" style="display:none;">
+            <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
+                <thead>
+                    <th class="border px-4 py-2 text-center">Complejidad/Tipo paciente</th>
+                    <th class="border px-4 py-2 text-center">Precio</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border px-4 py-2">
+                            <input type="text" name="complejidad" id="complejidad" class="border-none w-full">
+                        </td>
+                        <td class="border px-4 py-2">
+                            <input type="number" name="precio_anestesia" id="precio_anestesia"
+                                class="border-none w-full">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-6">
+            <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
+            <input type="number" id="total_presupuesto" name="total_presupuesto"
+                class="border rounded p-2 w-2 ml-1 text-center" value="">
+        </div>
+
+        <div class="mb-6">
+            <label for="condicion" class="font-semibold">CONDICIÓN DE PAGO:</label>
+            <textarea id="condicion" name="condicion"
+                class="border rounded p-2 w-full">EFECTIVO/TRANSFERENCIA BANCARIA/TARJETA DE DÉBITO/TARJETA DE CRÉDITO</textarea>
+        </div>
+
+        <div class="mb-6">
+            <label for="incluye" class="font-semibold">INCLUYE:</label>
+            <textarea id="incluye" name="incluye" class="border rounded p-2 w-full">
+( A ) Módulo: Módulo: Incluye Gastos Hospitalarios: Honorarios Médicos sin anestesistas (A.M.A.). PENSION: Raciones de corresponder, habitación compartida, Enfermería, Antibióticos de primera y segunda generación. Sueros. Descartables Básicos: Jeringas, gasas, algodón, tela adhesiva, vendas, guantes, agujas
+( B ) Oxígeno: En la actualidad el oxígeno se factura por separado del Módulo y equivale al monto consignado por el período de utilización por hasta cuatro horas de quirófano, de corresponder.</textarea>
+        </div>
+        <div class="mb-6">
+            <label for="excluye" class="font-semibold">EXCLUYE:</label>
+            <textarea id="excluye" name="excluye"
+                class="border rounded p-2 w-full">Antibióticos de tercera y cuarta generación, Rx., Ecografías y demás insumos que se encuentran en la ficha de consumo que se facturarán a valores kairos.</textarea>
+        </div>
+        <div class="mb-6">
+            <label for="adicionales" class="font-semibold">ADICIONALES:</label>
+            <textarea id="adicionales" name="adicionales"
+                class="border rounded p-2 w-full">*Las prestaciones / insumos / medicación no contempladas en el presente presupuesto, que sean requeridas durante la intervención o recuperación se adicionarán al valor del mismo. 
+*  Al momento de realizar su ingreso, se le solicitará   firmar un pagaré.  El mismo le será devuelto a los 30 días de recibir el alta médica.
+*Este presupuesto tiene una validez de 15 días desde la fecha de emisión, con excepción de honorarios de AMA  que serán los vigentes al momento de la cirugía.</textarea>
+        </div>
+        <div class="mb-6">
+            <button type="submit" class="btn btn-primary">Crear Presupuesto</button>
+        </div>
+    </form>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            // Inicializar select2 para selects existentes al cargar la página
+            initializeSelect2();
+
+            // Función para inicializar select2 en selects dinámicos
+            function initializeSelect2() {
+                $('#obra_social, #convenio, .prestacion-select').select2({
+                    placeholder: 'Seleccione',
+                    allowClear: true
+                });
+            }
+
+            function updateTotalPresupuesto() {
+                let total = 0;
+                // Sumar todos los valores de los campos modulo_total_ en la tabla
+                $('input[name^="modulo_total_"]').each(function () {
+                    let value = parseFloat($(this).val()) || 0;
+                    total += value;
+                });
+
+                let precioAnestesia = parseFloat($('#precio_anestesia').val()) || 0;
+                total += precioAnestesia;
+
+                // Actualizar el campo total_presupuesto con el total calculado
+                $('#total_presupuesto').val(total.toFixed(2));
+            }
+
+            $('#precio_anestesia').on('input', function () {
+                // Verificar si el input tiene un valor antes de actualizar
+
+                updateTotalPresupuesto();
+
+            });
+
+            // Agregar fila y configurar select2
+            $('#add-row').click(function () {
+                var rowCount = $('#presupuesto-table tbody tr').length + 1;
+                var newRow = `<tr data-row="${rowCount}">
+                <td class="border px-4 py-2 text-center">
+                    <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+                <td class="codigo border px-4 py-2">
+                    <input type="text" name="codigo_${rowCount}" class="codigo border-none w-full text-center">
+                </td>
+                <td class="border px-4 py-2">
+                    <select name="prestacion_${rowCount}" class="fixed-width border-none prestacion-select">
+                        <option value="">Seleccione prestación</option>
+                    </select>
+                </td>
+                <td class="border px-4 py-2 text-right">
+                    <input type="number" name="modulo_total_${rowCount}" class="border-none w-full text-right">
+                </td>
+                <td class="border px-4 py-2 text-right">
+                    <input type="number" name="oxigeno_${rowCount}" class="border-none w-full text-right">
+                </td>
+                </tr>`;
+
+                // Agregar la nueva fila a la tabla
+                $('#presupuesto-table tbody').append(newRow);
+
+                // Inicializar select2 para el nuevo select
+                initializeSelect2();
+
+                // Cargar prestaciones en el nuevo select
+                loadPrestaciones($('#convenio').val(), $('#presupuesto-table tbody tr:last-child').find('.prestacion-select'));
+
+                // Actualizar el total después de agregar una fila
+                updateTotalPresupuesto();
+
+                // Agregar el evento de cambio para los nuevos inputs
+                $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+            });
+
+            // Agregar el evento de cambio para los inputs existentes
+            $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+
+            // Manejador para eliminar filas
+            $('#presupuesto-table').on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
+                updateTotalPresupuesto(); // Actualizar el total después de eliminar una fila
+            });
+
+            // Eliminar fila de la tabla de presupuesto
+            $(document).on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
+            });
+
+            // Manejar el cambio de estado del switch de anestesia
+            $(document).ready(function () {
+                const $switchElement = $('#anestesia');
+                const $selectElement = $('#anestesia-select');
+                const $tableElement = $('#anestesia-table').closest('div');
+                const $hiddenInput = $('#hidden_anestesia_id');
+
+                if ($switchElement.is(':checked')) {
+                    $selectElement.show();
+                    $tableElement.show();
+                    $hiddenInput.val($selectElement.find('select').val());
+                } else {
+                    $selectElement.hide();
+                    $tableElement.hide();
+                    $hiddenInput.val('0');
+                }
+
+                $switchElement.change(function () {
+                    if ($(this).is(':checked')) {
+                        $selectElement.show();
+                        $tableElement.show();
+                        $hiddenInput.val($selectElement.find('select').val());
+                    } else {
+                        $selectElement.hide();
+                        $tableElement.hide();
+                        $hiddenInput.val('0');
+                    }
+                });
+
+                $selectElement.find('select').change(function () {
+                    $hiddenInput.val($(this).val());
+                });
+            });
+
+            // Buscar paciente por DNI
+            $('#search-button').click(function (e) {
+                e.preventDefault();
+                var searchTerm = $('#search-input').val().trim();
+                if (!searchTerm) {
+                    $('#results').html('<p>Por favor, ingrese un término de búsqueda.</p>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('presupuestos.searchPatient') }}',
+                    method: 'GET',
+                    data: { search: searchTerm },
+                    success: function (data) {
+                        var resultHtml = '';
+                        if (data.length > 0) {
+                            data.forEach(function (patient) {
+                                resultHtml += '<div>';
+                                resultHtml += '<p><strong>HC Electrónica:</strong> ' + patient.id + '</p>';
+                                resultHtml += '<p><strong>Nombre:</strong> ' + patient.nombres + ' ' + patient.apellidos + '</p>';
+                                resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
+                                resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
+                                resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
+                                resultHtml += '</div><hr>';
+                            });
+                        } else {
+                            resultHtml = '<p>No se encontraron resultados.</p>';
+                        }
+                        $('#results').html(resultHtml);
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = 'Error al buscar datos.';
+                        if (xhr.status === 404) {
+                            errorMessage = 'La ruta no fue encontrada.';
+                        } else if (xhr.status === 500) {
+                            errorMessage = 'Error interno del servidor.';
+                        }
+                        $('#results').html('<p>' + errorMessage + '</p>');
+                    }
+                });
+            });
+
+            // Seleccionar paciente desde la lista de resultados
+            $('#results').on('click', '.select-button', function (e) {
+                e.preventDefault();
+                var selectedName = $(this).data('name');
+                var selectedId = $(this).data('id');
+                $('#selected-person').val(selectedName);
+                $('#paciente_salutte_id').val(selectedId);
+            });
+
+            // Manejar el cambio en el select de obra social
+            $('#obra_social').on('change', function () {
+                let obraSocial = $(this).find('option:selected').data('id');
+
+                if (obraSocial) {
+                    $.ajax({
+                        url: '{{ route('getConvenios') }}',
+                        type: 'GET',
+                        data: { obra_social: obraSocial },
+                        success: function (data) {
+                            let convenioSelect = $('#convenio');
+                            convenioSelect.empty();
+                            convenioSelect.append('<option value="">Seleccione Convenio</option>');
+
+                            if (data.length > 0) {
+                                data.forEach(function (item) {
+                                    convenioSelect.append(`<option value="${item.id}">${item.nombre}</option>`);
+                                });
+                            } else {
+                                convenioSelect.append('<option value="">No hay convenios disponibles</option>');
+                            }
+                        }
+                    });
+                } else {
+                    $('#convenio').empty().append('<option value="">Seleccione Convenio</option>');
+                }
+            });
+
+            // Capturar cambio en el select de convenio
+            $('#convenio').on('change', function () {
+                var convenioId = $(this).val();
+
+                if (convenioId) {
+                    loadPrestaciones(convenioId, $('.prestacion-select'));
+                } else {
+                    $('.prestacion-select').empty().append('<option value="">Seleccione Prestación</option>');
+                }
+            });
+
+            // Función para cargar las prestaciones en un select
+            function loadPrestaciones(convenioId, selectElement) {
+                console.log(convenioId);
+                $.ajax({
+                    url: '/getPrestaciones/' + convenioId,
+                    type: 'GET',
+                    success: function (data) {
+                        selectElement.empty();
+                        selectElement.append('<option value="">Seleccione Prestación</option>');
+                        $.each(data, function (key, value) {
+                            selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '">' + value.prestacionnombre + '</option>');
+                        });
+                    }
+                });
+            }
+
+            // Escuchar el cambio en el select de prestaciones
+            $(document).on('change', '.prestacion-select', function () {
+                var selectedOption = $(this).find('option:selected');
+                var codigo = selectedOption.data('codigo');
+                $(this).closest('tr').find('input[name^="codigo"]').val(codigo);
+            });
+
+
+            $(document).on('change', '.prestacion-select', function () {
+                let selectedOption = $(this).find('option:selected');
+                let codigoPrestacion = selectedOption.data('codigo');
+                let rowCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
+                $('#codigo_' + rowCount).val(codigoPrestacion);
+                let prestacionId = selectedOption.val();
+
+                let convenioId = $('#convenio').val();
+
+                console.log(convenioId, codigoPrestacion);
+
+                $.ajax({
+                    url: '/obtenerPrecio/' + convenioId + '/' + codigoPrestacion,
+                    method: 'GET',
+                    success: function (response) {
+                        console.log(response);
+                        let precio = parseFloat(response[0].PRECIO);
+                        // Truncar el precio eliminando la parte decimal
+                        let precioTruncado = Math.floor(precio); // También puedes usar parseInt(precio)
+                        console.log(precioTruncado);
+                        console.log("rowCount:", rowCount);
+
+                        $('input[name="modulo_total_' + rowCount + '"]').val(precioTruncado);
+                        updateTotalPresupuesto();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error en la consulta AJAX:', error);
+                    }
+                });
+            });
+
+
+        });
+    </script>
+
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .codigo {
+            min-width: 40px !important;
+
+        }
+
+        .fixed-width {
+            width: 550px;
+        }
+
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4caf50;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+
+</x-app-layout>

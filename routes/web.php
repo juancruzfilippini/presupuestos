@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ClienteController;
+use App\Http\Controllers\Admin\PresupuestoController;
+use App\Http\Controllers\Admin\PrestacionController;
+use App\Http\Controllers\Admin\ConvenioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,7 @@ use App\Http\Controllers\Admin\ClienteController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,25 +34,25 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::get('/presupuestos', [PresupuestoController::class, 'index'])->name('presupuestos.index');
 
-//Controlador Cliente
+Route::get('/presupuestos/create', [PresupuestoController::class, 'create'])->name('presupuestos.create');
 
-Route::prefix('clientes')->name('clientes.')->group(function () {
-    Route::get('/', [ClienteController::class, 'index'])->name('index');
+Route::post('/presupuestos', [PresupuestoController::class, 'store'])->name('presupuestos.store');
 
-    // Crear un cliente existente
+Route::get('/presupuestos/edit/{id}', [PresupuestoController::class, 'edit'])->name('presupuestos.edit');
 
-    Route::get('create', [ClienteController::class, 'create'])->name('create');
-    Route::post('store', [ClienteController::class, 'store'])->name('store');
+Route::get('/search-patient', [PresupuestoController::class, 'searchPatient'])->name('presupuestos.searchPatient');
 
-    // Actualizar un cliente existente
+//Route::get('/searchPrestaciones', [PrestacionController::class, 'searchPrestaciones'])->name('searchPrestaciones');
 
-    Route::get('{id}/edit', [ClienteController::class, 'edit'])->name('edit');
-    Route::put('{id}', [ClienteController::class, 'update'])->name('update');
+Route::get('/getConvenios', [ConvenioController::class, 'getConvenios'])->name('getConvenios');
 
-    // Eliminar un cliente
+Route::get('/getPrestaciones/{convenioId}', [PrestacionController::class, 'getPrestaciones'])->name('getPrestaciones');
 
-    Route::delete('{id}', [ClienteController::class, 'destroy'])->name('destroy');
-});
+Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionController::class, 'obtenerPrecio'])->name('obtenerPrecio');
+
+
+
 
 
