@@ -108,11 +108,7 @@ class PresupuestoController extends Controller
         if ($request->has('toggleAdicionales')) {
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
-        /*
-        $presupuesto->condicion = $validatedData['condicion'];
-        $presupuesto->incluye = $validatedData['incluye'];
-        $presupuesto->excluye = $validatedData['excluye']; 
-        $presupuesto->adicionales = $validatedData['adicionales'];*/
+
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->anestesia_id = $validatedData['anestesia_id'];
@@ -160,6 +156,23 @@ class PresupuestoController extends Controller
 
             $rowCount++;
         }
+/*
+        $ArchivosData = [];
+        $archivosCount = 1;  // Asume que las filas empiezan en 1
+
+        while ($request->has("codigo_{$rowCount}")) {
+            $prestacionInput = $request->input("prestacion_{$rowCount}");
+
+            if (is_numeric($prestacionInput)) {
+                $prestacionesData[] = [
+                    'presupuesto_id' => $presupuesto->id,
+                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
+                    'prestacion_salutte_id' => $prestacionInput,
+                    'nombre_prestacion' => null, // o dejarlo vacío
+                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    // Agrega otras columnas si es necesario, como oxígeno, etc.
+                ];
+            }*/
 
         // Insertar las prestaciones en la base de datos
         DB::table('prestaciones')->insert($prestacionesData);
@@ -168,7 +181,6 @@ class PresupuestoController extends Controller
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto creado exitosamente');
 
     }
-
 
 
 

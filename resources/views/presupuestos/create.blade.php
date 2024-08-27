@@ -19,9 +19,13 @@
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>
 
-        <label for="file">Subir archivo (PDF o Imagen)</label>
-        <input type="file" name="file" id="file" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
-
+        <label for="file_1">Subir archivo (PDF o Imagen)</label>
+        <input type="file" name="file[]" id="file_1" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
+        <p></p>
+        <button type="button" class="btn btn-primary btn-sm" id="addFile"><i class="fa fa-plus"></i> Agregar otro
+            archivo</button>
+        <p></p>
+        <div id="fileInputs"></div>
         <p></p>
 
 
@@ -29,7 +33,7 @@
             <div>
                 <label for="fecha" class="font-semibold">FECHA:</label>
                 <input type="date" id="fecha" name="fecha" class="border rounded p-2 w-full" value="{{ $today }}"
-                    required>
+                    required readonly>
             </div>
             <div>
                 <label for="medico_solicitante" class="font-semibold">MEDICO SOLICITANTE:</label>
@@ -657,10 +661,41 @@
                 textareaAdicionales.style.display = this.checked ? 'block' : 'none';
             });
 
-            
 
-            
-            
+            let fileCount = 1;
+
+            $('#addFile').on('click', function () {
+                fileCount++;
+
+                // Oculta el botón de eliminar del archivo anterior
+                $('.removeFile').hide();
+
+                const newFileInput = `
+        <div id="fileContainer_${fileCount}">
+            <label for="file_${fileCount}">Subir archivo (PDF o Imagen) ${fileCount}</label>
+            <input type="file" name="file[]" id="file_${fileCount}" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
+            <p></p>
+            <button type="button" class="removeFile btn btn-sm btn-danger" data-id="${fileCount}"><i class="fa fa-remove"></i> Eliminar</button>
+            <p></p>
+        </div>
+    `;
+                $('#fileInputs').append(newFileInput);
+            });
+
+            $(document).on('click', '.removeFile', function () {
+                const id = $(this).data('id');
+
+                if (id === fileCount) {
+                    $('#fileContainer_' + id).remove();
+                    fileCount--;
+
+                    // Muestra el botón de eliminar en el nuevo último archivo
+                    $('#fileContainer_' + fileCount + ' .removeFile').show();
+                }
+            });
+
+
+
 
 
 
