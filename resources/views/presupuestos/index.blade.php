@@ -35,7 +35,7 @@
                         <th class="" style="width: 5%;">Estado</th>
                         <th style="width: 5%;">Especialidad</th>
                         <th class="estado" style="width: 5%;">Total Presupuesto</th>
-                        <th class="paciente" style="width: 10%;">Obra Social</th>
+                        <th class="" style="width: 10%;">Obra Social</th>
                         <th class="" style="width: 2%;">Acciones</th>
                     </tr>
                 </thead>
@@ -48,12 +48,19 @@
                             <td class="">{{ $presupuesto->estado }}</td>
                             <td>{{ $presupuesto->especialidad }}</td>
                             <td class="">${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
-                            <td class="" style=""> {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}</td>
-                            <td style="width: 2%;" >
-                                <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
-                                    class="btn btn-warning btn-sm">
+                            <td class="" style="">
+                                @if(is_numeric($presupuesto->obra_social))
+                                    {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
+                                @else
+                                    {{ $presupuesto->obra_social }}
+                                @endif
+                            </td>
+
+                            <td style="width: 2%;">
+                                <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-pencil-alt"></i>
-                                </a></td>
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

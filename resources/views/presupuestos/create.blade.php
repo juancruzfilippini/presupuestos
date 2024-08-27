@@ -11,7 +11,7 @@
 
 
     <form method="POST" action="{{ route('presupuestos.store') }}"
-        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg"  enctype="multipart/form-data">
+        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
         <h1 class="text-2xl font-bold mb-6">CREAR PRESUPUESTO</h1>
@@ -32,8 +32,14 @@
                     required>
             </div>
             <div>
-                <label for="fecha" class="font-semibold">MEDICO:</label>
-                <input type="text" id="medico" name="medico" class="border rounded p-2 w-full" value="">
+                <label for="medico_solicitante" class="font-semibold">MEDICO SOLICITANTE:</label>
+                <input type="text" id="medico_solicitante" name="medico_solicitante" class="border rounded p-2 w-full"
+                    value="">
+            </div>
+            <div>
+                <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
+                <input type="text" id="medico_tratante" name="medico_tratante" class="border rounded p-2 w-full"
+                    value="">
             </div>
         </div>
 
@@ -60,6 +66,20 @@
             <input type="text" id="selected-person" name="paciente" class="form-control"
                 placeholder="Nombre del paciente seleccionado">
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
+            <p> </p>
+            <p> </p>
+            <div class="flex items-center">
+                <label for="convenida" class="font-semibold mr-2">Convenida </label>
+                <label class="switch">
+                    <input type="checkbox" id="convenida" name="convenida" checked>
+                    <span class="slider round"></span>
+                </label>
+                <div>
+                    <label for="" class="font-semibold ml-3">Obra Social:</label>
+                    <input type="text" id="input_obrasocial" name="input_obrasocial" class="border rounded p-2"
+                        value="">
+                </div>
+            </div>
             <p></p>
             <div class="form-group row">
                 <div class="col-md-6">
@@ -86,9 +106,36 @@
             <p></p>
         </div>
 
+        <input type="text" id="detalle" name="detalle" class="form-control"
+            placeholder="Asunto: Prestaciones quirurgicas">
+
+        <p></p>
+
+        <div class="mb-6" id="no-convenida-table">
+
+            <p></p>
+            <table class="table-auto w-full mb-4">
+                <thead>
+                    <tr>
+                        <th class="border px-4 py-2"></th>
+                        <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
+                        <th class="fixed-width border px-4 py-2 text-center">
+                            <input id="input_especialidad" name="input_especialidad" class="w-full text-center"
+                                placeholder="Ingrese Especialidad" />
+                        </th>
+
+                        <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <button type="button" id="add-row1" class="btn btn-success text-white p-2 rounded-full mb-4 ml-1"> <i
+                    class="fas fa-plus"></i> Prestación </button>
+        </div>
+
         <div class="mb-6">
-
-
             <table class="table-auto w-full mb-4" id="presupuesto-table">
                 <thead>
                     <tr>
@@ -100,7 +147,6 @@
                         </th>
 
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
-                        <th class="border px-4 py-2 text-center">OXÍGENO (B)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,9 +170,9 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div id="anestesia-select" style="display:none;">
+                <div id="anestesia-select" style="display:none; text-center">
                     <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
-                    <select id="anestesia_id" class="border rounded p-2 ml-2" style="width: 250px;">
+                    <select id="anestesia_id" class="border rounded" style="width: 250px;">
                         <option value="1">Local</option>
                         <option value="2">Periférica</option>
                         <option value="3">Central</option>
@@ -163,33 +209,85 @@
                 class="border rounded p-2 w-2 ml-1 text-center" value="">
         </div>
 
+
+
         <div class="mb-6">
-            <label for="condicion" class="font-semibold">CONDICIÓN DE PAGO:</label>
+            <div class="items-center ">
+                <div class="flex items-center">
+                    <label for="condicion" class="font-semibold mr-2">CONDICIÓN DE PAGO:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleCondicion" name="toggleCondicion" checked>
+                        <span class="slider round"></span>
+
+                    </label>
+                </div>
+            </div>
+            <p></p>
             <textarea id="condicion" name="condicion"
                 class="border rounded p-2 w-full">EFECTIVO/TRANSFERENCIA BANCARIA/TARJETA DE DÉBITO/TARJETA DE CRÉDITO</textarea>
         </div>
 
         <div class="mb-6">
-            <label for="incluye" class="font-semibold">INCLUYE:</label>
+            <div class="items-center ">
+                <div class="flex items-center">
+                    <label for="incluye" class="font-semibold mr-2">INCLUYE: </label>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleIncluye" name="toggleIncluye" checked>
+                        <span class="slider round"></span>
+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
             <textarea id="incluye" name="incluye" class="border rounded p-2 w-full">
 ( A ) Módulo: Módulo: Incluye Gastos Hospitalarios: Honorarios Médicos sin anestesistas (A.M.A.). PENSION: Raciones de corresponder, habitación compartida, Enfermería, Antibióticos de primera y segunda generación. Sueros. Descartables Básicos: Jeringas, gasas, algodón, tela adhesiva, vendas, guantes, agujas
 ( B ) Oxígeno: En la actualidad el oxígeno se factura por separado del Módulo y equivale al monto consignado por el período de utilización por hasta cuatro horas de quirófano, de corresponder.</textarea>
         </div>
+
         <div class="mb-6">
-            <label for="excluye" class="font-semibold">EXCLUYE:</label>
+            <div class="items-center ">
+                <div class="flex items-center">
+                    <label for="excluye" class="font-semibold mr-2">EXCLUYE:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleExcluye" name="toggleExcluye" checked>
+                        <span class="slider round"></span>
+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
             <textarea id="excluye" name="excluye"
                 class="border rounded p-2 w-full">Antibióticos de tercera y cuarta generación, Rx., Ecografías y demás insumos que se encuentran en la ficha de consumo que se facturarán a valores kairos.</textarea>
         </div>
+
         <div class="mb-6">
-            <label for="adicionales" class="font-semibold">ADICIONALES:</label>
+            <div class="items-center ">
+                <div class="flex items-center">
+                    <label for="adicionales" class="font-semibold mr-2">ADICIONALES:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleAdicionales" name="toggleAdicionales" checked>
+                        <span class="slider round"></span>
+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
             <textarea id="adicionales" name="adicionales"
                 class="border rounded p-2 w-full">*Las prestaciones / insumos / medicación no contempladas en el presente presupuesto, que sean requeridas durante la intervención o recuperación se adicionarán al valor del mismo. 
 *  Al momento de realizar su ingreso, se le solicitará   firmar un pagaré.  El mismo le será devuelto a los 30 días de recibir el alta médica.
 *Este presupuesto tiene una validez de 15 días desde la fecha de emisión, con excepción de honorarios de AMA  que serán los vigentes al momento de la cirugía.</textarea>
         </div>
+
         <div class="mb-6">
             <button type="submit" class="btn btn-primary">Crear Presupuesto</button>
         </div>
+
     </form>
 
 
@@ -241,8 +339,8 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </td>
-                <td class="codigo border px-4 py-2">
-                    <input type="text" name="codigo_${rowCount}" class="codigo border-none w-full text-center">
+                <td class="border px-4 py-2">
+                    <input type="text" name="codigo_${rowCount}" class="border-none w-full text-center">
                 </td>
                 <td class="border px-4 py-2">
                     <select name="prestacion_${rowCount}" class="fixed-width border-none prestacion-select">
@@ -251,9 +349,6 @@
                 </td>
                 <td class="border px-4 py-2 text-right">
                     <input type="number" name="modulo_total_${rowCount}" class="border-none w-full text-right">
-                </td>
-                <td class="border px-4 py-2 text-right">
-                    <input type="number" name="oxigeno_${rowCount}" class="border-none w-full text-right">
                 </td>
                 </tr>`;
 
@@ -271,6 +366,39 @@
 
                 // Agregar el evento de cambio para los nuevos inputs
                 $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+            });
+
+            $('#add-row1').click(function () {
+                var rowCount = $('#no-convenida-table tbody tr').length + 1;
+                var newRow = `<tr data-row="${rowCount}">
+                <td class="border px-4 py-2 text-center">
+                    <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+                <td class="border px-4 py-2">
+                    <input type="text" name="codigo_${rowCount}" class="border-none w-full text-center">
+                </td>
+                <td class="border px-4 py-2">
+                    <input name="prestacion_${rowCount}" class="fixed-width border-none"></input>
+                </td>
+                <td class="border px-4 py-2 text-right">
+                    <input type="number" name="modulo_total_${rowCount}" class="border-none w-full text-right">
+                </td>
+                </tr>`;
+
+                // Agregar la nueva fila a la tabla
+                $('#no-convenida-table tbody').append(newRow);
+
+                // Inicializar select2 para el nuevo select
+                initializeSelect2();
+
+
+                // Actualizar el total después de agregar una fila
+                updateTotalPresupuesto();
+
+                // Agregar el evento de cambio para los nuevos inputs
+                $('#no-convenida-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
             });
 
             // Agregar el evento de cambio para los inputs existentes
@@ -421,7 +549,7 @@
                         selectElement.empty();
                         selectElement.append('<option value="">Seleccione Prestación</option>');
                         $.each(data, function (key, value) {
-                            selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '">' + value.prestacionnombre + '</option>');
+                            selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
                         });
                     }
                 });
@@ -466,6 +594,77 @@
                 });
             });
 
+            // Manejar el cambio de estado del switch de convenida/no convenida
+            // Manejar el cambio de estado del switch de convenida/no convenida
+            $(document).ready(function () {
+                const $switchConvenida = $('#convenida');
+                const $presupuestoTable = $('#presupuesto-table').closest('div');
+                const $noconvenidaTable = $('#no-convenida-table').closest('div');
+                const $inputObrasocial = $('#input_obrasocial').closest('div');
+                const $obraSocialInput = $('#obra_social').closest('div');
+                const $convenioInput = $('#convenio').closest('div');
+
+                // Verificar el estado inicial del switch y mostrar/ocultar la tabla y los inputs
+                if ($switchConvenida.is(':checked')) {
+                    $noconvenidaTable.hide();
+                    $inputObrasocial.hide();
+                    $presupuestoTable.show();
+                    $obraSocialInput.show();
+                    $convenioInput.show();
+                } else {
+                    $noconvenidaTable.show();
+                    $inputObrasocial.show();
+                    $presupuestoTable.hide();
+                    $obraSocialInput.hide();
+                    $convenioInput.hide();
+                }
+
+                // Manejar el cambio de estado del switch
+                $switchConvenida.change(function () {
+                    if ($(this).is(':checked')) {
+                        $noconvenidaTable.hide();
+                        $inputObrasocial.hide();
+                        $presupuestoTable.show();
+                        $obraSocialInput.show();
+                        $convenioInput.show();
+                    } else {
+                        $noconvenidaTable.show();
+                        $inputObrasocial.show();
+                        $presupuestoTable.hide();
+                        $obraSocialInput.hide();
+                        $convenioInput.hide();
+                    }
+                });
+            });
+
+            document.getElementById('toggleCondicion').addEventListener('change', function () {
+                var textareaCondicion = document.getElementById('condicion');
+                textareaCondicion.style.display = this.checked ? 'block' : 'none';
+            });
+
+            document.getElementById('toggleIncluye').addEventListener('change', function () {
+                var textareaIncluye = document.getElementById('incluye');
+                textareaIncluye.style.display = this.checked ? 'block' : 'none';
+            });
+
+            document.getElementById('toggleExcluye').addEventListener('change', function () {
+                var textareaExcluye = document.getElementById('excluye');
+                textareaExcluye.style.display = this.checked ? 'block' : 'none';
+            });
+
+            document.getElementById('toggleAdicionales').addEventListener('change', function () {
+                var textareaAdicionales = document.getElementById('adicionales');
+                textareaAdicionales.style.display = this.checked ? 'block' : 'none';
+            });
+
+            
+
+            
+            
+
+
+
+
 
         });
     </script>
@@ -481,6 +680,7 @@
 
         .codigo {
             min-width: 40px !important;
+            max-width: 50px !important;
 
         }
 

@@ -29,7 +29,8 @@ class Presupuesto extends Model
         'fecha',
         'paciente_salutte_id',
         'paciente',
-        'medico',
+        'medico_tratante',
+        'medico_solicitante',
         'file_path',
     ];
     

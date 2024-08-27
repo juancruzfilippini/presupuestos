@@ -31,27 +31,9 @@ class PresupuestoController extends Controller
         return view('presupuestos.create', compact('obrasSociales', 'today'));
     }
 
-    /*
-            $validatedData = $request->validate([
-                'obra_social' => 'integer',
-                'especialidad' => 'nullable|string',
-                'condicion' => 'nullable|string',
-                'incluye' => 'nullable|string',
-                'excluye' => 'nullable|string',
-                'adicionales' => 'nullable|string',
-                'total_presupuesto' => 'nullable|string',
-                'anestesia_id' => 'nullable|integer',
-                'complejidad' => 'nullable|string',
-                'precio_anestesia' => 'nullable|string',
-                'fecha' => 'nullable|string',
-                'paciente_salutte_id' => 'nullable|integer',
-                'paciente' => 'nullable|string',
-                'medico' => 'nullable|string',
-            ]);
-            */
+
     public function store(Request $request)
     {
-        //dd($request->all());
         //$validatedData = $request->except('file'); // Excluye 'file' de la validación
         //dd($validatedData);
 
@@ -59,8 +41,11 @@ class PresupuestoController extends Controller
         //dd($request->all());
 
         $validatedData = $request->validate([
+            'detalle' => 'nullable|string',
             'obra_social' => 'nullable|integer',
+            'input_obrasocial' => 'nullable|string',
             'especialidad' => 'nullable|string',
+            'input_especialidad' => 'nullable|string',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
             'excluye' => 'nullable|string',
@@ -72,7 +57,8 @@ class PresupuestoController extends Controller
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
             'paciente' => 'nullable|string',
-            'medico' => 'nullable|string',
+            'medico_tratante' => 'nullable|string',
+            'medico_solicitante' => 'nullable|string',
             'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Validación del archivo
         ]);
 
@@ -87,13 +73,47 @@ class PresupuestoController extends Controller
         // Creación del nuevo presupuesto
 
 
+        $os = $validatedData['obra_social'];
+        $esp = $validatedData['especialidad'];
+
         $presupuesto = new Presupuesto();
-        $presupuesto->obra_social = $validatedData['obra_social'];  // Guarda el ID de la obra social
-        $presupuesto->especialidad = $validatedData['especialidad'];
+        if (is_numeric($os)) {
+            $presupuesto->obra_social = $validatedData['obra_social'];  // Guarda el ID de la obra social
+        } else {
+            $presupuesto->obra_social = $validatedData['input_obrasocial'];  // Guarda el Nombre de la obra social
+        }
+
+        if ($esp) {
+            $presupuesto->especialidad = $esp;
+        } else {
+            $presupuesto->especialidad = $validatedData['input_especialidad'];
+        }
+
+        // Verificar si el toggle de 'condicion' está activado antes de asignar
+        if ($request->has('toggleCondicion')) {
+            $presupuesto->condicion = $validatedData['condicion'];
+        }
+
+        // Verificar si el toggle de 'incluye' está activado antes de asignar
+        if ($request->has('toggleIncluye')) {
+            $presupuesto->incluye = $validatedData['incluye'];
+        }
+
+        // Verificar si el toggle de 'excluye' está activado antes de asignar
+        if ($request->has('toggleExcluye')) {
+            $presupuesto->excluye = $validatedData['excluye'];
+        }
+
+        // Verificar si el toggle de 'adicionales' está activado antes de asignar
+        if ($request->has('toggleAdicionales')) {
+            $presupuesto->adicionales = $validatedData['adicionales'];
+        }
+        /*
         $presupuesto->condicion = $validatedData['condicion'];
         $presupuesto->incluye = $validatedData['incluye'];
-        $presupuesto->excluye = $validatedData['excluye'];
-        $presupuesto->adicionales = $validatedData['adicionales'];
+        $presupuesto->excluye = $validatedData['excluye']; 
+        $presupuesto->adicionales = $validatedData['adicionales'];*/
+        $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->anestesia_id = $validatedData['anestesia_id'];
         $presupuesto->complejidad = $validatedData['complejidad'];
@@ -101,7 +121,8 @@ class PresupuestoController extends Controller
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         $presupuesto->paciente = $validatedData['paciente'];
-        $presupuesto->medico = $validatedData['medico'];
+        $presupuesto->medico_tratante = $validatedData['medico_tratante'];
+        $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
         $presupuesto->estado = 0;
         if ($request->hasFile('file')) {
             $presupuesto->file_path = $path; // Guardar la ruta del archivo en la base de datos
@@ -115,14 +136,28 @@ class PresupuestoController extends Controller
         $rowCount = 1;  // Asume que las filas empiezan en 1
 
         while ($request->has("codigo_{$rowCount}")) {
-            $prestacionesData[] = [
-                'prestacion_salutte_id' => $request->input("prestacion_{$rowCount}"),
-                'presupuesto_id' => $presupuesto->id,
-                'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
-                'modulo_total' => $request->input("modulo_total_{$rowCount}"),
-                // Agrega otras columnas si es necesario, como oxígeno, etc.
-                'oxigeno' => $request->input("oxigeno_{$rowCount}"),
-            ];
+            $prestacionInput = $request->input("prestacion_{$rowCount}");
+
+            if (is_numeric($prestacionInput)) {
+                $prestacionesData[] = [
+                    'presupuesto_id' => $presupuesto->id,
+                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
+                    'prestacion_salutte_id' => $prestacionInput,
+                    'nombre_prestacion' => null, // o dejarlo vacío
+                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    // Agrega otras columnas si es necesario, como oxígeno, etc.
+                ];
+            } else {
+                $prestacionesData[] = [
+                    'presupuesto_id' => $presupuesto->id,
+                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
+                    'prestacion_salutte_id' => null,
+                    'nombre_prestacion' => $prestacionInput,
+                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    // Agrega otras columnas si es necesario, como oxígeno, etc.
+                ];
+            }
+
             $rowCount++;
         }
 
