@@ -9,6 +9,8 @@ use App\Models\ObraSocial; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Paciente;
+use App\Models\Archivo;
+use App\Models\Prestaciones;
 use Illuminate\Support\Facades\DB;
 
 
@@ -38,11 +40,13 @@ class PresupuestoController extends Controller
         //dd($validatedData);
 
 
+
         //dd($request->all());
 
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
             'obra_social' => 'nullable|integer',
+            'convenio' => 'nullable|string',
             'input_obrasocial' => 'nullable|string',
             'especialidad' => 'nullable|string',
             'input_especialidad' => 'nullable|string',
@@ -59,15 +63,9 @@ class PresupuestoController extends Controller
             'paciente' => 'nullable|string',
             'medico_tratante' => 'nullable|string',
             'medico_solicitante' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Validación del archivo
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('presupuestos', $filename, 'public');
-            $validatedData['file_path'] = $path; // Agregar la ruta del archivo a los datos validados
-        }
+
 
         //dd($validatedData);
         // Creación del nuevo presupuesto
@@ -76,7 +74,14 @@ class PresupuestoController extends Controller
         $os = $validatedData['obra_social'];
         $esp = $validatedData['especialidad'];
 
+        if (!is_null($request->presupuesto_id)) {
+            //dd($request->presupuesto_id);
+            
+        }
+
         $presupuesto = new Presupuesto();
+
+
         if (is_numeric($os)) {
             $presupuesto->obra_social = $validatedData['obra_social'];  // Guarda el ID de la obra social
         } else {
@@ -110,6 +115,7 @@ class PresupuestoController extends Controller
         }
 
         $presupuesto->detalle = $validatedData['detalle'];
+        $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->anestesia_id = $validatedData['anestesia_id'];
         $presupuesto->complejidad = $validatedData['complejidad'];
@@ -120,13 +126,11 @@ class PresupuestoController extends Controller
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
         $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
         $presupuesto->estado = 0;
-        if ($request->hasFile('file')) {
-            $presupuesto->file_path = $path; // Guardar la ruta del archivo en la base de datos
-        }
 
 
         // Guardar en la base de datos
         $presupuesto->save();
+
 
         $prestacionesData = [];
         $rowCount = 1;  // Asume que las filas empiezan en 1
@@ -156,23 +160,20 @@ class PresupuestoController extends Controller
 
             $rowCount++;
         }
-/*
-        $ArchivosData = [];
-        $archivosCount = 1;  // Asume que las filas empiezan en 1
 
-        while ($request->has("codigo_{$rowCount}")) {
-            $prestacionInput = $request->input("prestacion_{$rowCount}");
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                // Genera un nombre único para el archivo y lo guarda en el sistema de archivos
+                $filePath = $file->storeAs('archivos', $filename, 'public');
 
-            if (is_numeric($prestacionInput)) {
-                $prestacionesData[] = [
+                // Crea una nueva instancia del modelo Archivo y guarda los detalles en la base de datos
+                Archivo::create([
                     'presupuesto_id' => $presupuesto->id,
-                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
-                    'prestacion_salutte_id' => $prestacionInput,
-                    'nombre_prestacion' => null, // o dejarlo vacío
-                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
-                    // Agrega otras columnas si es necesario, como oxígeno, etc.
-                ];
-            }*/
+                    'file_path' => $filePath,
+                ]);
+            }
+        }
 
         // Insertar las prestaciones en la base de datos
         DB::table('prestaciones')->insert($prestacionesData);
@@ -184,65 +185,17 @@ class PresupuestoController extends Controller
 
 
 
-    /*
-    public function store(Request $request)
-    {
-        try {
-            // Validación de datos
-            $validatedData = $request->validate([
-                'anestesia_id' => 'string',
-                'fecha' => 'date',
-                'obra_social' => 'string',
-                'especialidad' => 'string',
-                'complejidad' => 'string',
-                'precio_anestesia' => 'string',
-                'total_presupuesto' => 'string',
-                'condicion' => 'string',
-                'incluye' => 'string',
-                'excluye' => 'string',
-                'adicionales' => 'string',
-                'paciente_salutte_id' => 'integer',
-            ]);
-
-            // Creación del nuevo presupuesto
-            $presupuesto = new Presupuesto();
-            $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
-            $presupuesto->anestesia_id = $validatedData['anestesia_id'];
-            $presupuesto->fecha = $validatedData['fecha'];
-            $presupuesto->obra_social = $validatedData['obra_social'];
-            $presupuesto->especialidad = $validatedData['especialidad'];
-            $presupuesto->complejidad = $validatedData['complejidad'];
-            $presupuesto->precio_anestesia = $validatedData['precio_anestesia'];
-            $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
-            $presupuesto->condicion = $validatedData['condicion'];
-            $presupuesto->incluye = $validatedData['incluye'];
-            $presupuesto->excluye = $validatedData['excluye'];
-            $presupuesto->adicionales = $validatedData['adicionales'];
-
-            // Guardar en la base de datos
-            $presupuesto->save();
-
-            // Redirigir a la vista de presupuestos o a otra vista que desees
-            return redirect()->route('presupuestos.index')->with('success', 'Presupuesto creado exitosamente');
-
-        } catch (\Exception $e) {
-            // Log del error para inspección
-            \Log::error($e);
-
-            // Puedes manejar el error como desees, por ejemplo, redirigiendo con un mensaje de error
-            return redirect()->route('presupuestos.index')->with('error', 'Hubo un problema al crear el presupuesto');
-        }
-    }
-    */
-
-
-
-    // Muestra el formulario para editar un presupuesto existente
     public function edit($id)
     {
-        $presupuesto = presupuesto::findOrFail($id);
-        return view('presupuestos.edit', compact('presupuesto'));
+        
+        $presupuesto = Presupuesto::findOrFail($id);
+        $archivos = Archivo::where('presupuesto_id', $id)->get();
+        $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        //dd($prestaciones);
+
+        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'id'));
     }
+
 
     // Actualiza un presupuesto en la base de datos
     public function update(Request $request, $id)

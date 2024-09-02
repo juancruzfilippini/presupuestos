@@ -20,7 +20,10 @@ class Prestacion extends Model
 
     public static function getPrestacionById($id)
     {
-        return self::where('id', 'like', $id)->get();
+        $prestacion = self::where('id', $id)->first();
+        
+        // Devolver el nombre si el registro existe, de lo contrario null
+        return $prestacion ? $prestacion->nombre : null;
     }
 
 }

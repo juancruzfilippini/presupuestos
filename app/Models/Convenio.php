@@ -19,4 +19,13 @@ class Convenio extends Model
         'borrado_logico',
     ];
 
+    public static function getConvenioById($id)
+    {
+        // Buscar el registro por ID
+        $convenio = self::where('id', $id)->first();
+        
+        // Devolver el nombre si el registro existe, de lo contrario null
+        return $convenio ? $convenio->nombre : null;
+    }
+
 }

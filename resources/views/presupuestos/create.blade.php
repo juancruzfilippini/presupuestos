@@ -68,7 +68,7 @@
             <div id="results"></div>
             <p></p>
             <input type="text" id="selected-person" name="paciente" class="form-control"
-                placeholder="Nombre del paciente seleccionado">
+                placeholder="Nombre del paciente seleccionado" readonly>
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
             <p> </p>
             <p> </p>

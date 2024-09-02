@@ -34,6 +34,7 @@
                         <th class="" style="width: 5%;">Fecha</th>
                         <th class="" style="width: 5%;">Estado</th>
                         <th style="width: 5%;">Especialidad</th>
+                        <th style="width: 5%;">Detalle</th>
                         <th class="estado" style="width: 5%;">Total Presupuesto</th>
                         <th class="" style="width: 10%;">Obra Social</th>
                         <th class="" style="width: 2%;">Acciones</th>
@@ -47,6 +48,7 @@
                             <td class="">{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
                             <td class="">{{ $presupuesto->estado }}</td>
                             <td>{{ $presupuesto->especialidad }}</td>
+                            <td>{{ $presupuesto->detalle }}</td>
                             <td class="">${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
                             <td class="" style="">
                                 @if(is_numeric($presupuesto->obra_social))

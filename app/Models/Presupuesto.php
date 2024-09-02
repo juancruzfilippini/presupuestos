@@ -17,6 +17,7 @@ class Presupuesto extends Model
 
     protected $fillable = [
         'obra_social',
+        'convenio',
         'especialidad',
         'condicion',
         'incluye',
