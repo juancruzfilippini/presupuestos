@@ -83,23 +83,23 @@
                             value="{{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}" readonly>
                     @else
                         <input class="form-control" id="input_obrasocial" name="input_obrasocial" type="text"
-                            value="{{ $presupuesto->obra_social }}" readonly>
+                            value="{{ $presupuesto->obra_social }}">
                     @endif
                 </label>
                 <input type="hidden" id="obra_social" name="obra_social" value="">
 
-                <label for="search-input" class="p-2 font-semibold">Convenio:
-                    @if(is_numeric($presupuesto->convenio))
+                @if(is_numeric($presupuesto->convenio))
+                    <label for="search-input" class="p-2 font-semibold">Convenio:
                         <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
                             value="{{ Convenio::getConvenioById($presupuesto->convenio) }}" readonly>
+                @else
+                    @if (!is_null($presupuesto->convenio))
+                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
+                            value="{{ $presupuesto->convenio }}" readonly>
                     @else
-                        @if (!is_null($presupuesto->convenio))
-                            <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
-                                value="{{ $presupuesto->convenio }}" readonly>
-                        @else
-                            <input type="hidden" id="convenio" name="convenio" value="">
-                        @endif
+                        <input type="hidden" id="convenio" name="convenio" value="">
                     @endif
+                @endif
                 </label>
             </div>
 
@@ -129,6 +129,9 @@
                 <tbody>
 
                     @foreach($prestaciones as $prestacion)
+                        <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
+                            value="{{$prestacion->id}}">
+
                         <tr>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center" name="codigo_{{ $loop->iteration }}"

@@ -236,10 +236,10 @@ class PresupuestoController extends Controller
         // Encontrar el presupuesto por su ID
         $presupuesto = presupuesto::findOrFail($id);
 
-        
-        
 
-        
+
+
+
         $presupuesto->especialidad = $validatedData['input_especialidad'];
         // Verificar si el toggle de 'condicion' está activado antes de asignar
         if ($request->has('toggleCondicion')) {
@@ -272,13 +272,50 @@ class PresupuestoController extends Controller
         $presupuesto->paciente = $validatedData['paciente'];
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
         $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
-        $presupuesto->estado = 0;
+        $presupuesto->estado = 1;
 
         //'updated_by' => Auth::id(),  // Establecer el ID del usuario autenticado
 
         // Guardar en la base de datos
         $presupuesto->save();
-        
+
+
+
+        $rowCount = 1;  // Asume que las filas empiezan en 1
+
+        while ($request->has("codigo_{$rowCount}")) {
+            $prestacionId = $request->input("prestacion_id_{$rowCount}");
+            $prestacionInput = $request->input("prestacion_{$rowCount}");
+
+            // Buscar la prestación por ID
+            $prestacion = Prestaciones::find($prestacionId);
+
+            if ($prestacion) {
+                // Actualizar los campos de la prestación
+                $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
+
+                if (is_numeric($prestacionInput)) {
+                    $prestacion->prestacion_salutte_id = $prestacionInput;
+                    $prestacion->nombre_prestacion = null;  // O dejarlo vacío
+                } else {
+                    $prestacion->prestacion_salutte_id = null;
+                    $prestacion->nombre_prestacion = $prestacionInput;
+                }
+
+                $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+                // Actualizar otros campos según sea necesario
+
+                // Guardar los cambios en la base de datos
+                $prestacion->save();
+            } else {
+                // Manejar el caso donde la prestación no existe
+                // Puedes lanzar una excepción, ignorarlo, o crear una nueva prestación
+                // throw new Exception("Prestación con ID {$prestacionId} no encontrada.");
+            }
+
+            $rowCount++;
+        }
+
         // Redirigir con un mensaje de éxito
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
     }
