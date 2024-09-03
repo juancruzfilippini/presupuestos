@@ -233,10 +233,9 @@
                     <p></p>
                     <div id="incluyeContainer" class="mb-6" style="display: none;">
                         <textarea id="incluye" name="incluye" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->incluye)){{$presupuesto->incluye}}@endif 
+@if (!is_null($presupuesto->incluye)){{$presupuesto->incluye}}@endif
 </textarea>
                     </div>
-
                     <div class="mb-6">
                         <div class="items-center">
                             <div class="flex items-center">
@@ -252,7 +251,7 @@
                         <div id="excluyeContainer" class="mb-6" style="display: none;">
                             <p></p>
                             <textarea id="excluye" name="excluye" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->excluye)){{$presupuesto->excluye}}@endif 
+@if (!is_null($presupuesto->excluye)){{$presupuesto->excluye}}@endif
 </textarea>
                         </div>
 
@@ -276,9 +275,20 @@
 
                             <div class="mb-6">
                                 <button type="submit" class="btn btn-primary">Guardar Presupuesto</button>
+
                             </div>
 
     </form>
+
+
+    <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
+        onsubmit="return confirm('¿Estás seguro de que deseas eliminar este presupuesto?');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Eliminar Presupuesto</button>
+    </form>
+
+
 </x-app-layout>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

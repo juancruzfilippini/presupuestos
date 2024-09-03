@@ -244,21 +244,29 @@ class PresupuestoController extends Controller
         // Verificar si el toggle de 'condicion' está activado antes de asignar
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
+        } else {
+            $presupuesto->condicion = "";
         }
 
         // Verificar si el toggle de 'incluye' está activado antes de asignar
         if ($request->has('toggleIncluye')) {
             $presupuesto->incluye = $validatedData['incluye'];
+        } else {
+            $presupuesto->incluye = "";
         }
 
         // Verificar si el toggle de 'excluye' está activado antes de asignar
         if ($request->has('toggleExcluye')) {
             $presupuesto->excluye = $validatedData['excluye'];
+        } else {
+            $presupuesto->excluye = "";
         }
 
         // Verificar si el toggle de 'adicionales' está activado antes de asignar
         if ($request->has('toggleAdicionales')) {
             $presupuesto->adicionales = $validatedData['adicionales'];
+        } else {
+            $presupuesto->adicionales = "";
         }
 
         $presupuesto->detalle = $validatedData['detalle'];
@@ -323,11 +331,22 @@ class PresupuestoController extends Controller
     // Elimina un presupuesto de la base de datos
     public function destroy($id)
     {
-        $presupuesto = presupuesto::findOrFail($id);
+        // Encuentra el presupuesto por ID o falla si no existe
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        // Obtén el ID del presupuesto para eliminar las prestaciones asociadas
+        $presupuestoId = $presupuesto->id;
+
+        // Elimina las prestaciones asociadas al presupuesto
+        Prestaciones::where('presupuesto_id', $presupuestoId)->delete();
+
+        // Elimina el presupuesto
         $presupuesto->delete();
 
-        return redirect()->route('presupuestos.index')->with('success', 'presupuesto eliminado con éxito.');
+        // Redirige con mensaje de éxito
+        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones eliminados con éxito.');
     }
+
 
     public function searchPatient(Request $request)
     {
