@@ -71,7 +71,7 @@
                             <td>
                                 <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
                                     class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-file-signature"></i>
+                                    <i class="fa-solid fa-file-signature"></i> 
                                 </a>
                             </td>
                             @endif
