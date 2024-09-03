@@ -39,8 +39,6 @@ class PresupuestoController extends Controller
         //$validatedData = $request->except('file'); // Excluye 'file' de la validación
         //dd($validatedData);
 
-
-
         //dd($request->all());
 
         $validatedData = $request->validate([
@@ -75,11 +73,19 @@ class PresupuestoController extends Controller
         $esp = $validatedData['especialidad'];
 
         if (!is_null($request->presupuesto_id)) {
-            //dd($request->presupuesto_id);
-            
+            // Buscar el presupuesto existente
+            $presupuesto = Presupuesto::find($request->presupuesto_id);
+
+            // Si el presupuesto no existe, puedes manejarlo como creas conveniente
+            if (!$presupuesto) {
+                return redirect()->back()->withErrors(['error' => 'Presupuesto no encontrado.']);
+            }
+        } else {
+            // Si no hay presupuesto_id, crea uno nuevo
+            $presupuesto = new Presupuesto();
         }
 
-        $presupuesto = new Presupuesto();
+
 
 
         if (is_numeric($os)) {
@@ -187,7 +193,7 @@ class PresupuestoController extends Controller
 
     public function edit($id)
     {
-        
+
         $presupuesto = Presupuesto::findOrFail($id);
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
@@ -200,30 +206,81 @@ class PresupuestoController extends Controller
     // Actualiza un presupuesto en la base de datos
     public function update(Request $request, $id)
     {
+
+        //dd($request->all());
+
         // Validar los datos del request
-        $request->validate([
-            'nombres' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'empresa' => 'nullable|string|max:100',
-            'mail' => 'required|email|max:100',
-            'telefono' => 'nullable|string|max:20',
+        $validatedData = $request->validate([
+            'detalle' => 'nullable|string',
+            'obra_social' => 'nullable|integer',
+            'convenio' => 'nullable|string',
+            'input_obrasocial' => 'nullable|string',
+            'especialidad' => 'nullable|string',
+            'input_especialidad' => 'nullable|string',
+            'condicion' => 'nullable|string',
+            'incluye' => 'nullable|string',
+            'excluye' => 'nullable|string',
+            'adicionales' => 'nullable|string',
+            'total_presupuesto' => 'nullable|string',
+            'anestesia_id' => 'nullable|integer',
+            'complejidad' => 'nullable|string',
+            'precio_anestesia' => 'nullable|string',
+            'fecha' => 'nullable|string',
+            'paciente_salutte_id' => 'nullable|integer',
+            'paciente' => 'nullable|string',
+            'medico_tratante' => 'nullable|string',
+            'medico_solicitante' => 'nullable|string',
         ]);
+
 
         // Encontrar el presupuesto por su ID
         $presupuesto = presupuesto::findOrFail($id);
 
-        // Actualizar los datos del presupuesto incluyendo el campo 'updated_by'
-        $presupuesto->update([
-            'nombres' => $request->input('nombres'),
-            'apellidos' => $request->input('apellidos'),
-            'empresa' => $request->input('empresa'),
-            'mail' => $request->input('mail'),
-            'telefono' => $request->input('telefono'),
-            'updated_by' => Auth::id(),  // Establecer el ID del usuario autenticado
-        ]);
+        
+        
 
+        
+        $presupuesto->especialidad = $validatedData['input_especialidad'];
+        // Verificar si el toggle de 'condicion' está activado antes de asignar
+        if ($request->has('toggleCondicion')) {
+            $presupuesto->condicion = $validatedData['condicion'];
+        }
+
+        // Verificar si el toggle de 'incluye' está activado antes de asignar
+        if ($request->has('toggleIncluye')) {
+            $presupuesto->incluye = $validatedData['incluye'];
+        }
+
+        // Verificar si el toggle de 'excluye' está activado antes de asignar
+        if ($request->has('toggleExcluye')) {
+            $presupuesto->excluye = $validatedData['excluye'];
+        }
+
+        // Verificar si el toggle de 'adicionales' está activado antes de asignar
+        if ($request->has('toggleAdicionales')) {
+            $presupuesto->adicionales = $validatedData['adicionales'];
+        }
+
+        $presupuesto->detalle = $validatedData['detalle'];
+        $presupuesto->convenio = $validatedData['convenio'];
+        $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
+        $presupuesto->anestesia_id = $validatedData['anestesia_id'];
+        $presupuesto->complejidad = $validatedData['complejidad'];
+        $presupuesto->precio_anestesia = $validatedData['precio_anestesia'];
+        $presupuesto->fecha = $validatedData['fecha'];
+        $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
+        $presupuesto->paciente = $validatedData['paciente'];
+        $presupuesto->medico_tratante = $validatedData['medico_tratante'];
+        $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
+        $presupuesto->estado = 0;
+
+        //'updated_by' => Auth::id(),  // Establecer el ID del usuario autenticado
+
+        // Guardar en la base de datos
+        $presupuesto->save();
+        
         // Redirigir con un mensaje de éxito
-        return redirect()->route('presupuestos.index')->with('success', 'presupuesto actualizado con éxito.');
+        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
     }
 
     // Elimina un presupuesto de la base de datos

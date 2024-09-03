@@ -7,7 +7,7 @@
 <x-app-layout>
     <x-slot name="title">Editar Presupuesto</x-slot>
 
-    <form method="POST" action="{{ route('presupuestos.store') }}"
+    <form method="POST" action="{{ route('presupuestos.update', $presupuesto->id) }}"
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
@@ -78,28 +78,31 @@
 
             <div class="d-flex justify-content-between align-items-center">
                 <label for="search-input" class="p-2 font-semibold">Obra Social:
-
                     @if(is_numeric($presupuesto->obra_social))
-                        <input id="input_obrasocial" name="input_obrasocial" type="text"
+                        <input class="form-control" id="input_obrasocial" name="input_obrasocial" type="text"
                             value="{{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}" readonly>
                     @else
-                        <input id="input_obrasocial" name="input_obrasocial" type="text"
+                        <input class="form-control" id="input_obrasocial" name="input_obrasocial" type="text"
                             value="{{ $presupuesto->obra_social }}" readonly>
                     @endif
                 </label>
                 <input type="hidden" id="obra_social" name="obra_social" value="">
 
-
-
-
-                @if(!is_null($presupuesto->convenio))
-                    <input id="convenio" name="convenio" type="text"
-                        value="{{ ObraSocial::getConvenioById($presupuesto->convenio) }}" readonly>
-                @else
-                    <input type="hidden" id="convenio" name="convenio" value="">
-                @endif
-
+                <label for="search-input" class="p-2 font-semibold">Convenio:
+                    @if(is_numeric($presupuesto->convenio))
+                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
+                            value="{{ Convenio::getConvenioById($presupuesto->convenio) }}" readonly>
+                    @else
+                        @if (!is_null($presupuesto->convenio))
+                            <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
+                                value="{{ $presupuesto->convenio }}" readonly>
+                        @else
+                            <input type="hidden" id="convenio" name="convenio" value="">
+                        @endif
+                    @endif
+                </label>
             </div>
+
             <p></p>
             <p></p>
             <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
@@ -144,7 +147,7 @@
                             @endif
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center" name="modulo_total_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->modulo_total }}" />
+                                    value="{{ $prestacion->modulo_total }}" oninput="updateTotalPresupuesto()" />
                             </td>
                         </tr>
                     @endforeach
@@ -152,45 +155,47 @@
                 </tbody>
             </table>
 
-            @if ($presupuesto->anestesia_id != 0)
 
-                <div id="anestesia-select" class="">
-                    <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
-                    <select id="anestesia_id" name="anestesia_id" class="border rounded" style="width: 250px;">
-                        <option value="0" {{ $presupuesto->anestesia_id == 0 ? 'selected' : '' }}>Sin anestesia</option>
-                        <option value="1" {{ $presupuesto->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                        <option value="2" {{ $presupuesto->anestesia_id == 2 ? 'selected' : '' }}>Periférica</option>
-                        <option value="3" {{ $presupuesto->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
-                        <option value="4" {{ $presupuesto->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
-                    </select>
-                </div>
 
-                <div class="mb-4" style="">
-                    <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
-                        <thead>
-                            <th class="border px-4 py-2 text-center">Complejidad/Tipo paciente</th>
-                            <th class="border px-4 py-2 text-center">Precio</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border px-4 py-2">
-                                    <input type="text" name="complejidad" id="complejidad" class="border-none w-full"
-                                        value="{{$presupuesto->complejidad}}">
-                                </td>
-                                <td class="border px-4 py-2">
-                                    <input type="number" name="precio_anestesia" id="precio_anestesia"
-                                        class="border-none w-full" value="{{$presupuesto->precio_anestesia}}">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            @endif
+            <div id="anestesia-select" class="">
+                <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
+                <select id="anestesia_id" name="anestesia_id" class="border rounded" style="width: 250px;">
+                    <option value="0" {{ $presupuesto->anestesia_id == 0 ? 'selected' : '' }}>Sin anestesia</option>
+                    <option value="1" {{ $presupuesto->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
+                    <option value="2" {{ $presupuesto->anestesia_id == 2 ? 'selected' : '' }}>Periférica</option>
+                    <option value="3" {{ $presupuesto->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
+                    <option value="4" {{ $presupuesto->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
+                </select>
+            </div>
+
+            <div class="mb-4" style="">
+                <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
+                    <thead>
+                        <th class="border px-4 py-2 text-center">Complejidad/Tipo paciente</th>
+                        <th class="border px-4 py-2 text-center">Precio</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">
+                                <input type="text" name="complejidad" id="complejidad" class="border-none w-full"
+                                    value="{{$presupuesto->complejidad}}">
+                            </td>
+                            <td class="border px-4 py-2">
+                                <input type="number" name="precio_anestesia" id="precio_anestesia"
+                                    class="border-none w-full" value="{{$presupuesto->precio_anestesia}}"
+                                    oninput="updateTotalPresupuesto()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
 
             <div class="mb-6">
                 <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
                 <input type="number" id="total_presupuesto" name="total_presupuesto"
-                    class="border rounded p-2 w-2 ml-1 text-center" value="{{$presupuesto->total_presupuesto}}">
+                    class="border rounded p-2 w-2 ml-1 text-center" value="{{$presupuesto->total_presupuesto}}"
+                    readonly>
             </div>
 
             <div class="mb-6">
@@ -279,18 +284,21 @@
 
     function updateTotalPresupuesto() {
         let total = 0;
-        // Sumar todos los valores de los campos modulo_total_ en la tabla
+
+        // Sumar todos los valores de los campos que comienzan con "modulo_total_"
         $('input[name^="modulo_total_"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
             total += value;
         });
 
+        // Obtener el valor del campo precio_anestesia y sumarlo al total
         let precioAnestesia = parseFloat($('#precio_anestesia').val()) || 0;
         total += precioAnestesia;
 
         // Actualizar el campo total_presupuesto con el total calculado
         $('#total_presupuesto').val(total.toFixed(2));
     }
+
 
     $('#search-button').click(function (e) {
         e.preventDefault();

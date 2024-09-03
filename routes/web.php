@@ -42,6 +42,8 @@ Route::post('/presupuestos', [PresupuestoController::class, 'store'])->name('pre
 
 Route::get('/presupuestos/edit/{id}', [PresupuestoController::class, 'edit'])->name('presupuestos.edit');
 
+Route::post('/presupuestos/update/{id}', [PresupuestoController::class, 'update'])->name('presupuestos.update');
+
 Route::get('/search-patient', [PresupuestoController::class, 'searchPatient'])->name('presupuestos.searchPatient');
 
 //Route::get('/searchPrestaciones', [PrestacionController::class, 'searchPrestaciones'])->name('searchPrestaciones');
