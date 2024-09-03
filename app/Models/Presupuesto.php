@@ -33,6 +33,7 @@ class Presupuesto extends Model
         'medico_tratante',
         'medico_solicitante',
         'file_path',
+        'borrado_logico',
     ];
     
 }

@@ -4,6 +4,8 @@
     use App\Models\Prestacion;
 @endphp
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <x-app-layout>
     <x-slot name="title">Editar Presupuesto</x-slot>
 
@@ -282,10 +284,13 @@
 
 
     <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
-        onsubmit="return confirm('¿Estás seguro de que deseas eliminar este presupuesto?');">
+        id="delete-form-{{ $presupuesto->id }}">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-danger">Eliminar Presupuesto</button>
+        <button style="margin-top: 50px" type="button" class="btn btn-danger"
+            onclick="confirmDelete({{ $presupuesto->id }})">
+            Eliminar Presupuesto
+        </button>
     </form>
 
 
@@ -294,6 +299,23 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
 
     function updateTotalPresupuesto() {
         let total = 0;

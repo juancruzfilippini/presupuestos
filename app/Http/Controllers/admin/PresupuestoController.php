@@ -19,9 +19,14 @@ class PresupuestoController extends Controller
     // Muestra una lista de todos los presupuestos
     public function index(Request $request)
     {
-        $presupuestos = Presupuesto::all();
+        // Filtra los presupuestos donde 'borrado_logico' es null o 0
+        $presupuestos = Presupuesto::where('borrado_logico', 0)
+            ->orWhereNull('borrado_logico')
+            ->get();
+
         return view('presupuestos.index', compact('presupuestos'));
     }
+
 
 
     // Muestra el formulario para crear un nuevo presupuesto
@@ -334,18 +339,20 @@ class PresupuestoController extends Controller
         // Encuentra el presupuesto por ID o falla si no existe
         $presupuesto = Presupuesto::findOrFail($id);
 
-        // Obtén el ID del presupuesto para eliminar las prestaciones asociadas
+        // Obtén el ID del presupuesto para actualizar las prestaciones asociadas
         $presupuestoId = $presupuesto->id;
 
-        // Elimina las prestaciones asociadas al presupuesto
-        Prestaciones::where('presupuesto_id', $presupuestoId)->delete();
+        // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
+        Prestaciones::where('presupuesto_id', $presupuestoId)
+            ->update(['borrado_logico' => 1]);
 
-        // Elimina el presupuesto
-        $presupuesto->delete();
+        // Actualiza la columna 'borrado_logico' a 1 en el presupuesto
+        $presupuesto->update(['borrado_logico' => 1]);
 
         // Redirige con mensaje de éxito
-        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones eliminados con éxito.');
+        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
     }
+
 
 
     public function searchPatient(Request $request)
