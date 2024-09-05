@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PresupuestoController;
+use App\Http\Controllers\Admin\ExportarController;
 use App\Http\Controllers\Admin\PrestacionController;
 use App\Http\Controllers\Admin\ConvenioController;
 
@@ -58,7 +59,7 @@ Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionControll
 
 Route::get('/presupuestos/firmar/{id}', [PresupuestoController::class, 'firmar'])->name('presupuestos.firmar');
 
-Route::get('estudios/exportar-datos/{id}', [ExportarController::class, 'exportarDatos'])->name('presupuesto.exportarDatos');
+Route::get('presupuestos/exportar-datos/{id}', [ExportarController::class, 'exportarDatos'])->name('presupuestos.exportarDatos');
 
 Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 'sign'])->name('presupuestos.sign');
 

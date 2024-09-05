@@ -11,6 +11,7 @@ class Exportar extends Model
     {
         // Ejecutar la consulta
         $presupuesto = DB::connection('mysql')->table('presupuesto as p')
+            ->leftJoin('firmas as f', 'p.id', '=', 'f.presupuesto_id')
             ->where('p.id', 116)
             ->select(
                 'p.*',  // Todos los campos de la tabla presupuesto
@@ -19,7 +20,7 @@ class Exportar extends Model
                 'f.direccion as fdirec'
             )->first();
 
-            //dd($presupuesto);
+        //dd($presupuesto);
 
         return $presupuesto;
     }

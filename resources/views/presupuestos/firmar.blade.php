@@ -234,7 +234,7 @@
 
         <!-- Botón adicional que aparece solo si todas las partes han firmado -->
         @if($firmas->auditoria == 1 && $firmas->comercializacion == 1 && $firmas->direccion == 1)
-            <form class="max-w-4xl p-6 bg-white shadow-md rounded-lg mr-2" method="POST" action="{{ route('presupuestos.exportarDatos', ['id' => $presupuesto->id]) }}">
+            <form class="max-w-4xl p-6 bg-white shadow-md rounded-lg mr-2" method="GET" action="{{ route('presupuestos.exportarDatos', ['id' => $presupuesto->id]) }}">
                 @csrf
                 <button type="submit" class="btn btn-primary">
                     Generar Presupuesto

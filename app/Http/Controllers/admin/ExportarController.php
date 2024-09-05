@@ -1,18 +1,18 @@
 <?php
 
+namespace App\Http\Controllers\Admin;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\Presupuesto; // Importamos el modelo correcto
+use App\Models\Prestaciones; // Importamos el modelo correcto
 use App\Models\Prestacion; // Importamos el modelo correcto
 use App\Models\ObraSocial; // Importamos el modelo correcto
 use App\Models\Firmas; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Paciente;
 use App\Models\Archivo;
 use App\Models\Convenio;
 use App\Models\Exportar;
-use App\Models\Prestaciones;
-use Illuminate\Support\Facades\DB;
 use PDF;
 
 
@@ -24,11 +24,14 @@ class ExportarController extends Controller
         // Crear una instancia del modelo Exportar
         $exportar = new Exportar();
 
+        // Obtener el presupuesto
         $presupuesto = $exportar->getPresupuesto($id);
 
+        // Inicializar variables
         $os = '';
         $conv = '';
 
+        // Establecer la anestesia según el id
         switch ($presupuesto->anestesia_id) {
             case 0:
                 $anestesia = 'Sin anestesia';
@@ -50,6 +53,7 @@ class ExportarController extends Controller
                 break;
         }
 
+        // Obtener obra social y convenio
         if (is_numeric($presupuesto->obra_social)) {
             $os = ObraSocial::getObraSocialById($presupuesto->obra_social);
         } else {
@@ -62,8 +66,7 @@ class ExportarController extends Controller
             $conv = $presupuesto->convenio;
         }
 
-
-
+        // Crear array con los datos
         $data = [
             'id' => $presupuesto->id,
             'fecha' => $presupuesto->fecha,
@@ -90,11 +93,21 @@ class ExportarController extends Controller
             'fdirec' => $presupuesto->fdirec,
         ];
 
+        // Obtener las prestaciones asociadas al presupuesto
+        $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
 
+        // Empaquetar ambas variables en un solo array
+        $data1 = [
+            'presupuesto' => $data,
+            'prestaciones' => $prestaciones
+        ];
+
+        //dd($data);
         // Generar el PDF utilizando la vista y los datos
-        $pdf = PDF::loadView('presupuesto.export_presupuesto', $data);
+        $pdf = PDF::loadView('presupuestos.export_presupuesto', $data1);
 
         // Descargar el PDF directamente sin almacenarlo en el servidor
         return $pdf->download('informe.pdf');
     }
+
 }
