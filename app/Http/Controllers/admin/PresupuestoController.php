@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Presupuesto; // Importamos el modelo correcto
 use App\Models\Prestacion; // Importamos el modelo correcto
 use App\Models\ObraSocial; // Importamos el modelo correcto
+use App\Models\Firmas; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Paciente;
@@ -26,6 +27,45 @@ class PresupuestoController extends Controller
 
         return view('presupuestos.index', compact('presupuestos'));
     }
+
+    public function firmar($id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+        $archivos = Archivo::where('presupuesto_id', $id)->get();
+        $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $firmas = Firmas::where('presupuesto_id', $id)->first();
+        //dd($prestaciones);
+
+        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id'));
+    }
+
+    public function sign($id, $rol_id)
+    {
+
+        $firmas = Firmas::where('presupuesto_id', $id)->first();
+
+        //dd($id, $rol_id, $firmas->auditoria);
+
+        switch ($rol_id) {
+            case 1:
+                $firmas->auditoria = 1;
+                break;
+            case 2:
+                $firmas->comercializacion = 1;
+                break;
+            case 6:
+                $firmas->direccion = 1;
+                break;
+            default:
+                return redirect()->back()->with('error', 'Rol no autorizado para firmar el presupuesto.');
+        }
+
+        $firmas->save();
+
+        return redirect()->route('presupuestos.firmar', $id)->with('success', 'El presupuesto ha sido firmado por ' . Auth::user()->name);
+    }
+
+    
 
 
 
@@ -60,6 +100,7 @@ class PresupuestoController extends Controller
             'total_presupuesto' => 'nullable|string',
             'anestesia_id' => 'nullable|integer',
             'complejidad' => 'nullable|string',
+            'detalle_anestesia' => 'nullable|string',
             'precio_anestesia' => 'nullable|string',
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
@@ -125,6 +166,7 @@ class PresupuestoController extends Controller
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
 
+        $presupuesto->detalle_anestesia = $validatedData['detalle_anestesia'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
@@ -142,6 +184,13 @@ class PresupuestoController extends Controller
         // Guardar en la base de datos
         $presupuesto->save();
 
+        $presupuesto_id = $presupuesto->id;
+
+        $firma = new Firmas();
+        $firma->presupuesto_id = $presupuesto_id;
+        $firma->save();
+
+        
 
         $prestacionesData = [];
         $rowCount = 1;  // Asume que las filas empiezan en 1
@@ -228,6 +277,7 @@ class PresupuestoController extends Controller
             'adicionales' => 'nullable|string',
             'total_presupuesto' => 'nullable|string',
             'anestesia_id' => 'nullable|integer',
+            'detalle_anestesia' => 'nullable|string',
             'complejidad' => 'nullable|string',
             'precio_anestesia' => 'nullable|string',
             'fecha' => 'nullable|string',
@@ -274,6 +324,7 @@ class PresupuestoController extends Controller
             $presupuesto->adicionales = "";
         }
 
+        $presupuesto->detalle_anestesia = $validatedData['detalle_anestesia'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
@@ -344,6 +395,9 @@ class PresupuestoController extends Controller
 
         // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
         Prestaciones::where('presupuesto_id', $presupuestoId)
+            ->update(['borrado_logico' => 1]);
+
+        Archivo::where('presupuesto_id', $presupuestoId)
             ->update(['borrado_logico' => 1]);
 
         // Actualiza la columna 'borrado_logico' a 1 en el presupuesto

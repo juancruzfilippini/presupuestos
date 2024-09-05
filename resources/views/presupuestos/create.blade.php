@@ -167,22 +167,30 @@
         <div class="mb-4">
             <h2 class="text-lg font-semibold mb-2">OPCIONES</h2>
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
+                <div class="flex items-center mb-4">
                     <label for="anestesia" class="font-semibold mr-2">Anestesia</label>
                     <label class="switch">
                         <input type="checkbox" id="anestesia" name="anestesia">
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <div id="anestesia-select" style="display:none; text-center">
-                    <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
-                    <select id="anestesia_id" class="border rounded" style="width: 250px;">
-                        <option value="1">Local</option>
-                        <option value="2">Periférica</option>
-                        <option value="3">Central</option>
-                        <option value="4">Total</option>
-                    </select>
+
+                <div id="anestesia-select" style="display: none; display: flex; align-items: center;">
+                    <div style="flex: 1;">
+                        <label for="anestesia_id" class="font-semibold" style="margin-left: 10px;">Especificar
+                            Anestesia:</label>
+                        <select id="anestesia_id" class="border rounded" style="width: 250px; margin-right: 20px;">
+                            <option value="1">Local</option>
+                            <option value="2">Periférica</option>
+                            <option value="3">Central</option>
+                            <option value="4">Total</option>
+                        </select>
+                    </div>
                 </div>
+
+
+
+
             </div>
         </div>
 
@@ -205,6 +213,10 @@
                     </tr>
                 </tbody>
             </table>
+            <div style="flex: 1; text-align: right;">
+                <label for="anestesia_detalle" class="font-semibold">Detalle:</label>
+                <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;">
+            </div>
         </div>
 
         <div class="mb-6">
@@ -451,6 +463,13 @@
                 $selectElement.find('select').change(function () {
                     $hiddenInput.val($(this).val());
                 });
+            });
+
+            $('#search-input').keypress(function (e) {
+                if (e.which === 13) { // 13 es el código de la tecla Enter
+                    e.preventDefault(); // Evitar el comportamiento predeterminado de la tecla Enter
+                    $('#search-button').click(); // Llamar a la función de búsqueda
+                }
             });
 
             // Buscar paciente por DNI

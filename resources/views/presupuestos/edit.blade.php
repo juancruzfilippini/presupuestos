@@ -193,6 +193,10 @@
                         </tr>
                     </tbody>
                 </table>
+                <div style="flex: 1; text-align: right;">
+                <label for="detalle_anestesia" class="font-semibold">Detalle:</label>
+                <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;" value="{{$presupuesto->detalle_anestesia}}">
+            </div>
             </div>
 
 
@@ -334,6 +338,12 @@
         $('#total_presupuesto').val(total.toFixed(2));
     }
 
+    $('#search-input').keypress(function(e) {
+                if (e.which === 13) { // 13 es el código de la tecla Enter
+                    e.preventDefault(); // Evitar el comportamiento predeterminado de la tecla Enter
+                    $('#search-button').click(); // Llamar a la función de búsqueda
+                }
+            });
 
     $('#search-button').click(function (e) {
         e.preventDefault();

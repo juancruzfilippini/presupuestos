@@ -59,22 +59,27 @@
                                 @endif
                             </td>
 
-                            @if(Auth::user()->rol_id == 4)
                             <td>
+                                @if(Auth::user()->rol_id == 4)
                                 <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
                                     class="btn btn-warning btn-sm">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
+                                @endif
+                                @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
+                                    <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
+                                        class="btn btn-success btn-sm">
+                                        <i class="fa-solid fa-check"></i>
+                                    </a>
+                                @endif
+                                @if(Auth::user()->rol_id == 3)
+                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
+                                            class="btn btn-success btn-sm">
+                                            <i class="fa-solid fa-prescription-bottle-medical"></i>
+                                        </a>
+                                @endif
                             </td>
-                            @endif
-                            @if(Auth::user()->rol_id == 1)
-                            <td>
-                                <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
-                                    class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-file-signature"></i> 
-                                </a>
-                            </td>
-                            @endif
+                            
                         </tr>
                     @endforeach
                 </tbody>

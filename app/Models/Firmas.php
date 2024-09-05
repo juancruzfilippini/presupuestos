@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Archivo extends Model
+class Firmas extends Model
 {
     use HasFactory;
     
@@ -13,13 +13,14 @@ class Archivo extends Model
 
     protected $connection = 'mysql'; // Para la base de datos 'db-sistema-ap'
 
-    protected $table = 'archivos'; // Nombre de la tabla en la base de datos
+    protected $table = 'firmas'; // Nombre de la tabla en la base de datos
 
     protected $fillable = [
         'id',
         'presupuesto_id',
-        'file_path',
-        'borrado_logico',
+        'comercializacion',
+        'auditoria',
+        'direccion',
     ];
 
 }

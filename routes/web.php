@@ -56,7 +56,11 @@ Route::get('/getPrestaciones/{convenioId}', [PrestacionController::class, 'getPr
 
 Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionController::class, 'obtenerPrecio'])->name('obtenerPrecio');
 
+Route::get('/presupuestos/firmar/{id}', [PresupuestoController::class, 'firmar'])->name('presupuestos.firmar');
 
+Route::get('estudios/exportar-datos/{id}', [ExportarController::class, 'exportarDatos'])->name('presupuesto.exportarDatos');
+
+Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 'sign'])->name('presupuestos.sign');
 
 
 

@@ -25,6 +25,7 @@ class Presupuesto extends Model
         'adicionales',
         'total_presupuesto',
         'anestesia_id',
+        'anestesia_detalle',
         'complejidad',
         'precio_anestesia',
         'fecha',
