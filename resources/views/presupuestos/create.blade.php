@@ -218,8 +218,12 @@
         <div class="mb-4" style="display:none;">
             <div style="margin-left: 30%">
                 <button type="button" id="addRow"
-                    class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded mb-4">
+                    class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded mb-4">
                     Agregar filaaaa
+                </button>
+                <button type="button" id="removeRow"
+                    class="bg-red-500 hover:bg-red-700 text-black font-bold py-2 px-4 rounded mb-4">
+                    Eliminar última fila
                 </button>
             </div>
             <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
@@ -351,6 +355,18 @@
 
             // Añadimos la fila al cuerpo de la tabla
             tableBody.appendChild(newRow);
+        });
+
+        document.getElementById('removeRow').addEventListener('click', function () {
+            // Seleccionamos el cuerpo de la tabla
+            var tableBody = document.getElementById('anestesia-body');
+
+            // Verificamos si hay más de una fila antes de eliminar la última
+            if (tableBody.rows.length > 1) {
+                tableBody.deleteRow(-1);
+            } else {
+                alert('No puedes eliminar todas las filas.');
+            }
         });
 
         $(document).ready(function () {

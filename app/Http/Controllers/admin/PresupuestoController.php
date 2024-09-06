@@ -86,7 +86,7 @@ class PresupuestoController extends Controller
         //$validatedData = $request->except('file'); // Excluye 'file' de la validación
         //dd($validatedData);
 
-        //dd($request->all());
+        dd($request->all());
 
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
