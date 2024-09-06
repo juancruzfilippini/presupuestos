@@ -51,7 +51,7 @@
         <div class="mb-4">
             <h2 class="text-lg font-semibold mb-2">DATOS DEL PACIENTE</h2>
 
-            <div class="form-group">
+            <div class="form-groupp">
                 <label for="search-input">DNI: </label>
                 <div class="input-group">
                     <input type="text" id="search-input" name="documento" class="form-control"
@@ -67,8 +67,25 @@
 
             <div id="results"></div>
             <p></p>
-            <input type="text" id="selected-person" name="paciente" class="form-control"
+            <input type="text" id="selected-person" name="paciente" class="form-control form-groupp"
                 placeholder="Nombre del paciente seleccionado" readonly>
+            <div class="form-row">
+                <div class="form-groupp">
+                    <label for="telefono" style="margin-top: 5px;">TELEFONO: </label>
+                    <input type="text" id="telefono" name="telefono" class="form-control"
+                        placeholder="Número telefónico del paciente">
+                </div>
+                <div class="form-groupp">
+                    <label for="email" style="margin-top: 5px;">EMAIL: </label>
+                    <input type="text" id="email" name="email" class="form-control" placeholder="Email del paciente">
+                </div>
+                <div class="form-groupp">
+                    <label for="email" style="margin-top: 5px;">NUMERO DE AFILIADO: </label>
+                    <input type="text" id="nro_afiliado" name="nro_afiliado" class="form-control"
+                        placeholder="Numero de afiliado en obra social">
+                </div>
+            </div>
+
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
             <p> </p>
             <p> </p>
@@ -105,6 +122,7 @@
                     </select>
                 </div>
             </div>
+
 
 
             <p></p>
@@ -194,29 +212,32 @@
             </div>
         </div>
 
+
+
         <!-- Tabla que debería mostrarse solo cuando el switch está activado -->
         <div class="mb-4" style="display:none;">
+            <div style="margin-left: 30%">
+                <button type="button" id="addRow"
+                    class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded mb-4">
+                    Agregar filaaaa
+                </button>
+            </div>
             <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
                 <thead>
                     <th class="border px-4 py-2 text-center">Complejidad/Tipo paciente</th>
                     <th class="border px-4 py-2 text-center">Precio</th>
                 </thead>
-                <tbody>
+                <tbody id="anestesia-body">
                     <tr>
                         <td class="border px-4 py-2">
-                            <input type="text" name="complejidad" id="complejidad" class="border-none w-full">
+                            <input type="text" name="complejidad[]" class="border-none w-full">
                         </td>
                         <td class="border px-4 py-2">
-                            <input type="number" name="precio_anestesia" id="precio_anestesia"
-                                class="border-none w-full">
+                            <input type="number" name="precio_anestesia[]" class="border-none w-full">
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div style="flex: 1; text-align: right;">
-                <label for="anestesia_detalle" class="font-semibold">Detalle:</label>
-                <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;">
-            </div>
         </div>
 
         <div class="mb-6">
@@ -311,6 +332,27 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        document.getElementById('addRow').addEventListener('click', function () {
+            // Seleccionamos el cuerpo de la tabla
+            var tableBody = document.getElementById('anestesia-body');
+
+            // Creamos una nueva fila
+            var newRow = document.createElement('tr');
+
+            // Creamos las celdas y los inputs
+            newRow.innerHTML = `
+            <td class="border px-4 py-2">
+                <input type="text" name="complejidad[]" class="border-none w-full">
+            </td>
+            <td class="border px-4 py-2">
+                <input type="number" name="precio_anestesia[]" class="border-none w-full">
+            </td>
+        `;
+
+            // Añadimos la fila al cuerpo de la tabla
+            tableBody.appendChild(newRow);
+        });
+
         $(document).ready(function () {
 
             // Inicializar select2 para selects existentes al cargar la página
@@ -472,6 +514,20 @@
                 }
             });
 
+            function calcularEdad(fechaNacimiento) {
+                const hoy = new Date();
+                const nacimiento = new Date(fechaNacimiento);
+                let edad = hoy.getFullYear() - nacimiento.getFullYear();
+                const mes = hoy.getMonth() - nacimiento.getMonth();
+
+                // Ajustar si la fecha de nacimiento aún no ha pasado este año
+                if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+                    edad--;
+                }
+
+                return edad;
+            }
+
             // Buscar paciente por DNI
             $('#search-button').click(function (e) {
                 e.preventDefault();
@@ -489,11 +545,16 @@
                         var resultHtml = '';
                         if (data.length > 0) {
                             data.forEach(function (patient) {
+
+                                const fechaNacimiento = patient.fecha_nacimiento; // Asumiendo que esto está en formato 'YYYY-MM-DD'
+                                const edad = calcularEdad(fechaNacimiento);
+
                                 resultHtml += '<div>';
                                 resultHtml += '<p><strong>HC Electrónica:</strong> ' + patient.id + '</p>';
                                 resultHtml += '<p><strong>Nombre:</strong> ' + patient.nombres + ' ' + patient.apellidos + '</p>';
                                 resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                                 resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
+                                resultHtml += '<p><strong>Edad:</strong> ' + edad + '</p>';
                                 resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                                 resultHtml += '</div><hr>';
                             });
@@ -779,6 +840,27 @@
 
         input:checked+.slider:before {
             transform: translateX(26px);
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            /* Alinea verticalmente en el centro */
+            gap: 20px;
+            /* Espacio entre los elementos */
+        }
+
+        .form-groupp {
+            display: flex;
+            flex-direction: column;
+            /* Alinea el label y el input en columna */
+            flex: 1;
+            /* Permite que ambos elementos ocupen espacio igual */
+        }
+
+        .form-groupp label {
+            margin-bottom: 5px;
+            /* Espacio entre el label y el input */
         }
     </style>
 

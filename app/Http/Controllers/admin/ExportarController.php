@@ -8,6 +8,7 @@ use App\Models\Prestaciones; // Importamos el modelo correcto
 use App\Models\Prestacion; // Importamos el modelo correcto
 use App\Models\ObraSocial; // Importamos el modelo correcto
 use App\Models\Firmas; // Importamos el modelo correcto
+use App\Models\Paciente; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Archivo;
@@ -95,11 +96,15 @@ class ExportarController extends Controller
 
         // Obtener las prestaciones asociadas al presupuesto
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $paciente= Paciente::findById($presupuesto->paciente_salutte_id);
+        $today = date('Y-m-d');
 
         // Empaquetar ambas variables en un solo array
         $data1 = [
             'presupuesto' => $data,
-            'prestaciones' => $prestaciones
+            'prestaciones' => $prestaciones,
+            'paciente' => $paciente,
+            'today' => $today
         ];
 
         //dd($data);

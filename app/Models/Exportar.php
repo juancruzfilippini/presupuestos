@@ -12,7 +12,7 @@ class Exportar extends Model
         // Ejecutar la consulta
         $presupuesto = DB::connection('mysql')->table('presupuesto as p')
             ->leftJoin('firmas as f', 'p.id', '=', 'f.presupuesto_id')
-            ->where('p.id', 116)
+            ->where('p.id', $id)
             ->select(
                 'p.*',  // Todos los campos de la tabla presupuesto
                 'f.comercializacion as fcomer',  // Campos de la tabla firmas

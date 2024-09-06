@@ -34,9 +34,11 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $firmas = Firmas::where('presupuesto_id', $id)->first();
-        //dd($prestaciones);
+        $paciente= Paciente::findById($presupuesto->paciente_salutte_id);
+        $today = date('Y-m-d');
+        //dd($paciente);
 
-        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id'));
+        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today'));
     }
 
     public function sign($id, $rol_id)
@@ -107,6 +109,9 @@ class PresupuestoController extends Controller
             'paciente' => 'nullable|string',
             'medico_tratante' => 'nullable|string',
             'medico_solicitante' => 'nullable|string',
+            'telefono' => 'nullable|string',
+            'email' => 'nullable|string',
+            'nro_afiliado' => 'nullable|string',
         ]);
 
 
@@ -178,6 +183,9 @@ class PresupuestoController extends Controller
         $presupuesto->paciente = $validatedData['paciente'];
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
         $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
+        $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
+        $presupuesto->telefono = $validatedData['telefono'];
+        $presupuesto->email = $validatedData['email'];
         $presupuesto->estado = 0;
 
 
@@ -285,6 +293,9 @@ class PresupuestoController extends Controller
             'paciente' => 'nullable|string',
             'medico_tratante' => 'nullable|string',
             'medico_solicitante' => 'nullable|string',
+            'nro_afiliado' => 'nullable|string',
+            'email' => 'nullable|string',
+            'telefono' => 'nullable|string',
         ]);
 
 
@@ -323,6 +334,9 @@ class PresupuestoController extends Controller
         } else {
             $presupuesto->adicionales = "";
         }
+        if($validatedData['paciente_salutte_id'] != ''){
+            $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
+        }
 
         $presupuesto->detalle_anestesia = $validatedData['detalle_anestesia'];
         $presupuesto->detalle = $validatedData['detalle'];
@@ -332,10 +346,12 @@ class PresupuestoController extends Controller
         $presupuesto->complejidad = $validatedData['complejidad'];
         $presupuesto->precio_anestesia = $validatedData['precio_anestesia'];
         $presupuesto->fecha = $validatedData['fecha'];
-        $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         $presupuesto->paciente = $validatedData['paciente'];
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
         $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
+        $presupuesto->telefono = $validatedData['telefono'];
+        $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
+        $presupuesto->email = $validatedData['email'];
         $presupuesto->estado = 1;
 
         //'updated_by' => Auth::id(),  // Establecer el ID del usuario autenticado

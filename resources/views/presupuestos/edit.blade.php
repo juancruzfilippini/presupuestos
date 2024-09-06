@@ -194,9 +194,10 @@
                     </tbody>
                 </table>
                 <div style="flex: 1; text-align: right;">
-                <label for="detalle_anestesia" class="font-semibold">Detalle:</label>
-                <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;" value="{{$presupuesto->detalle_anestesia}}">
-            </div>
+                    <label for="detalle_anestesia" class="font-semibold">Detalle:</label>
+                    <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;"
+                        value="{{$presupuesto->detalle_anestesia}}">
+                </div>
             </div>
 
 
@@ -338,12 +339,26 @@
         $('#total_presupuesto').val(total.toFixed(2));
     }
 
-    $('#search-input').keypress(function(e) {
-                if (e.which === 13) { // 13 es el código de la tecla Enter
-                    e.preventDefault(); // Evitar el comportamiento predeterminado de la tecla Enter
-                    $('#search-button').click(); // Llamar a la función de búsqueda
-                }
-            });
+    $('#search-input').keypress(function (e) {
+        if (e.which === 13) { // 13 es el código de la tecla Enter
+            e.preventDefault(); // Evitar el comportamiento predeterminado de la tecla Enter
+            $('#search-button').click(); // Llamar a la función de búsqueda
+        }
+    });
+
+    function calcularEdad(fechaNacimiento) {
+        const hoy = new Date();
+        const nacimiento = new Date(fechaNacimiento);
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+
+        // Ajustar si la fecha de nacimiento aún no ha pasado este año
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+
+        return edad;
+    }
 
     $('#search-button').click(function (e) {
         e.preventDefault();
@@ -361,11 +376,16 @@
                 var resultHtml = '';
                 if (data.length > 0) {
                     data.forEach(function (patient) {
+
+                        const fechaNacimiento = patient.fecha_nacimiento; // Asumiendo que esto está en formato 'YYYY-MM-DD'
+                        const edad = calcularEdad(fechaNacimiento);
+
                         resultHtml += '<div>';
                         resultHtml += '<p><strong>HC Electrónica:</strong> ' + patient.id + '</p>';
                         resultHtml += '<p><strong>Nombre:</strong> ' + patient.nombres + ' ' + patient.apellidos + '</p>';
                         resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                         resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
+                        resultHtml += '<p><strong>Edad:</strong> ' + edad + '</p>';
                         resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                         resultHtml += '</div><hr>';
                     });

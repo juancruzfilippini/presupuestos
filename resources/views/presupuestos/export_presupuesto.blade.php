@@ -2,6 +2,7 @@
     use App\Models\ObraSocial;
     use App\Models\Convenio;
     use App\Models\Prestacion;
+    use App\Helpers\NumberToWordsHelper;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -29,157 +30,152 @@
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{ $presupuesto['id'] }}">
 
 
-        <h2 class="text-allig-center">PRESUPUESTO</h2>
+        <h2 class="text-center">PRESUPUESTO</h2>
         
         <div style="border-top: 1px solid #000; padding-top: 20px; margin-top: 20px;"></div>
         <!-- Linea divisora de secciones -->
 
-        <div class="flex justify-between mb-4">
-            <div>
-            <label for="fecha" class="font-semibold">FECHA:</label>
-            {{ \Carbon\Carbon::parse($presupuesto['fecha'])->format('d/m/Y') }}
-
+        <div style="width: 100%; display: table; margin-bottom: 16px;">
+            <div style="display: table-cell; text-align: left; vertical-align: middle;">
+                <label for="medico_tratante" style="">MEDICO TRATANTE: {{$presupuesto['medico_tratante']}}</label>
             </div>
-            <div>
-                <label for="medico_solicitante" class="font-semibold">MEDICO SOLICITANTE:</label>
-                {{$presupuesto['medico_solicitante']}}
-            </div>
-            <div>
-                <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
-                {{$presupuesto['medico_tratante']}}
+            <div style="display: table-cell; text-align: right; vertical-align: middle;">
+                <label for="fecha" style="">FECHA: {{ \Carbon\Carbon::parse($presupuesto['fecha'])->format('d/m/Y') }}</label>
             </div>
         </div>
-
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+
         <!-- Linea divisora de secciones -->
-        <h2 class="text-lg font-semibold mb-2">PACIENTE</h2>
+        <div style="font-size: 1rem; font-weight: 600; text-align: center;">PACIENTE</div>
+
         <div class="form-group">
-            {{$presupuesto['paciente']}}
-            <p></p>
+            Nombre: {{$presupuesto['paciente']}}
+            <br>
+            Fecha de nacimiento: {{ \Carbon\Carbon::parse($paciente->fecha_nacimiento)->format('d/m/Y');}}
+            <br>
+            Edad: {{ \Carbon\Carbon::parse($paciente->fecha_nacimiento)->age }}
+            <br>
+            Documento: {{number_format($paciente->documento, 0, '', '.');}}
+            <br>
+            <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
 
 
-        <div class="d-flex justify-content-between align-items-center">
+        <div style="margin-bottom: 5px;" class="d-flex justify-content-between align-items-center">
 
             @if(is_numeric($presupuesto['obra_social']))
-                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} 
+                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} - Nro Afiliado:  
             @else
-                Obra Social: {{ $presupuesto['obra_social'] }} 
+                Obra Social: {{ $presupuesto['obra_social'] }} - Nro Afiliado:  
             @endif
-
-
-            @if(is_numeric($presupuesto['convenio']))
-                -  {{ Convenio::getConvenioById($presupuesto['convenio']) }}
-            @else
-                @if (!is_null($presupuesto['convenio']))
-                -  {{ $presupuesto['convenio'] }}
-                @endif
-            @endif
+            <br>
         </div>
-
-
-        <p></p>
-        <p></p>
-        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
         <!-- Linea divisora de secciones -->
-        <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
 
         <!-- NECESITO MOSTRAR AQUI MIS PRESTACIONES -->
-        <table class="min-w-full bg-white border border-gray-200">
+                <table>
             <thead>
                 <tr>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left">CÓDIGO</th>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left">NOMBRE</th>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left">MÓDULO TOTAL</th>
+                    <th>CÓDIGO</th>
+                    <th style="text-transform: uppercase;">{{$presupuesto['especialidad']}}</th>
+                    <th>MÓDULO TOTAL</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($prestaciones as $prestacion)
                     <tr>
-                        <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->codigo_prestacion }}</td>
-                        <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->nombre_prestacion }}</td>
-                        <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->modulo_total }}</td>
+                        <td>{{ $prestacion->codigo_prestacion }}</td>
+                        <td class="text-left">{{ $prestacion->nombre_prestacion }}</td>
+                        <td>$ {{number_format($prestacion->modulo_total, 0, '', '.');}}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        <br>
 
-        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-
-
-        <label class="p-2 font-semibold">Anestesia: </label>
-
-            @switch($presupuesto['anestesia'])
-                @case(0)
-                    Sin anestesia
-                    @break
-                @case(1)
-                    Local
-                    @break
-                @case(2)
-                    Periferica
-                    @break
-                @case(3)
-                    Central
-                    @break
-                @case(4)
-                    Total
-                    @break
-                @default
-                    No especificado
-            @endswitch
-            
-        @if($presupuesto['detalle_anestesia'] != "" && $presupuesto['anestesia'] != 0)
-        <label class="ml-4 p-2 font-semibold"> Observación Anestesia: </label> {{$presupuesto['detalle_anestesia']}}
+        @if($presupuesto['anestesia'] != "Sin anestesia")
+            <div style="margin-bottom: 5px;">
+            </div>
+                
+                <table class="min-w-full bg-white border border-gray-200" style="margin-bottom: 5px;">
+                    <thead>
+                        <tr>
+                            <th>COMPLEJIDAD</th>
+                            <th>PRECIO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border-b border-gray-300">{{ $presupuesto['complejidad'] }}</td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($presupuesto['precio_anestesia'], 0, '', '.');}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+                <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
         @endif
-       
-        <table class="min-w-full bg-white border border-gray-200">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left">COMPLEJIDAD</th>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left">PRECIO</th>
-                </tr>
-            </thead>
-            <tbody>
-                    <tr>
-                        <td class="px-4 py-2 border-b border-gray-300">{{ $presupuesto['complejidad'] }}</td>
-                        <td class="px-4 py-2 border-b border-gray-300">{{ $presupuesto['precio_anestesia'] }}</td>
-                    </tr>
-            </tbody>
-        </table>
 
-        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
         
         <div class="mb-6">
-            <h4 for="total_presupuesto" class="mt-3 font-semibold" style="text-align: center;">TOTAL PRESUPUESTO: $ {{$presupuesto['total_presupuesto']}}</h4>
+        <div style="font-size: 1rem; font-weight: 600; text-align: center;">TOTAL PRESUPUESTO: $ {{number_format($presupuesto['total_presupuesto'], 0, '', '.');}}</div>
+            <p style="text-align: center;">
+    {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }} pesos
+            </p>
         </div>
 
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
-        @if(!is_null($presupuesto['condicion']))
-        <label class="ml-4 p-2 font-semibold">Condición: </label> 
-        <label class="ml-4 p-2">{{$presupuesto['condicion']}}</label> 
+        @if($presupuesto['condicion'])
+            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Condición: </label> 
+            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['condicion']}}</label> 
         @endif
-        @if(!is_null($presupuesto['incluye']))
-        <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-        <label class="ml-4 p-2 font-semibold">Incluye: </label> 
-        <label class="ml-4 p-2">{{$presupuesto['incluye']}}</label> 
+        @if($presupuesto['incluye'])
+            <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
+            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Incluye: </label> 
+            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['incluye']}}</label> 
         @endif
-        @if(!is_null($presupuesto['excluye']))
-        <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-        <label class="ml-4 p-2 font-semibold">Excluye: </label> 
-        <label class="ml-4 p-2">{{$presupuesto['excluye']}}</label> 
+        @if($presupuesto['excluye'])
+            <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
+            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Excluye: </label> 
+            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['excluye']}}</label> 
         @endif
-        @if(!is_null($presupuesto['adicionales']))
-        <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-        <label class="ml-4 p-2 font-semibold">Adicionales: </label>
-        <label class="ml-4 p-2 font-semibold">{{$presupuesto['adicionales']}}</label> 
-        @endif
+        @if($presupuesto['adicionales'])
+            <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
+            <label class="ml-4 p-2 font-semibold" style="font-size: 12px; font-weight: bold;">Adicionales: </label>
+            <label class="ml-4 p-2" style="font-size: 12px; font-weight: bold;">{{$presupuesto['adicionales']}}</label> 
+        @endif 
+
     </form>
-
-
 <!--  <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>  LINEA DIVISORA-->
-
 <!--  route('presupuestos.finalize', ['id' => $presupuesto->id]) -->
 
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+    .text-right {
+        text-align: right;
+    }
+    .text-center {
+        text-align: center;
+    }
+</style>
