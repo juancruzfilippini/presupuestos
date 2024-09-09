@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Paciente;
 use App\Models\Archivo;
 use App\Models\Prestaciones;
+use App\Models\Anestesia_p;
 use Illuminate\Support\Facades\DB;
 
 
@@ -34,7 +35,7 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $firmas = Firmas::where('presupuesto_id', $id)->first();
-        $paciente= Paciente::findById($presupuesto->paciente_salutte_id);
+        $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
         $today = date('Y-m-d');
         //dd($paciente);
 
@@ -67,7 +68,7 @@ class PresupuestoController extends Controller
         return redirect()->route('presupuestos.firmar', $id)->with('success', 'El presupuesto ha sido firmado por ' . Auth::user()->name);
     }
 
-    
+
 
 
 
@@ -86,7 +87,9 @@ class PresupuestoController extends Controller
         //$validatedData = $request->except('file'); // Excluye 'file' de la validación
         //dd($validatedData);
 
-        dd($request->all());
+        //dd($request->all());
+
+        
 
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
@@ -100,10 +103,6 @@ class PresupuestoController extends Controller
             'excluye' => 'nullable|string',
             'adicionales' => 'nullable|string',
             'total_presupuesto' => 'nullable|string',
-            'anestesia_id' => 'nullable|integer',
-            'complejidad' => 'nullable|string',
-            'detalle_anestesia' => 'nullable|string',
-            'precio_anestesia' => 'nullable|string',
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
             'paciente' => 'nullable|string',
@@ -171,13 +170,9 @@ class PresupuestoController extends Controller
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
 
-        $presupuesto->detalle_anestesia = $validatedData['detalle_anestesia'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
-        $presupuesto->anestesia_id = $validatedData['anestesia_id'];
-        $presupuesto->complejidad = $validatedData['complejidad'];
-        $presupuesto->precio_anestesia = $validatedData['precio_anestesia'];
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         $presupuesto->paciente = $validatedData['paciente'];
@@ -194,11 +189,29 @@ class PresupuestoController extends Controller
 
         $presupuesto_id = $presupuesto->id;
 
+        $anestesias = $request->anestesia_id;
+        $precios = $request->precio_anestesia;
+        $complejidades = $request->complejidad;
+
+        // Asegúrate de que los arrays tengan la misma cantidad de elementos
+        if (count($anestesias) == count($precios) && count($precios) == count($complejidades)) {
+            foreach ($anestesias as $index => $anestesiaId) {
+                DB::table('anestesia_p')->insert([
+                    'presupuesto_id' => $presupuesto_id,
+                    'anestesia_id' => $anestesiaId,
+                    'precio' => $precios[$index],
+                    'complejidad' => $complejidades[$index],
+                ]);
+            }
+        } else {
+            return back()->withErrors(['message' => 'Los arrays de anestesia, precio y complejidad deben tener la misma longitud.']);
+        }
+    
         $firma = new Firmas();
         $firma->presupuesto_id = $presupuesto_id;
         $firma->save();
 
-        
+
 
         $prestacionesData = [];
         $rowCount = 1;  // Asume que las filas empiezan en 1
@@ -259,9 +272,10 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::findOrFail($id);
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
-        //dd($prestaciones);
+        $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
+        //dd($anestesias);
 
-        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'id'));
+        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
     }
 
 
@@ -284,10 +298,6 @@ class PresupuestoController extends Controller
             'excluye' => 'nullable|string',
             'adicionales' => 'nullable|string',
             'total_presupuesto' => 'nullable|string',
-            'anestesia_id' => 'nullable|integer',
-            'detalle_anestesia' => 'nullable|string',
-            'complejidad' => 'nullable|string',
-            'precio_anestesia' => 'nullable|string',
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
             'paciente' => 'nullable|string',
@@ -334,17 +344,13 @@ class PresupuestoController extends Controller
         } else {
             $presupuesto->adicionales = "";
         }
-        if($validatedData['paciente_salutte_id'] != ''){
+        if ($validatedData['paciente_salutte_id'] != '') {
             $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         }
 
-        $presupuesto->detalle_anestesia = $validatedData['detalle_anestesia'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
-        $presupuesto->anestesia_id = $validatedData['anestesia_id'];
-        $presupuesto->complejidad = $validatedData['complejidad'];
-        $presupuesto->precio_anestesia = $validatedData['precio_anestesia'];
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente = $validatedData['paciente'];
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
@@ -394,6 +400,23 @@ class PresupuestoController extends Controller
             }
 
             $rowCount++;
+        }
+        $rowCountt = 1;  // Asume que las filas empiezan en 1
+
+        while ($request->has("anestesia{$rowCountt}")) {
+            $anestesia = $request->input("anestesia{$rowCountt}");
+
+            // Buscar la prestación por ID
+            $anestesia = Anestesia_p::find($anestesia);
+
+            if ($anestesia) {
+                // Actualizar los campos de la prestación
+                $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
+                $anestesia->precio = $request->input("anestesia_precio{$rowCountt}");
+                $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
+                $anestesia->save();
+            }
+            $rowCountt++;
         }
 
         // Redirigir con un mensaje de éxito

@@ -83,9 +83,9 @@
         <div class="d-flex justify-content-between align-items-center">
 
             @if(is_numeric($presupuesto->obra_social))
-                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} - Nro Afiliado:  
+                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} - Nro Afiliado:  {{$presupuesto->nro_afiliado}}
             @else
-                Obra Social: {{ $presupuesto->obra_social }} - Nro Afiliado: 
+                Obra Social: {{ $presupuesto->obra_social }} - Nro Afiliado: {{$presupuesto->nro_afiliado}}
             @endif
 
         </div>

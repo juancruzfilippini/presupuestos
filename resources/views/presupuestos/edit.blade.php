@@ -74,6 +74,24 @@
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
             <p> </p>
             <p> </p>
+            <div class="form-row">
+                <div class="form-groupp">
+                    <label for="telefono" style="margin-top: 5px;">TELEFONO: </label>
+                    <input type="text" id="telefono" name="telefono" class="form-control"
+                        value="{{$presupuesto->telefono}}">
+                </div>
+                <div class="form-groupp">
+                    <label for="email" style="margin-top: 5px;">EMAIL: </label>
+                    <input type="text" id="email" name="email" class="form-control" value="{{$presupuesto->email}}">
+                </div>
+                <div class="form-groupp">
+                    <label for="email" style="margin-top: 5px;">NUMERO DE AFILIADO: </label>
+                    <input type="text" id="nro_afiliado" name="nro_afiliado" class="form-control"
+                        value="{{$presupuesto->nro_afiliado}}">
+                </div>
+            </div>
+            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+
 
             <div id="results"></div>
 
@@ -156,49 +174,58 @@
                             </td>
                         </tr>
                     @endforeach
-
                 </tbody>
             </table>
 
 
+            @if (count($anestesias) > 0)
+                <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+                <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
 
-            <div id="anestesia-select" class="">
-                <label for="anestesia_id" class="font-semibold">Especificar Anestesia:</label>
-                <select id="anestesia_id" name="anestesia_id" class="border rounded" style="width: 250px;">
-                    <option value="0" {{ $presupuesto->anestesia_id == 0 ? 'selected' : '' }}>Sin anestesia</option>
-                    <option value="1" {{ $presupuesto->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                    <option value="2" {{ $presupuesto->anestesia_id == 2 ? 'selected' : '' }}>Periférica</option>
-                    <option value="3" {{ $presupuesto->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
-                    <option value="4" {{ $presupuesto->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
-                </select>
-            </div>
 
-            <div class="mb-4" style="">
+
                 <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
                     <thead>
-                        <th class="border px-4 py-2 text-center">Complejidad/Tipo paciente</th>
+                        <th class="border px-4 py-2 text-center">Complejidad</th>
                         <th class="border px-4 py-2 text-center">Precio</th>
+                        <th class="border px-4 py-2 text-center">Tipo</th>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="border px-4 py-2">
-                                <input type="text" name="complejidad" id="complejidad" class="border-none w-full"
-                                    value="{{$presupuesto->complejidad}}">
-                            </td>
-                            <td class="border px-4 py-2">
-                                <input type="number" name="precio_anestesia" id="precio_anestesia"
-                                    class="border-none w-full" value="{{$presupuesto->precio_anestesia}}"
-                                    oninput="updateTotalPresupuesto()">
-                            </td>
-                        </tr>
+                    <tbody id="anestesia-body">
+                        @foreach($anestesias as $anestesia)
+                            <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
+                            <tr>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="complejidad{{ $loop->iteration }}"
+                                        value="{{$anestesia->complejidad}}" class="border-none w-full">
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="precio_anestesia{{ $loop->iteration }}"
+                                        value="{{$anestesia->precio}}" class="border-none w-full">
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full">
+                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin anestesia
+                                        </option>
+                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
+                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
+                                        </option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
-                <div style="flex: 1; text-align: right;">
-                    <label for="detalle_anestesia" class="font-semibold">Detalle:</label>
-                    <input type="text" id="detalle_anestesia" name="detalle_anestesia" style="width: 400px;"
-                        value="{{$presupuesto->detalle_anestesia}}">
-                </div>
-            </div>
+                <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
+                <input type="number" id="total_anestesia" name="total_anestesia"
+                    class="border rounded p-2 w-2 ml-1 text-center" value="">
+                    
+            @endif
+
+
+
+
 
 
             <div class="mb-6">
@@ -323,20 +350,29 @@
     }
 
     function updateTotalPresupuesto() {
-        let total = 0;
+        let totalPresupuesto = 0;
+        let totalAnestesia = 0; // Variable para el total de anestesia
 
-        // Sumar todos los valores de los campos que comienzan con "modulo_total_"
+        // Sumar todos los valores de los campos de presupuesto (por ejemplo, modulo_total_)
         $('input[name^="modulo_total_"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
-            total += value;
+            totalPresupuesto += value;
         });
 
-        // Obtener el valor del campo precio_anestesia y sumarlo al total
-        let precioAnestesia = parseFloat($('#precio_anestesia').val()) || 0;
-        total += precioAnestesia;
+        // Sumar los precios de anestesia
+        $('input[name="precio_anestesia[]"]').each(function () {
+            let value = parseFloat($(this).val()) || 0;
+            totalAnestesia += value;
+        });
 
-        // Actualizar el campo total_presupuesto con el total calculado
-        $('#total_presupuesto').val(total.toFixed(2));
+        // Sumar total de presupuesto y anestesia
+        let totalGeneral = totalPresupuesto + totalAnestesia;
+
+        // Actualizar el campo total_presupuesto con la suma total
+        $('#total_presupuesto').val(totalGeneral.toFixed(2));
+
+        // Actualizar el campo total_anestesia con el total calculado para anestesias
+        $('#total_anestesia').val(totalAnestesia.toFixed(2));
     }
 
     $('#search-input').keypress(function (e) {
@@ -571,5 +607,26 @@
 
     input:checked+.slider:before {
         transform: translateX(26px);
+    }
+
+    .form-row {
+        display: flex;
+        align-items: center;
+        /* Alinea verticalmente en el centro */
+        gap: 20px;
+        /* Espacio entre los elementos */
+    }
+
+    .form-groupp {
+        display: flex;
+        flex-direction: column;
+        /* Alinea el label y el input en columna */
+        flex: 1;
+        /* Permite que ambos elementos ocupen espacio igual */
+    }
+
+    .form-groupp label {
+        margin-bottom: 5px;
+        /* Espacio entre el label y el input */
     }
 </style>
