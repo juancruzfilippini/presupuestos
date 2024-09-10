@@ -200,7 +200,7 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border-none w-full">
+                                        value="{{$anestesia->precio}}" class="border-none w-full" oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
                                     <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full">
@@ -220,7 +220,7 @@
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
                 <input type="number" id="total_anestesia" name="total_anestesia"
                     class="border rounded p-2 w-2 ml-1 text-center" value="">
-                    
+
             @endif
 
 
@@ -331,6 +331,34 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    updateTotalPresupuesto();
+
+    function updateTotalPresupuesto() {
+        let totalPresupuesto = 0;
+        let totalAnestesia = 0;
+
+        // Sumar todos los valores de los campos de presupuesto
+        $('input[name^="modulo_total_"]').each(function () {
+            let value = parseFloat($(this).val()) || 0;
+            totalPresupuesto += value;
+        });
+
+        // Sumar los precios de anestesia
+        $('input[name^="precio_anestesia"]').each(function () {
+            let value = parseFloat($(this).val()) || 0;
+            totalAnestesia += value;
+        });
+
+        // Sumar total de presupuesto y anestesia
+        let totalGeneral = totalPresupuesto + totalAnestesia;
+
+        // Actualizar el campo total_presupuesto con la suma total
+        $('#total_presupuesto').val(totalGeneral.toFixed(2));
+
+        // Actualizar el campo total_anestesia con el total calculado para anestesias
+        $('#total_anestesia').val(totalAnestesia.toFixed(2));
+    }
+
 
     function confirmDelete(id) {
         Swal.fire({
@@ -349,31 +377,7 @@
         });
     }
 
-    function updateTotalPresupuesto() {
-        let totalPresupuesto = 0;
-        let totalAnestesia = 0; // Variable para el total de anestesia
 
-        // Sumar todos los valores de los campos de presupuesto (por ejemplo, modulo_total_)
-        $('input[name^="modulo_total_"]').each(function () {
-            let value = parseFloat($(this).val()) || 0;
-            totalPresupuesto += value;
-        });
-
-        // Sumar los precios de anestesia
-        $('input[name="precio_anestesia[]"]').each(function () {
-            let value = parseFloat($(this).val()) || 0;
-            totalAnestesia += value;
-        });
-
-        // Sumar total de presupuesto y anestesia
-        let totalGeneral = totalPresupuesto + totalAnestesia;
-
-        // Actualizar el campo total_presupuesto con la suma total
-        $('#total_presupuesto').val(totalGeneral.toFixed(2));
-
-        // Actualizar el campo total_anestesia con el total calculado para anestesias
-        $('#total_anestesia').val(totalAnestesia.toFixed(2));
-    }
 
     $('#search-input').keypress(function (e) {
         if (e.which === 13) { // 13 es el código de la tecla Enter

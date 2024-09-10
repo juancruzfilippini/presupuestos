@@ -9,6 +9,7 @@ use App\Models\Prestacion; // Importamos el modelo correcto
 use App\Models\ObraSocial; // Importamos el modelo correcto
 use App\Models\Firmas; // Importamos el modelo correcto
 use App\Models\Paciente; // Importamos el modelo correcto
+use App\Models\Anestesia_p; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Archivo;
@@ -33,26 +34,6 @@ class ExportarController extends Controller
         $conv = '';
 
         // Establecer la anestesia según el id
-        switch ($presupuesto->anestesia_id) {
-            case 0:
-                $anestesia = 'Sin anestesia';
-                break;
-            case 1:
-                $anestesia = 'Local';
-                break;
-            case 2:
-                $anestesia = 'Periférica';
-                break;
-            case 3:
-                $anestesia = 'Central';
-                break;
-            case 4:
-                $anestesia = 'Total';
-                break;
-            default:
-                $anestesia = 'No especificado';
-                break;
-        }
 
         // Obtener obra social y convenio
         if (is_numeric($presupuesto->obra_social)) {
@@ -79,11 +60,10 @@ class ExportarController extends Controller
             'obra_social' => $os,
             'convenio' => $conv,
             'especialidad' => $presupuesto->especialidad,
-            'anestesia' => $anestesia,
-            'detalle_anestesia' => $presupuesto->detalle_anestesia,
-            'complejidad' => $presupuesto->complejidad,
-            'precio_anestesia' => $presupuesto->precio_anestesia,
             'total_presupuesto' => $presupuesto->total_presupuesto,
+            'email' => $presupuesto->email,
+            'telefono' => $presupuesto->telefono,
+            'nro_afiliado' => $presupuesto->nro_afiliado,
             'condicion' => $presupuesto->condicion,
             'incluye' => $presupuesto->incluye,
             'excluye' => $presupuesto->excluye,
@@ -96,6 +76,7 @@ class ExportarController extends Controller
 
         // Obtener las prestaciones asociadas al presupuesto
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $paciente= Paciente::findById($presupuesto->paciente_salutte_id);
         $today = date('Y-m-d');
 
@@ -104,6 +85,7 @@ class ExportarController extends Controller
             'presupuesto' => $data,
             'prestaciones' => $prestaciones,
             'paciente' => $paciente,
+            'anestesias' => $anestesias,
             'today' => $today
         ];
 

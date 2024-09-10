@@ -60,7 +60,7 @@
                             </td>
 
                             <td>
-                                @if(Auth::user()->rol_id == 4)
+                                @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2 )
                                 <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
                                     class="btn btn-warning btn-sm">
                                     <i class="fas fa-pencil-alt"></i>
@@ -73,6 +73,12 @@
                                     </a>
                                 @endif
                                 @if(Auth::user()->rol_id == 3)
+                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
+                                            class="btn btn-success btn-sm">
+                                            <i class="fa-solid fa-prescription-bottle-medical"></i>
+                                        </a>
+                                @endif
+                                @if(Auth::user()->rol_id == 5 && $presupuesto->estado == 5)
                                         <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
                                             class="btn btn-success btn-sm">
                                             <i class="fa-solid fa-prescription-bottle-medical"></i>

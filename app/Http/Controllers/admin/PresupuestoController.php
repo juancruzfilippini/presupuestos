@@ -35,11 +35,14 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $firmas = Firmas::where('presupuesto_id', $id)->first();
+        $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
         $today = date('Y-m-d');
-        //dd($paciente);
+        //  dd($anestesias);
 
-        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today'));
+
+
+        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today', 'anestesias'));
     }
 
     public function sign($id, $rol_id)
@@ -63,8 +66,21 @@ class PresupuestoController extends Controller
                 return redirect()->back()->with('error', 'Rol no autorizado para firmar el presupuesto.');
         }
 
+
         $firmas->save();
 
+        $presupuesto = Presupuesto::find($id);
+
+        if ($presupuesto) {
+            if ($firmas->direccion == 1 && $firmas->comercializacion == 1 && $firmas->auditoria == 1) {
+                $presupuesto->estado = 4; // Cambia el estado a 4 (completado)
+            } elseif ($firmas->direccion == 1 || $firmas->comercializacion == 1 || $firmas->auditoria == 1) {
+                $presupuesto->estado = 3; // Cambia el estado a 3 (firmando)
+            } else {
+                // Maneja el caso en el que ninguna firma está en 1 si es necesario
+            }
+            $presupuesto->save(); // Guarda los cambios en la base de datos
+        }
         return redirect()->route('presupuestos.firmar', $id)->with('success', 'El presupuesto ha sido firmado por ' . Auth::user()->name);
     }
 
@@ -89,7 +105,7 @@ class PresupuestoController extends Controller
 
         //dd($request->all());
 
-        
+
 
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
@@ -206,7 +222,7 @@ class PresupuestoController extends Controller
         } else {
             return back()->withErrors(['message' => 'Los arrays de anestesia, precio y complejidad deben tener la misma longitud.']);
         }
-    
+
         $firma = new Firmas();
         $firma->presupuesto_id = $presupuesto_id;
         $firma->save();
@@ -412,7 +428,7 @@ class PresupuestoController extends Controller
             if ($anestesia) {
                 // Actualizar los campos de la prestación
                 $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
-                $anestesia->precio = $request->input("anestesia_precio{$rowCountt}");
+                $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
                 $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
                 $anestesia->save();
             }

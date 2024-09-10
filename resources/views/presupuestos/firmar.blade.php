@@ -14,7 +14,10 @@
 
 <x-app-layout>
     <x-slot name="title">Ver Presupuesto</x-slot>
+    
 
+
+    
     <form method="GET" action="{{ route('presupuestos.index') }}"
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
@@ -118,11 +121,24 @@
         </table>
 
         
-        @if($presupuesto->anestesia_id != 0)
+        @if(!empty($anestesias))
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-            <label class="p-2 font-semibold">Anestesia: </label>
+        <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
 
-                @switch($presupuesto->anestesia_id)
+                
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">TIPO</th>
+                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">COMPLEJIDAD</th>
+                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">PRECIO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($anestesias as $anestesia)
+                        <tr>
+                            <td class="px-4 py-2 border-b border-gray-300">
+                            @switch($anestesia->anestesia_id)
                     @case(0)
                         Sin anestesia
                         @break
@@ -141,20 +157,11 @@
                     @default
                         No especificado
                 @endswitch
-                
-                
-                <table class="min-w-full bg-white border border-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">COMPLEJIDAD</th>
-                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">PRECIO</th>
+                            </td>
+                            <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 0, '', '.');}}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 py-2 border-b border-gray-300">{{ $presupuesto->complejidad }}</td>
-                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($presupuesto->precio_anestesia, 0, '', '.');}}</td>
-                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
                 @if($presupuesto->detalle_anestesia != "" && $presupuesto->anestesia_id != 0)
@@ -190,10 +197,17 @@
             <label class="ml-4 p-2">{{$presupuesto->excluye}}</label> 
         @endif
         @if($presupuesto->adicionales != '')
-        <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-        <label class="ml-4 p-2 font-semibold">Adicionales: </label>
-        <label class="ml-4 p-2 font-semibold">{{$presupuesto->adicionales}}</label> 
+            <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
+            <label class="ml-4 p-2 font-semibold">Adicionales: </label>
+            <ul class="ml-8 list-none"> <!-- Eliminamos los discos y agregamos asteriscos manualmente -->
+                @foreach(explode('*', $presupuesto->adicionales) as $item)
+                    @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
+                        <li class="font-semibold">* {{ trim($item) }}</li>
+                    @endif
+                @endforeach
+            </ul>
         @endif
+
 
         <div class="mb-6" style="margin-top: 50px">
             <button type="submit" class="btn btn-primary">

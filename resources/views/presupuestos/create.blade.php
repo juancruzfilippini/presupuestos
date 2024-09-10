@@ -539,7 +539,14 @@
                         edad--;
                     }
 
+                    adicionalAnestesia(edad);
                     return edad;
+                }
+
+                function adicionalAnestesia($edad) {
+                    if (edad < 3 || edad > 65) {
+
+                    }
                 }
 
                 // Buscar paciente por DNI
@@ -876,6 +883,11 @@
         .form-groupp label {
             margin-bottom: 5px;
             /* Espacio entre el label y el input */
+        }
+
+        #addRow {
+            background-color: #48bb78;
+            /* Color equivalente a bg-green-500 */
         }
     </style>
 
