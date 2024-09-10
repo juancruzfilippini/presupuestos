@@ -200,7 +200,8 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border-none w-full" oninput="updateTotalPresupuesto()">
+                                        value="{{$anestesia->precio}}" class="border-none w-full"
+                                        oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
                                     <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full">
@@ -217,6 +218,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
                 <input type="number" id="total_anestesia" name="total_anestesia"
                     class="border rounded p-2 w-2 ml-1 text-center" value="">
@@ -331,6 +333,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    let edad;
     updateTotalPresupuesto();
 
     function updateTotalPresupuesto() {
@@ -348,6 +351,15 @@
             let value = parseFloat($(this).val()) || 0;
             totalAnestesia += value;
         });
+        if (edad < 3 || edad > 65) {
+            totalAnestesia = totalAnestesia * 1.2;
+
+            // Mostrar el label oculto
+            document.getElementById('adicional_anestesia').style.display = 'block';
+        } else {
+            // Ocultar el label si no se cumple la condición
+            document.getElementById('adicional_anestesia').style.display = 'none';
+        }
 
         // Sumar total de presupuesto y anestesia
         let totalGeneral = totalPresupuesto + totalAnestesia;
@@ -418,7 +430,7 @@
                     data.forEach(function (patient) {
 
                         const fechaNacimiento = patient.fecha_nacimiento; // Asumiendo que esto está en formato 'YYYY-MM-DD'
-                        const edad = calcularEdad(fechaNacimiento);
+                        edad = calcularEdad(fechaNacimiento);
 
                         resultHtml += '<div>';
                         resultHtml += '<p><strong>HC Electrónica:</strong> ' + patient.id + '</p>';
@@ -452,6 +464,7 @@
         var selectedId = $(this).data('id');
         $('#selected-person').val(selectedName);
         $('#paciente_salutte_id').val(selectedId);
+        updateTotalPresupuesto();
     });
 
 

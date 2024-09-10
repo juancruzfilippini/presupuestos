@@ -123,7 +123,7 @@
         
         @if(!empty($anestesias))
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-        <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
+        <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2> 
 
                 
                 <table class="min-w-full bg-white border border-gray-200">
@@ -164,10 +164,6 @@
                     @endforeach
                     </tbody>
                 </table>
-                @if($presupuesto->detalle_anestesia != "" && $presupuesto->anestesia_id != 0)
-                <br>
-                <label class="p-2 font-semibold">Observación Anestesia: </label> {{$presupuesto->detalle_anestesia}}
-                @endif
         @endif
 
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>

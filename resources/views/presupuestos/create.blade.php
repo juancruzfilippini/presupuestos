@@ -221,7 +221,7 @@
 
                 </tbody>
             </table>
-
+            <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
             <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
             <input type="number" id="total_anestesia" name="total_anestesia"
                 class="border rounded p-2 w-2 ml-1 text-center" value="">
@@ -319,12 +319,14 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        let edad;
 
         document.addEventListener('DOMContentLoaded', function () {
 
             function updateTotalPresupuesto() {
                 let totalPresupuesto = 0;
                 let totalAnestesia = 0; // Variable para el total de anestesia
+                console.log(edad);
 
                 // Sumar todos los valores de los campos de presupuesto (por ejemplo, modulo_total_)
                 $('input[name^="modulo_total_"]').each(function () {
@@ -337,6 +339,16 @@
                     let value = parseFloat($(this).val()) || 0;
                     totalAnestesia += value;
                 });
+
+                if (edad < 3 || edad > 65) {
+                    totalAnestesia = totalAnestesia * 1.2;
+
+                    // Mostrar el label oculto
+                    document.getElementById('adicional_anestesia').style.display = 'block';
+                } else {
+                    // Ocultar el label si no se cumple la condición
+                    document.getElementById('adicional_anestesia').style.display = 'none';
+                }
 
                 // Sumar total de presupuesto y anestesia
                 let totalGeneral = totalPresupuesto + totalAnestesia;
@@ -539,16 +551,8 @@
                         edad--;
                     }
 
-                    adicionalAnestesia(edad);
                     return edad;
                 }
-
-                function adicionalAnestesia($edad) {
-                    if (edad < 3 || edad > 65) {
-
-                    }
-                }
-
                 // Buscar paciente por DNI
                 $('#search-button').click(function (e) {
                     e.preventDefault();
@@ -568,7 +572,8 @@
                                 data.forEach(function (patient) {
 
                                     const fechaNacimiento = patient.fecha_nacimiento; // Asumiendo que esto está en formato 'YYYY-MM-DD'
-                                    const edad = calcularEdad(fechaNacimiento);
+                                    edad = calcularEdad(fechaNacimiento);
+
 
                                     resultHtml += '<div>';
                                     resultHtml += '<p><strong>HC Electrónica:</strong> ' + patient.id + '</p>';
@@ -603,6 +608,7 @@
                     var selectedId = $(this).data('id');
                     $('#selected-person').val(selectedName);
                     $('#paciente_salutte_id').val(selectedId);
+                    updateTotalPresupuesto();
                 });
 
                 // Manejar el cambio en el select de obra social
