@@ -70,8 +70,9 @@
             <div id="results"></div>
             <p></p>
             <input type="text" id="selected-person" name="paciente" class="form-control"
-                value="{{$presupuesto->paciente}}" readonly>
+                value="{{$presupuesto->paciente}}" readonly oninput="">
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
+            <input type="hidden" id="edad" name="edad" value="">
             <p> </p>
             <p> </p>
             <div class="form-row">
@@ -231,6 +232,7 @@
 
 
             <div class="mb-6">
+                <br>
                 <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
                 <input type="number" id="total_presupuesto" name="total_presupuesto"
                     class="border rounded p-2 w-2 ml-1 text-center" value="{{$presupuesto->total_presupuesto}}"
@@ -333,8 +335,16 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    
     let edad;
+    updateEdad({{ $presupuesto->edad }});
+    console.log({{$presupuesto->edad}});
     updateTotalPresupuesto();
+
+    function updateEdad($edad) {
+        edad = $edad;
+    }
+
 
     function updateTotalPresupuesto() {
         let totalPresupuesto = 0;
@@ -437,7 +447,7 @@
                         resultHtml += '<p><strong>Nombre:</strong> ' + patient.nombres + ' ' + patient.apellidos + '</p>';
                         resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                         resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
-                        resultHtml += '<p><strong>Edad:</strong> ' + edad + '</p>';
+                        resultHtml += '<p><strong>Edad:</strong> ' + edad + ' años</p>';
                         resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                         resultHtml += '</div><hr>';
                     });

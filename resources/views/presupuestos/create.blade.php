@@ -87,6 +87,7 @@
             </div>
 
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
+            <input type="hidden" id="edad" name="edad" value="">
             <p> </p>
             <p> </p>
             <div class="flex items-center">
@@ -580,8 +581,8 @@
                                     resultHtml += '<p><strong>Nombre:</strong> ' + patient.nombres + ' ' + patient.apellidos + '</p>';
                                     resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                                     resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
-                                    resultHtml += '<p><strong>Edad:</strong> ' + edad + '</p>';
-                                    resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
+                                    resultHtml += '<p><strong>Edad:</strong> ' + edad + ' años</p>';
+                                    resultHtml += '<button type="button" class="btn btn-primary select-button"  data-edad="' + edad + '" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                                     resultHtml += '</div><hr>';
                                 });
                             } else {
@@ -606,8 +607,10 @@
                     e.preventDefault();
                     var selectedName = $(this).data('name');
                     var selectedId = $(this).data('id');
+                    var selectedEdad = $(this).data('edad');
                     $('#selected-person').val(selectedName);
                     $('#paciente_salutte_id').val(selectedId);
+                    $('#edad').val(selectedEdad);
                     updateTotalPresupuesto();
                 });
 

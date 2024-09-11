@@ -3,6 +3,8 @@
     use App\Models\Convenio;
     use App\Models\Prestacion;
     use App\Helpers\NumberToWordsHelper;
+    use Carbon\Carbon;
+
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -124,7 +126,9 @@
         @if(!empty($anestesias))
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
         <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2> 
-
+        @if ( Carbon::parse($paciente->fecha_nacimiento)->age < 3 || Carbon::parse($paciente->fecha_nacimiento)->age >65 )
+        <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
+        @endif
                 
                 <table class="min-w-full bg-white border border-gray-200">
                     <thead>
