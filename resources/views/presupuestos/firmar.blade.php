@@ -2,10 +2,19 @@
     use App\Models\ObraSocial;
     use App\Models\Convenio;
     use App\Models\Prestacion;
+    use App\Models\Users;
     use App\Helpers\NumberToWordsHelper;
     use Carbon\Carbon;
 
 @endphp
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -116,7 +125,7 @@
                     <tr>
                         <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->codigo_prestacion }}</td>
                         <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->nombre_prestacion }}</td>
-                        <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($prestacion->modulo_total, 0, '', '.');}}</td>
+                        <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -163,7 +172,7 @@
                 @endswitch
                             </td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
-                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 0, '', '.');}}</td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -174,11 +183,14 @@
 
         
         <div class="mb-6">
-            <h4 for="total_presupuesto" class="mt-3 font-semibold" style="text-align: center;">TOTAL PRESUPUESTO: $ {{number_format($presupuesto->total_presupuesto, 0, '', '.');}}</h4>
-            <p style="text-align: center;">
-    {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }} pesos
-            </p>
-        </div>
+    <h4 for="total_presupuesto" class="mt-3 font-semibold" style="text-align: center;">
+        TOTAL PRESUPUESTO: $ {{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}
+    </h4>
+    <p style="text-align: center;">
+    {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
+    </p>
+</div>
+
 
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
@@ -214,6 +226,10 @@
                 <i class="fa-solid fa-arrow-left-long"></i> 
                  Volver
             </button>
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
+    Ver Historial de Cambios
+</button>
+
         </div>
     </form>
 
@@ -264,6 +280,98 @@
     </div>
 @endif
 
+<!-- Modal REGISTRO AUDITORIA -->
+<div class="modal fade" id="cambiosModal" tabindex="-1" aria-labelledby="cambiosModalLabel" aria-hidden="true">
+    <div class="modal-dialog custom-modal-width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cambiosModalLabel">Historial de Cambios</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabla para Cambios en Presupuestos -->
+                <h3>Cambios en Presupuesto</h3>
+                <table class="table table-striped" style="table-layout: auto; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="">Fecha</th>
+                            <th>Campo</th>
+                            <th>Valor Anterior</th>
+                            <th>Valor Nuevo</th>
+                            <th style="">Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cambiosPresupuestos as $cambio)
+                            <tr>
+                                <td style="">{{ $cambio->fecha_cambio }}</td>
+                                <td>{{ $cambio->campo }}</td>
+                                <td>{{ $cambio->valor_anterior }}</td>
+                                <td>{{ $cambio->valor_nuevo }}</td>
+                                <td style="">{{ Users::getNameById($cambio->usuario_id) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <!-- Tabla para Cambios en Prestaciones -->
+                <h3>Cambios en Prestaciones</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Campo</th>
+                            <th>Valor Anterior</th>
+                            <th>Valor Nuevo</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cambiosPrestaciones as $cambio)
+                            <tr>
+                                <td>{{ $cambio->fecha_cambio }}</td>
+                                <td>{{ $cambio->campo }}</td>
+                                <td>{{ $cambio->valor_anterior }}</td>
+                                <td>{{ $cambio->valor_nuevo }}</td>
+                                <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <!-- Tabla para Cambios en Anestesias -->
+                <h3>Cambios en Anestesias</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Campo</th>
+                            <th>Valor Anterior</th>
+                            <th>Valor Nuevo</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cambiosAnestesias as $cambio)
+                            <tr>
+                                <td>{{ $cambio->fecha_cambio }}</td>
+                                <td>{{ $cambio->campo }}</td>
+                                <td>{{ $cambio->valor_anterior }}</td>
+                                <td>{{ $cambio->valor_nuevo }}</td>
+                                <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </x-app-layout>
 <!--  <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>  LINEA DIVISORA-->
@@ -291,3 +399,13 @@
 
     
 </script>
+
+<style>
+
+.custom-modal-width {
+    max-width: 90%; /* O el ancho que necesites, por ejemplo, 800px */
+}
+
+
+
+</style>

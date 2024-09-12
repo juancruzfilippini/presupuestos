@@ -14,6 +14,9 @@ use App\Models\Archivo;
 use App\Models\Prestaciones;
 use App\Models\Anestesia_p;
 use Illuminate\Support\Facades\DB;
+use App\Models\cambios_presupuestos;
+use App\Models\cambios_prestaciones;
+use App\Models\cambios_anestesias;
 
 
 class PresupuestoController extends Controller
@@ -37,12 +40,16 @@ class PresupuestoController extends Controller
         $firmas = Firmas::where('presupuesto_id', $id)->first();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
+        $cambiosPresupuestos = cambios_presupuestos::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
+        $cambiosPrestaciones = cambios_prestaciones::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
+        $cambiosAnestesias = cambios_anestesias::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
         $today = date('Y-m-d');
-        //  dd($anestesias);
+        //dd($cambiosPrestaciones);
 
 
 
-        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today', 'anestesias'));
+        return view('presupuestos.firmar', compact
+        ('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today', 'anestesias', 'cambiosPresupuestos', 'cambiosPrestaciones', 'cambiosAnestesias'));
     }
 
     public function sign($id, $rol_id)
@@ -298,11 +305,10 @@ class PresupuestoController extends Controller
 
 
     // Actualiza un presupuesto en la base de datos
+
+
     public function update(Request $request, $id)
     {
-
-        //dd($request->all());
-
         // Validar los datos del request
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
@@ -327,37 +333,29 @@ class PresupuestoController extends Controller
             'telefono' => 'nullable|string',
         ]);
 
-
         // Encontrar el presupuesto por su ID
         $presupuesto = presupuesto::findOrFail($id);
 
+        // Guardar una copia del presupuesto original para registrar los cambios
+        $presupuestoOriginal = $presupuesto->getOriginal();
 
-
-
-
+        // Actualizar el presupuesto
         $presupuesto->especialidad = $validatedData['input_especialidad'];
-        // Verificar si el toggle de 'condicion' está activado antes de asignar
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
         } else {
             $presupuesto->condicion = "";
         }
-
-        // Verificar si el toggle de 'incluye' está activado antes de asignar
         if ($request->has('toggleIncluye')) {
             $presupuesto->incluye = $validatedData['incluye'];
         } else {
             $presupuesto->incluye = "";
         }
-
-        // Verificar si el toggle de 'excluye' está activado antes de asignar
         if ($request->has('toggleExcluye')) {
             $presupuesto->excluye = $validatedData['excluye'];
         } else {
             $presupuesto->excluye = "";
         }
-
-        // Verificar si el toggle de 'adicionales' está activado antes de asignar
         if ($request->has('toggleAdicionales')) {
             $presupuesto->adicionales = $validatedData['adicionales'];
         } else {
@@ -366,7 +364,6 @@ class PresupuestoController extends Controller
         if ($validatedData['paciente_salutte_id'] != '') {
             $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         }
-
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
@@ -380,68 +377,101 @@ class PresupuestoController extends Controller
         $presupuesto->email = $validatedData['email'];
         $presupuesto->estado = 1;
 
-        //'updated_by' => Auth::id(),  // Establecer el ID del usuario autenticado
+        // Guardar el presupuesto actualizado
 
-        // Guardar en la base de datos
+        // Comparar cambios en el presupuesto
+        $dirtyFieldsPresupuesto = $presupuesto->getDirty();
+        //dd($dirtyFieldsPresupuesto);
+
+        // Registrar los cambios en cambios_presupuestos usando el modelo
+        foreach ($dirtyFieldsPresupuesto as $campo => $nuevoValor) {
+            cambios_presupuestos::create([
+                'presupuesto_id' => $presupuesto->id,
+                'campo' => $campo,
+                'valor_anterior' => $presupuestoOriginal[$campo],
+                'valor_nuevo' => $nuevoValor,
+                'fecha_cambio' => now(),
+                'usuario_id' => auth()->user()->id
+            ]);
+        }
+
         $presupuesto->save();
 
-
-
-        $rowCount = 1;  // Asume que las filas empiezan en 1
-
+        // Manejar prestaciones
+        $rowCount = 1;
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
-            $prestacionInput = $request->input("prestacion_{$rowCount}");
-
-            // Buscar la prestación por ID
             $prestacion = Prestaciones::find($prestacionId);
 
             if ($prestacion) {
-                // Actualizar los campos de la prestación
+                $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
                 $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
-
+                $prestacionInput = $request->input("prestacion_{$rowCount}");
                 if (is_numeric($prestacionInput)) {
                     $prestacion->prestacion_salutte_id = $prestacionInput;
-                    $prestacion->nombre_prestacion = null;  // O dejarlo vacío
+                    $prestacion->nombre_prestacion = null;
                 } else {
                     $prestacion->prestacion_salutte_id = null;
                     $prestacion->nombre_prestacion = $prestacionInput;
                 }
-
                 $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
-                // Actualizar otros campos según sea necesario
 
-                // Guardar los cambios en la base de datos
+                // Comparar cambios en las prestaciones
+                $dirtyFieldsPrestacion = $prestacion->getDirty();
+                //dd($dirtyFieldsPrestacion);
+                foreach ($dirtyFieldsPrestacion as $campo => $nuevoValor) {
+                    cambios_prestaciones::create([
+                        'presupuesto_id' => $presupuesto->id,
+                        'campo' => $campo,
+                        'valor_anterior' => $prestacionOriginal[$campo],
+                        'valor_nuevo' => $nuevoValor,
+                        'fecha_cambio' => now(),
+                        'usuario_id' => auth()->user()->id
+                    ]);
+                }
                 $prestacion->save();
-            } else {
-                // Manejar el caso donde la prestación no existe
-                // Puedes lanzar una excepción, ignorarlo, o crear una nueva prestación
-                // throw new Exception("Prestación con ID {$prestacionId} no encontrada.");
-            }
 
+            }
             $rowCount++;
         }
-        $rowCountt = 1;  // Asume que las filas empiezan en 1
 
+
+
+        // Manejar anestesias
+        $rowCountt = 1;
         while ($request->has("anestesia{$rowCountt}")) {
-            $anestesia = $request->input("anestesia{$rowCountt}");
-
-            // Buscar la prestación por ID
-            $anestesia = Anestesia_p::find($anestesia);
+            $anestesiaId = $request->input("anestesia{$rowCountt}");
+            $anestesia = Anestesia_p::find($anestesiaId);
 
             if ($anestesia) {
-                // Actualizar los campos de la prestación
+                $anestesiaOriginal = $anestesia->getOriginal(); // Guardar original
+
                 $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
                 $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
                 $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
+
+                // Comparar cambios en las anestesias
+                $dirtyFieldsAnestesia = $anestesia->getDirty();
+                //dd($dirtyFieldsAnestesia);
+                foreach ($dirtyFieldsAnestesia as $campo => $nuevoValor) {
+                    cambios_anestesias::create([
+                        'presupuesto_id' => $presupuesto->id,
+                        'campo' => $campo,
+                        'valor_anterior' => $anestesiaOriginal[$campo],
+                        'valor_nuevo' => $nuevoValor,
+                        'fecha_cambio' => now(),
+                        'usuario_id' => auth()->user()->id
+                    ]);
+                }
                 $anestesia->save();
+
             }
             $rowCountt++;
         }
 
-        // Redirigir con un mensaje de éxito
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
     }
+
 
     // Elimina un presupuesto de la base de datos
     public function destroy($id)

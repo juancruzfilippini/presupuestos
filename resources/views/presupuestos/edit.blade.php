@@ -221,7 +221,7 @@
                 </table>
                 <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
-                <input type="number" id="total_anestesia" name="total_anestesia"
+                <input type="float" id="total_anestesia" name="total_anestesia"
                     class="border rounded p-2 w-2 ml-1 text-center" value="">
 
             @endif
@@ -234,7 +234,7 @@
             <div class="mb-6">
                 <br>
                 <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
-                <input type="number" id="total_presupuesto" name="total_presupuesto"
+                <input type="float" id="total_presupuesto" name="total_presupuesto"
                     class="border rounded p-2 w-2 ml-1 text-center" value="{{$presupuesto->total_presupuesto}}"
                     readonly>
             </div>

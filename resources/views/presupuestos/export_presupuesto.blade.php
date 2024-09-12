@@ -127,7 +127,7 @@
                     <tr>
                         <td>{{ $prestacion->codigo_prestacion }}</td>
                         <td class="text-left">{{ $prestacion->nombre_prestacion }}</td>
-                        <td>$ {{number_format($prestacion->modulo_total, 0, '', '.');}}</td>
+                        <td>$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -172,7 +172,7 @@
                 @endswitch
                             </td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
-                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 0, '', '.');}}</td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -183,10 +183,10 @@
         
         <div class="" style="margin-top: 10px;">
     <div style="font-size: 1rem; font-weight: 600; text-align: center; margin-bottom: 5px;">
-        TOTAL PRESUPUESTO: $ {{number_format($presupuesto['total_presupuesto'], 0, '', '.');}}
+        TOTAL PRESUPUESTO: $ {{ number_format($presupuesto['total_presupuesto'], 2, ',', '.') }}
     </div>
     <p style="text-align: center; margin-top: 0;">
-        {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }} pesos
+    {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
     </p>
 </div>
 

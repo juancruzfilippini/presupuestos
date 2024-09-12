@@ -48,4 +48,24 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Rol::class, 'rol_id');
     }
+    public function getUsuarioById($id)
+    {
+        // Busca el usuario por el ID
+        $user = User::find($id);
+
+        // Verifica si el usuario existe y devuelve su nombre
+        if ($user) {
+            return $user->name;
+        } else {
+            // Opcional: Maneja el caso en que el usuario no se encuentra
+            return null; // O puedes lanzar una excepción o retornar un mensaje de error
+        }
+    }
+
+    public static function getUserById($id)
+    {
+        $usuario = self::where('id', $id)->first();
+        return $usuario ? $usuario->nombre : null;
+    }
+
 }
