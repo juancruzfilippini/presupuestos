@@ -2,6 +2,8 @@
     use App\Models\ObraSocial;
     use App\Models\Convenio;
     use App\Models\Prestacion;
+    use App\Models\Anestesia;
+    use App\Models\Estado;
     use App\Models\Users;
     use App\Helpers\NumberToWordsHelper;
     use Carbon\Carbon;
@@ -64,7 +66,7 @@
         <div class="flex justify-between mb-4">
             <div>
             <label for="fecha" class="font-semibold">FECHA:</label>
-            {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}
+            {{Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}
 
             </div>
             <div>
@@ -83,9 +85,9 @@
         <div class="form-group">
             {{$presupuesto->paciente}}
             <br>
-            Fecha de nacimiento: {{\Carbon\Carbon::parse($paciente->fecha_nacimiento)->format('d/m/Y');}}
+            Fecha de nacimiento: {{Carbon::parse($paciente->fecha_nacimiento)->format('d/m/Y');}}
             <br>
-            Edad: {{ \Carbon\Carbon::parse($paciente->fecha_nacimiento)->age }}
+            Edad: {{ Carbon::parse($paciente->fecha_nacimiento)->age }}
             <br>
             Documento: {{number_format($paciente->documento, 0, '', '.');}}
             <br>
@@ -153,7 +155,7 @@
                             <td class="px-4 py-2 border-b border-gray-300">
                             @switch($anestesia->anestesia_id)
                     @case(0)
-                        Sin anestesia
+                        Sin especificar
                         @break
                     @case(1)
                         Local
@@ -306,10 +308,22 @@
                     <tbody>
                         @foreach($cambiosPresupuestos as $cambio)
                             <tr>
-                                <td style="">{{ $cambio->fecha_cambio }}</td>
+                                <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
                                 <td>{{ $cambio->campo }}</td>
-                                <td>{{ $cambio->valor_anterior }}</td>
-                                <td>{{ $cambio->valor_nuevo }}</td>
+                                <td>
+                                    @if($cambio->campo == 'estado')
+                                        {{ Estado::getEstadoById($cambio->valor_anterior) }}
+                                    @else
+                                        {{ $cambio->valor_anterior }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($cambio->campo == 'estado')
+                                        {{ Estado::getEstadoById($cambio->valor_nuevo) }}
+                                    @else
+                                        {{ $cambio->valor_nuevo }}
+                                    @endif
+                                </td>
                                 <td style="">{{ Users::getNameById($cambio->usuario_id) }}</td>
                             </tr>
                         @endforeach
@@ -331,9 +345,9 @@
                     <tbody>
                         @foreach($cambiosPrestaciones as $cambio)
                             <tr>
-                                <td>{{ $cambio->fecha_cambio }}</td>
+                                <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
                                 <td>{{ $cambio->campo }}</td>
-                                <td>{{ $cambio->valor_anterior }}</td>
+                                <td>{{ $cambio->valor_anterior }} </td>
                                 <td>{{ $cambio->valor_nuevo }}</td>
                                 <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
                             </tr>
@@ -354,15 +368,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($cambiosAnestesias as $cambio)
-                            <tr>
-                                <td>{{ $cambio->fecha_cambio }}</td>
-                                <td>{{ $cambio->campo }}</td>
-                                <td>{{ $cambio->valor_anterior }}</td>
-                                <td>{{ $cambio->valor_nuevo }}</td>
-                                <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
-                            </tr>
-                        @endforeach
+                    @foreach($cambiosAnestesias as $cambio)
+                        <tr>
+                            <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
+                            <td>{{ $cambio->campo }}</td>
+                            <td>
+                                @if($cambio->campo == 'anestesia_id')
+                                    {{ Anestesia::getAnestesiaById($cambio->valor_anterior) }}
+                                @else
+                                    {{ $cambio->valor_anterior }}
+                                @endif
+                            </td>
+                            <td>
+                                @if($cambio->campo == 'anestesia_id')
+                                    {{ Anestesia::getAnestesiaById($cambio->valor_nuevo) }}
+                                @else
+                                    {{ $cambio->valor_nuevo }}
+                                @endif
+                            </td>
+                            <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
+                        </tr>
+                    @endforeach
+
                     </tbody>
                 </table>
             </div>

@@ -20,4 +20,9 @@ class Estado extends Model
         'nombre'
     ];
 
+    public static function getEstadoById($id){
+        $estado = self::find($id);
+        return $estado ? $estado->nombre : null;
+    }
+
 }

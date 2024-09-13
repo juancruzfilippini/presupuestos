@@ -206,7 +206,7 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full">
-                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin anestesia
+                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
                                         <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
@@ -335,7 +335,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    
+
     let edad;
     updateEdad({{ $presupuesto->edad }});
     console.log({{$presupuesto->edad}});
@@ -343,6 +343,7 @@
 
     function updateEdad($edad) {
         edad = $edad;
+        console.log(edad);
     }
 
 
@@ -448,7 +449,7 @@
                         resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                         resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
                         resultHtml += '<p><strong>Edad:</strong> ' + edad + ' años</p>';
-                        resultHtml += '<button type="button" class="btn btn-primary select-button" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
+                        resultHtml += '<button type="button" class="btn btn-primary select-button" data-edad="' + edad + '" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                         resultHtml += '</div><hr>';
                     });
                 } else {
@@ -472,8 +473,10 @@
         e.preventDefault();
         var selectedName = $(this).data('name');
         var selectedId = $(this).data('id');
+        var selectedEdad = $(this).data('edad');
         $('#selected-person').val(selectedName);
         $('#paciente_salutte_id').val(selectedId);
+        $('#edad').val(selectedEdad);
         updateTotalPresupuesto();
     });
 

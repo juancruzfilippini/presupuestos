@@ -129,7 +129,7 @@ class PresupuestoController extends Controller
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
             'paciente' => 'nullable|string',
-            'edad' => 'nullable|integer',
+            'edad' => 'nullable',
             'medico_tratante' => 'nullable|string',
             'medico_solicitante' => 'nullable|string',
             'telefono' => 'nullable|string',
@@ -309,6 +309,7 @@ class PresupuestoController extends Controller
 
     public function update(Request $request, $id)
     {
+        //dd($request->all());
         // Validar los datos del request
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
@@ -325,7 +326,7 @@ class PresupuestoController extends Controller
             'fecha' => 'nullable|string',
             'paciente_salutte_id' => 'nullable|integer',
             'paciente' => 'nullable|string',
-            'edad' => 'nullable|integer',
+            'edad' => 'nullable',
             'medico_tratante' => 'nullable|string',
             'medico_solicitante' => 'nullable|string',
             'nro_afiliado' => 'nullable|string',
@@ -364,12 +365,14 @@ class PresupuestoController extends Controller
         if ($validatedData['paciente_salutte_id'] != '') {
             $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
         }
+        if ($validatedData['edad'] != '') {
+            $presupuesto->edad = $validatedData['edad'];
+        }
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente = $validatedData['paciente'];
-        $presupuesto->edad = $validatedData['edad'];
         $presupuesto->medico_tratante = $validatedData['medico_tratante'];
         $presupuesto->medico_solicitante = $validatedData['medico_solicitante'];
         $presupuesto->telefono = $validatedData['telefono'];
