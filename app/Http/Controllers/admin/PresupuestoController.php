@@ -211,7 +211,6 @@ class PresupuestoController extends Controller
 
         // Guardar en la base de datos
         $presupuesto->save();
-
         $presupuesto_id = $presupuesto->id;
 
         $anestesias = $request->anestesia_id;
@@ -227,6 +226,11 @@ class PresupuestoController extends Controller
                     'precio' => $precios[$index],
                     'complejidad' => $complejidades[$index],
                 ]);
+                if ($anestesiaId == 0) {
+                    $presupuesto->estado = 5;
+                    $presupuesto->save();
+
+                }
             }
         } else {
             return back()->withErrors(['message' => 'Los arrays de anestesia, precio y complejidad deben tener la misma longitud.']);
@@ -378,7 +382,7 @@ class PresupuestoController extends Controller
         $presupuesto->telefono = $validatedData['telefono'];
         $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
         $presupuesto->email = $validatedData['email'];
-        $presupuesto->estado = 1;
+        $presupuesto->estado = 5;
 
         // Guardar el presupuesto actualizado
 
@@ -453,6 +457,10 @@ class PresupuestoController extends Controller
                 $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
                 $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
 
+                if ($anestesiaId == 0) {
+                    $presupuesto->estado = 5;
+                }
+
                 // Comparar cambios en las anestesias
                 $dirtyFieldsAnestesia = $anestesia->getDirty();
                 //dd($dirtyFieldsAnestesia);
@@ -511,6 +519,71 @@ class PresupuestoController extends Controller
         return response()->json($patients);
     }
 
+    public function anestesia($id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+        $archivos = Archivo::where('presupuesto_id', $id)->get();
+        $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
+        //dd($anestesias);
+        return view('presupuestos.anestesia', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
+    }
 
+    public function updateAnestesia(Request $request, $id)
+    {
+
+        $presupuesto = presupuesto::findOrFail($id);
+        $presupuesto->estado = 6;
+
+        //dd($request->all(), $id);
+        $rowCountt = 1;
+        while ($request->has("anestesia{$rowCountt}")) {
+            $anestesiaId = $request->input("anestesia{$rowCountt}");
+            $anestesia = Anestesia_p::find($anestesiaId);
+
+            if ($anestesia) {
+                $anestesiaOriginal = $anestesia->getOriginal(); // Guardar original
+
+                $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
+                $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
+                $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
+
+                // Comparar cambios en las anestesias
+                $dirtyFieldsAnestesia = $anestesia->getDirty();
+                //dd($dirtyFieldsAnestesia);
+                foreach ($dirtyFieldsAnestesia as $campo => $nuevoValor) {
+                    cambios_anestesias::create([
+                        'presupuesto_id' => $id,
+                        'campo' => $campo,
+                        'valor_anterior' => $anestesiaOriginal[$campo],
+                        'valor_nuevo' => $nuevoValor,
+                        'fecha_cambio' => now(),
+                        'usuario_id' => auth()->user()->id
+                    ]);
+                }
+                $anestesia->save();
+                //dd($anestesia);
+            }
+            $rowCountt++;
+            if ($anestesia->anestesia_id == 0) {
+                $presupuesto->estado = 5;
+            }
+        }
+        
+        $presupuesto->save();
+
+        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
+
+    }
+
+    public function farmacia($id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+        $archivos = Archivo::where('presupuesto_id', $id)->get();
+        $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
+        //dd($anestesias);  
+        return view('presupuestos.farmacia', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
+    }
 
 }

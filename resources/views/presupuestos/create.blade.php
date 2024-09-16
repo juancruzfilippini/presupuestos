@@ -375,7 +375,7 @@
                 <input type="number" name="precio_anestesia[]" class="border-none w-full">
             </td>
             <td>
-                <select name="anestesia_id[]" class="border rounded" style="width: 250px; margin-right: 20px;">
+                <select name="anestesia_id[]" class="border rounded" style="min-width: 200px; margin-right: 20px;">
                     <option value="0">Sin especificar</option>
                     <option value="1">Local</option>
                     <option value="2">Periférica</option>

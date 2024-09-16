@@ -45,6 +45,14 @@ Route::get('/presupuestos/edit/{id}', [PresupuestoController::class, 'edit'])->n
 
 Route::post('/presupuestos/update/{id}', [PresupuestoController::class, 'update'])->name('presupuestos.update');
 
+Route::get('/presupuestos/farmacia/{id}', [PresupuestoController::class, 'farmacia'])->name('presupuestos.farmacia');
+
+Route::post('/presupuestos/updateFarmacia/{id}', [PresupuestoController::class, 'updateFarmacia'])->name('presupuestos.updateFarmacia');
+
+Route::get('/presupuestos/anestesia/{id}', [PresupuestoController::class, 'anestesia'])->name('presupuestos.anestesia');
+
+Route::post('/presupuestos/updateAnestesia/{id}', [PresupuestoController::class, 'updateAnestesia'])->name('presupuestos.updateAnestesia');
+
 Route::delete('/presupuestos/{id}', [PresupuestoController::class, 'destroy'])->name('presupuestos.destroy');
 
 Route::get('/search-patient', [PresupuestoController::class, 'searchPatient'])->name('presupuestos.searchPatient');

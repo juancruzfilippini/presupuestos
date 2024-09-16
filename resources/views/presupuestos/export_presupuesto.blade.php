@@ -91,6 +91,8 @@
             <br>
             Documento: {{number_format($paciente->documento, 0, '', '.');}}
             <br>
+            Email: {{$presupuesto['email']}}
+            <br>
             <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
 

@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <x-app-layout>
-    <x-slot name="title">Editar Presupuesto</x-slot>
+    <x-slot name="title">Farmacia</x-slot>
 
     <form method="POST" action="{{ route('presupuestos.update', $presupuesto->id) }}"
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
@@ -15,7 +15,7 @@
 
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
 
-        <h1 class="text-2xl font-bold mb-6">EDITAR PRESUPUESTO</h1>
+        <h1 class="text-2xl font-bold mb-6">FARMACIA</h1>
 
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>
@@ -40,108 +40,28 @@
                     value="{{ $presupuesto->fecha }}" required readonly>
             </div>
             <div>
-                <label for="medico_solicitante" class="font-semibold">MEDICO SOLICITANTE:</label>
-                <input type="text" id="medico_solicitante" name="medico_solicitante" class="border rounded p-2 w-full"
-                    value="{{$presupuesto->medico_solicitante}}">
-            </div>
-            <div>
                 <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
                 <input type="text" id="medico_tratante" name="medico_tratante" class="border rounded p-2 w-full"
-                    value="{{$presupuesto->medico_tratante}}">
+                    value="{{$presupuesto->medico_tratante}}" disabled>
             </div>
         </div>
         <div class="mb-4">
-            <h2 class="text-lg font-semibold mb-2">CAMBIAR PACIENTE</h2>
 
-            <div class="form-group">
-                <label for="search-input">DNI: </label>
-                <div class="input-group">
-                    <input type="text" id="search-input" name="documento" class="form-control"
-                        placeholder="Ingrese DNI del paciente">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-primary" id="search-button">
-                            Buscar
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <p></p>
-
-            <div id="results"></div>
-            <p></p>
-            <input type="text" id="selected-person" name="paciente" class="form-control"
-                value="{{$presupuesto->paciente}}" readonly oninput="">
-            <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
-            <input type="hidden" id="edad" name="edad" value="">
-            <p> </p>
-            <p> </p>
-            <div class="form-row">
-                <div class="form-groupp">
-                    <label for="telefono" style="margin-top: 5px;">TELEFONO: </label>
-                    <input type="text" id="telefono" name="telefono" class="form-control"
-                        value="{{$presupuesto->telefono}}">
-                </div>
-                <div class="form-groupp">
-                    <label for="email" style="margin-top: 5px;">EMAIL: </label>
-                    <input type="text" id="email" name="email" class="form-control" value="{{$presupuesto->email}}">
-                </div>
-                <div class="form-groupp">
-                    <label for="email" style="margin-top: 5px;">NUMERO DE AFILIADO: </label>
-                    <input type="text" id="nro_afiliado" name="nro_afiliado" class="form-control"
-                        value="{{$presupuesto->nro_afiliado}}">
-                </div>
-            </div>
             <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
 
-            <div id="results"></div>
 
-
-            <div class="d-flex justify-content-between align-items-center">
-                <label for="search-input" class="p-2 font-semibold">Obra Social:
-                    @if(is_numeric($presupuesto->obra_social))
-                        <input class="form-control" id="input_obrasocial" name="input_obrasocial" type="text"
-                            value="{{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}" readonly>
-                    @else
-                        <input class="form-control" id="input_obrasocial" name="input_obrasocial" type="text"
-                            value="{{ $presupuesto->obra_social }}">
-                    @endif
-                </label>
-                <input type="hidden" id="obra_social" name="obra_social" value="">
-
-                @if(is_numeric($presupuesto->convenio))
-                    <label for="search-input" class="p-2 font-semibold">Convenio:
-                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
-                            value="{{ Convenio::getConvenioById($presupuesto->convenio) }}" readonly>
-                @else
-                    @if (!is_null($presupuesto->convenio))
-                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
-                            value="{{ $presupuesto->convenio }}" readonly>
-                    @else
-                        <input type="hidden" id="convenio" name="convenio" value="">
-                    @endif
-                @endif
-                </label>
-            </div>
 
             <p></p>
             <p></p>
             <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
-
-            <input type="text" id="detalle" name="detalle" class="form-control" value="{{ $presupuesto->detalle }}"
-                placeholder="{{ empty($presupuesto->detalle) ? 'Asunto: Prestaciones quirúrgicas' : '' }}">
-
-
             <p></p>
 
             <table class="table-auto w-full mb-4">
                 <thead>
                     <tr>
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
-                        <th class="fixed-width border px-4 py-2 text-center">
-                            <input id="input_especialidad" name="input_especialidad" class="w-full text-center"
-                                value="{{ $presupuesto->especialidad }}" />
-                        </th>
+                        <th class="fixed-width border px-4 py-2 text-center"> {{$presupuesto->especialidad }}</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
                     <input type="hidden" id="especialidad" name="especialidad" value="">
@@ -197,15 +117,16 @@
                             <tr>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border-none w-full">
+                                        value="{{$anestesia->complejidad}}" class="border-none w-full" disabled>
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
                                         value="{{$anestesia->precio}}" class="border-none w-full"
-                                        oninput="updateTotalPresupuesto()">
+                                        oninput="updateTotalPresupuesto()" disabled>
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full" style="min-width: 200px;">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full"
+                                        style="min-width: 200px;" disabled>
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
@@ -222,7 +143,7 @@
                 <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
                 <input type="float" id="total_anestesia" name="total_anestesia"
-                    class="border rounded p-2 w-2 ml-1 text-center" value="">
+                    class="border rounded p-2 w-2 ml-1 text-center" value="" disabled>
 
             @endif
 
@@ -240,95 +161,11 @@
             </div>
 
             <div class="mb-6">
-                <div class="items-center">
-                    <div class="flex items-center">
-                        <label for="condicion" class="font-semibold mr-2">CONDICIÓN DE PAGO:</label>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleCondicion" name="toggleCondicion" {{ empty($presupuesto->condicion) ? '' : 'checked' }}>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-                <p></p>
+                <button type="submit" class="btn btn-primary">Guardar Presupuesto</button>
 
-                <div id="condicionContainer" class="mb-6" style="display: none;">
-                    <textarea id="condicion" name="condicion" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->condicion)){{$presupuesto->condicion}}@endif 
-</textarea>
-                </div>
-
-                <div class="mb-6">
-                    <div class="items-center">
-                        <div class="flex items-center">
-                            <label for="incluye" class="font-semibold mr-2">INCLUYE:</label>
-                            <label class="switch">
-                                <input type="checkbox" id="toggleIncluye" name="toggleIncluye" {{ empty($presupuesto->incluye) ? '' : 'checked' }}>
-                                <span class="slider round"></span>
-                                <p></p>
-                            </label>
-                        </div>
-                    </div>
-                    <p></p>
-                    <div id="incluyeContainer" class="mb-6" style="display: none;">
-                        <textarea id="incluye" name="incluye" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->incluye)){{$presupuesto->incluye}}@endif
-</textarea>
-                    </div>
-                    <div class="mb-6">
-                        <div class="items-center">
-                            <div class="flex items-center">
-                                <label for="excluye" class="font-semibold mr-2">EXCLUYE:</label>
-                                <label class="switch">
-                                    <input type="checkbox" id="toggleExcluye" name="toggleExcluye" {{ empty($presupuesto->excluye) ? '' : 'checked' }}>
-                                    <span class="slider round"></span>
-
-                                </label>
-                            </div>
-                        </div>
-                        <p></p>
-                        <div id="excluyeContainer" class="mb-6" style="display: none;">
-                            <p></p>
-                            <textarea id="excluye" name="excluye" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->excluye)){{$presupuesto->excluye}}@endif
-</textarea>
-                        </div>
-
-                        <div class="mb-6">
-                            <div class="items-center">
-                                <div class="flex items-center">
-                                    <label for="adicionales" class="font-semibold mr-2">Adicionales:</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="toggleAdicionales" name="toggleAdicionales" {{ empty($presupuesto->adicionales) ? '' : 'checked' }}>
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <p></p>
-                            <div id="adicionalesContainer" class="mb-6" style="display: none;">
-                                <textarea id="adicionales" name="adicionales" class="border rounded p-2 w-full">
-@if (!is_null($presupuesto->adicionales)){{$presupuesto->adicionales}}@endif 
-</textarea>
-                            </div>
-
-
-                            <div class="mb-6">
-                                <button type="submit" class="btn btn-primary">Guardar Presupuesto</button>
-
-                            </div>
+            </div>
 
     </form>
-
-
-    <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
-        id="delete-form-{{ $presupuesto->id }}">
-        @csrf
-        @method('DELETE')
-        <button style="margin-top: 50px" type="button" class="btn btn-danger"
-            onclick="confirmDelete({{ $presupuesto->id }})">
-            Eliminar Presupuesto
-        </button>
-    </form>
-
 
 </x-app-layout>
 

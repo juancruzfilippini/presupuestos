@@ -32,6 +32,7 @@
                     <tr>
                         <th>N°</th>
                         <th class="servicio" style="width: 5%;">Paciente</th>
+                        <th class="" style="">Medico</th>
                         <th class="" style="width: 5%;">Fecha</th>
                         <th class="" style="width: 5%;">Estado</th>
                         <th style="width: 5%;">Especialidad</th>
@@ -46,6 +47,7 @@
                         <tr>
                             <td style="width: 5%;">{{ $presupuesto->id }}</td>
                             <td class="">{{ $presupuesto->paciente }}</td>
+                            <td class="">{{ $presupuesto->medico_tratante}}</td>
                             <td class="">{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
                             <td class="">{{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}</td>
                             <td>{{ $presupuesto->especialidad }}</td>
@@ -73,13 +75,13 @@
                                     </a>
                                 @endif
                                 @if(Auth::user()->rol_id == 3)
-                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
+                                        <a href="{{ route('presupuestos.farmacia', $presupuesto->id) }}"
                                             class="btn btn-success btn-sm">
                                             <i class="fa-solid fa-prescription-bottle-medical"></i>
                                         </a>
                                 @endif
                                 @if(Auth::user()->rol_id == 5 && $presupuesto->estado == 5)
-                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}"
+                                        <a href="{{ route('presupuestos.anestesia', $presupuesto->id) }}"
                                             class="btn btn-success btn-sm">
                                             <i class="fa-solid fa-prescription-bottle-medical"></i>
                                         </a>
@@ -148,6 +150,8 @@
     .mt-4 {
         margin-top: 1.5rem;
     }
+    
+    
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
