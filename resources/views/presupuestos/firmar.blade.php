@@ -115,7 +115,6 @@
         <!-- Linea divisora de secciones -->
         <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
 
-        <!-- NECESITO MOSTRAR AQUI MIS PRESTACIONES -->
         <table class="min-w-full bg-white border border-gray-200">
             <thead>
                 <tr>
@@ -311,7 +310,15 @@
                         @foreach($cambiosPresupuestos as $cambio)
                             <tr>
                                 <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
-                                <td>{{ $cambio->campo }}</td>
+                                <td>
+                                    @if($cambio->campo== 'paciente_salutte_id')
+                                        HC
+                                    @elseif ($cambio->campo == 'medico_tratante')
+                                        Medico tratante
+                                    @else
+                                        {{ $cambio->campo }}
+                                    @endif
+                                </td>
                                 <td>
                                     @if($cambio->campo == 'estado')
                                         {{ Estado::getEstadoById($cambio->valor_anterior) }}
@@ -348,7 +355,15 @@
                         @foreach($cambiosPrestaciones as $cambio)
                             <tr>
                                 <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
-                                <td>{{ $cambio->campo }}</td>
+                                <td>
+                                    @if($cambio->campo== 'modulo_total')
+                                        precio prestacion
+                                    @elseif($cambio->campo== 'codigo_prestacion')
+                                        codigo prestacion
+                                    @else
+                                        {{ $cambio->campo }}
+                                    @endif
+                                </td>
                                 <td>{{ $cambio->valor_anterior }} </td>
                                 <td>{{ $cambio->valor_nuevo }}</td>
                                 <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
@@ -373,7 +388,15 @@
                     @foreach($cambiosAnestesias as $cambio)
                         <tr>
                             <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
-                            <td>{{ $cambio->campo }}</td>
+                            <td>
+                                @if($cambio->campo== 'anestesia_id')
+                                    tipo de anestesia
+                                @elseif($cambio->campo== 'precio_anestesia')
+                                    precio anestesia
+                                @else
+                                    {{ $cambio->campo }}
+                                @endif
+                            </td>
                             <td>
                                 @if($cambio->campo == 'anestesia_id')
                                     {{ Anestesia::getAnestesiaById($cambio->valor_anterior) }}

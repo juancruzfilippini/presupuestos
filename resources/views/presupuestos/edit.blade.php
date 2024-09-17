@@ -5,6 +5,7 @@
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <x-app-layout>
     <x-slot name="title">Editar Presupuesto</x-slot>
@@ -332,7 +333,6 @@
 
 </x-app-layout>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 
@@ -348,29 +348,38 @@
 
 
     function updateTotalPresupuesto() {
-        let totalPresupuesto = 0;
-        let totalAnestesia = 0;
+    let totalPresupuesto = 0;
+    let totalAnestesia = 0;
 
-        // Sumar todos los valores de los campos de presupuesto
-        $('input[name^="modulo_total_"]').each(function () {
-            let value = parseFloat($(this).val()) || 0;
-            totalPresupuesto += value;
-        });
+    // Sumar todos los valores de los campos de presupuesto
+    $('input[name^="modulo_total_"]').each(function () {
+        let value = parseFloat($(this).val()) || 0;
+        totalPresupuesto += value;
+    });
 
-        // Sumar los precios de anestesia
-        $('input[name^="precio_anestesia"]').each(function () {
-            let value = parseFloat($(this).val()) || 0;
-            totalAnestesia += value;
-        });
-        if (edad < 3 || edad > 65) {
-            totalAnestesia = totalAnestesia * 1.2;
+    // Sumar los precios de anestesia
+    $('input[name^="precio_anestesia"]').each(function () {
+        let value = parseFloat($(this).val()) || 0;
+        totalAnestesia += value;
+    });
 
-            // Mostrar el label oculto
-            document.getElementById('adicional_anestesia').style.display = 'block';
-        } else {
-            // Ocultar el label si no se cumple la condición
-            document.getElementById('adicional_anestesia').style.display = 'none';
+    if (edad < 3 || edad > 65) {
+        totalAnestesia = totalAnestesia * 1.2;
+
+        // Mostrar el label oculto si existe
+        let labelAnestesia = document.getElementById('adicional_anestesia');
+        if (labelAnestesia) {
+            labelAnestesia.style.display = 'block';
         }
+    } else {
+        // Ocultar el label si no se cumple la condición
+        let labelAnestesia = document.getElementById('adicional_anestesia');
+        if (labelAnestesia) {
+            labelAnestesia.style.display = 'none';
+        }
+    }
+
+
 
         // Sumar total de presupuesto y anestesia
         let totalGeneral = totalPresupuesto + totalAnestesia;

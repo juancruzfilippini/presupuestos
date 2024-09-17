@@ -5,11 +5,13 @@
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
 <x-app-layout>
     <x-slot name="title">Farmacia</x-slot>
 
-    <form method="POST" action="{{ route('presupuestos.update', $presupuesto->id) }}"
+    <form method="POST" action="{{ route('presupuestos.updateFarmacia', $presupuesto->id) }}"
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
@@ -64,7 +66,6 @@
                         <th class="fixed-width border px-4 py-2 text-center"> {{$presupuesto->especialidad }}</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
-                    <input type="hidden" id="especialidad" name="especialidad" value="">
 
                 </thead>
                 <tbody>
@@ -101,50 +102,15 @@
 
             @if (count($anestesias) > 0)
                 <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-                <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
-
-
-
-                <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
-                    <thead>
-                        <th class="border px-4 py-2 text-center">Complejidad</th>
-                        <th class="border px-4 py-2 text-center">Precio</th>
-                        <th class="border px-4 py-2 text-center">Tipo</th>
-                    </thead>
-                    <tbody id="anestesia-body">
-                        @foreach($anestesias as $anestesia)
-                            <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
-                            <tr>
-                                <td class="border px-4 py-2">
-                                    <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border-none w-full" disabled>
-                                </td>
-                                <td class="border px-4 py-2">
-                                    <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border-none w-full"
-                                        oninput="updateTotalPresupuesto()" disabled>
-                                </td>
-                                <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full"
-                                        style="min-width: 200px;" disabled>
-                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
-                                        </option>
-                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
-                                        </option>
-                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
-                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @foreach($anestesias as $anestesia)
+                    <input type="hidden" name="precio_anestesia{{ $loop->iteration }}" value="{{$anestesia->precio}}"
+                        class="border-none w-full" oninput="updateTotalPresupuesto()" disabled>
+                @endforeach
+                </tbody>
                 <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
                 <input type="float" id="total_anestesia" name="total_anestesia"
                     class="border rounded p-2 w-2 ml-1 text-center" value="" disabled>
-
             @endif
 
 
@@ -160,11 +126,19 @@
                     readonly>
             </div>
 
-            <div class="mb-6">
-                <button type="submit" class="btn btn-primary">Guardar Presupuesto</button>
+            <button type="submit" class="btn btn-primary">
+                Guardar Presupuesto
+            </button>
 
-            </div>
+    </form>
 
+    <form class="mt-2" method="GET" action="{{ route('presupuestos.index') }}">
+        @csrf
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Volver
+        </button>
     </form>
 
 </x-app-layout>
