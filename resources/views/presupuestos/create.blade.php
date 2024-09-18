@@ -80,52 +80,20 @@
                     <input type="text" id="email" name="email" class="form-control" placeholder="Email del paciente">
                 </div>
                 <div class="form-groupp">
+                    <label for="" style="margin-top: 5px;">OBRA SOCIAL:</label>
+                    <input type="text" id="input_obrasocial" name="input_obrasocial" class="border rounded p-2" value=""
+                        placeholder="Obra social del paciente">
+                </div>
+                <div class="form-groupp">
                     <label for="email" style="margin-top: 5px;">NUMERO DE AFILIADO: </label>
                     <input type="text" id="nro_afiliado" name="nro_afiliado" class="form-control"
                         placeholder="Numero de afiliado en obra social">
                 </div>
             </div>
-
+            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
             <input type="hidden" id="paciente_salutte_id" name="paciente_salutte_id" value="">
             <input type="hidden" id="edad" name="edad" value="">
-            <p> </p>
-            <p> </p>
-            <div class="flex items-center">
-                <label for="convenida" class="font-semibold mr-2">Convenida </label>
-                <label class="switch">
-                    <input type="checkbox" id="convenida" name="convenida" checked>
-                    <span class="slider round"></span>
-                </label>
-                <div>
-                    <label for="" class="font-semibold ml-3">Obra Social:</label>
-                    <input type="text" id="input_obrasocial" name="input_obrasocial" class="border rounded p-2"
-                        value="">
-                </div>
-            </div>
-            <p></p>
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <label for="obra_social">Obra Social:</label>
-                    <select class="form-control" name="obra_social" id="obra_social">
-                        <option value="">Seleccione Obra Social</option>
-                        @foreach($obrasSociales as $obraSocial)
-                            <option value="{{ $obraSocial['id'] }}" data-id="{{ $obraSocial['nombre'] }}">
-                                {{ $obraSocial['nombre'] }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="convenio">Convenio:</label>
-                    <select class="form-control" name="convenio" id="convenio">
-                        <option value="">Seleccione Convenio</option>
-                    </select>
-                </div>
-            </div>
-
-
-
+            <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
             <p></p>
         </div>
 
@@ -140,7 +108,12 @@
             <table class="table-auto w-full mb-4">
                 <thead>
                     <tr>
-                        <th class="border px-4 py-2"></th>
+                        <th class="border" style="width: 125px">
+                            <button type="button" id="add-row1" class="btn btn-success text-white rounded-full">
+                                <i class="fas fa-plus"></i> Prestación
+                            </button>
+                        </th>
+
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
                         <th class="fixed-width border px-4 py-2 text-center">
                             <input id="input_especialidad" name="input_especialidad" class="w-full text-center"
@@ -154,8 +127,7 @@
 
                 </tbody>
             </table>
-            <button type="button" id="add-row1" class="btn btn-success text-white p-2 rounded-full mb-4 ml-1"> <i
-                    class="fas fa-plus"></i> Prestación </button>
+
         </div>
 
         <div class="mb-6">

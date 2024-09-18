@@ -139,7 +139,7 @@
             <thead>
                 <tr>
                     <th>CÓDIGO</th>
-                    <th style="text-transform: uppercase;">{{$presupuesto['especialidad']}}</th>
+                    <th style="text-transform: uppercase;">DETALLE</th>
                     <th>MÓDULO TOTAL</th>
                 </tr>
             </thead>
