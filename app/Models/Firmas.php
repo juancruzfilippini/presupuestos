@@ -19,8 +19,14 @@ class Firmas extends Model
         'id',
         'presupuesto_id',
         'comercializacion',
+        'fecha_comercializacion',
+        'firmado_por_comercializacion',
         'auditoria',
+        'fecha_auditoria',
+        'firmado_por_auditoria',
         'direccion',
+        'fecha_direccion',
+        'firmado_por_direccion',
     ];
 
 }

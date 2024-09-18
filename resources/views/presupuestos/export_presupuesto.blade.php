@@ -17,44 +17,63 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-        font-size: 12px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
 
-    th, td {
-        border: 1px solid #000;
-        padding: 8px;
-        text-align: center;
-    }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
 
-    th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-    }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
 
-    .text-left {
-        text-align: left;
-    }
-    .text-right {
-        text-align: right;
-    }
-    .text-center {
-        text-align: center;
-    }
-</style>
+        .text-left {
+            text-align: left;
+        }
 
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        @page {
+            margin: 100px 25px;
+        }
+
+        body {
+            margin-bottom: 80px; /* Espacio para el footer */
+        }
+
+        .footer {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            line-height: 50px;
+        }
+
+    </style>
 </head>
-
-
-
-
 
     <x-slot name="title">Ver Presupuesto</x-slot>
     
-
+    <body>
+    
     <form method="GET" action="{{ route('presupuestos.index') }}"
     
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
@@ -190,7 +209,7 @@
     <p style="text-align: center; margin-top: 0;">
     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
     </p>
-</div>
+    </div>
 
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
@@ -220,7 +239,17 @@
             </ul>
         @endif
 
+        <div class="footer">
+            Firmado electrónicamente por Comercialización |
+            Firmado electronicamente por Auditoría |
+            Firmado electronicamente por Dirección 
+            <br>
+            Paso de los Andes 3051, Ciudad de Mendoza / www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar
+        </div>
+    </body>
+
     </form>
+
 <!--  <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>  LINEA DIVISORA-->
 <!--  route('presupuestos.finalize', ['id' => $presupuesto->id]) -->
 

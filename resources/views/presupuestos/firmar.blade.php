@@ -417,6 +417,23 @@
 
                     </tbody>
                 </table>
+
+                @if($firmas->comercializacion == 1 || $firmas->auditoria == 1 || $firmas->direccion == 1)
+                    <h3>Firmas</h3>
+                    @if($firmas->comercializacion == 1)
+                        ► Firmado por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Comercialización, el día: {{ Carbon::parse($firmas->fecha_comercializacion)->format('d/m/Y - H:i:s') }}
+                        <br>
+                    @endif
+                    @if($firmas->auditoria == 1)
+                        ► Firmado por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría, el día: {{ Carbon::parse($firmas->fecha_auditoria)->format('d/m/Y - H:i:s') }}
+                        <br>
+                    @endif
+                    @if($firmas->direccion == 1)
+                        ► Firmado por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Dirección, el día: {{ Carbon::parse($firmas->fecha_direccion)->format('d/m/Y - H:i:s') }}
+                        <br>
+                    @endif
+
+                @endif
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

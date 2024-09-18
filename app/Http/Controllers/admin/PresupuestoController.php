@@ -64,12 +64,18 @@ class PresupuestoController extends Controller
         switch ($rol_id) {
             case 1:
                 $firmas->auditoria = 1;
+                $firmas->fecha_auditoria = now();
+                $firmas->firmado_por_auditoria = auth()->user()->id;
                 break;
             case 2:
                 $firmas->comercializacion = 1;
+                $firmas->fecha_comercializacion = now();
+                $firmas->firmado_por_comercializacion = auth()->user()->id;
                 break;
             case 6:
                 $firmas->direccion = 1;
+                $firmas->fecha_direccion = now();
+                $firmas->firmado_por_direccion = auth()->user()->id;
                 break;
             default:
                 return redirect()->back()->with('error', 'Rol no autorizado para firmar el presupuesto.');
@@ -564,7 +570,6 @@ class PresupuestoController extends Controller
             $anestesiaId = $request->input("anestesia{$rowCountt}");
             $anestesia = Anestesia_p::find($anestesiaId);
 
-            
 
             if ($anestesia) {
                 $anestesiaOriginal = $anestesia->getOriginal(); // Guardar original

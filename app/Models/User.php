@@ -48,7 +48,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Rol::class, 'rol_id');
     }
-    public function getUsuarioById($id)
+    public function oById($id)
     {
         // Busca el usuario por el ID
         $user = User::find($id);

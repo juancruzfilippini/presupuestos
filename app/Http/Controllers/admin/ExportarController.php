@@ -77,7 +77,7 @@ class ExportarController extends Controller
         // Obtener las prestaciones asociadas al presupuesto
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
-        $paciente= Paciente::findById($presupuesto->paciente_salutte_id);
+        $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
         $today = date('Y-m-d');
 
         // Empaquetar ambas variables en un solo array
@@ -92,9 +92,10 @@ class ExportarController extends Controller
         //dd($data);
         // Generar el PDF utilizando la vista y los datos
         $pdf = PDF::loadView('presupuestos.export_presupuesto', $data1);
+        $pdf->setPaper('A4', 'portrait');
 
         // Descargar el PDF directamente sin almacenarlo en el servidor
-        return $pdf->download('informe.pdf');
+        return $pdf->stream('presupuesto.pdf');
     }
 
 }
