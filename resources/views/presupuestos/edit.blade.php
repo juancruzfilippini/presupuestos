@@ -11,7 +11,7 @@
     <x-slot name="title">Editar Presupuesto</x-slot>
 
     <form method="POST" action="{{ route('presupuestos.update', $presupuesto->id) }}"
-        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
+        class="w-full mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
@@ -109,20 +109,6 @@
                     @endif
                 </label>
                 <input type="hidden" id="obra_social" name="obra_social" value="">
-
-                @if(is_numeric($presupuesto->convenio))
-                    <label for="search-input" class="p-2 font-semibold">Convenio:
-                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
-                            value="{{ Convenio::getConvenioById($presupuesto->convenio) }}" readonly>
-                @else
-                    @if (!is_null($presupuesto->convenio))
-                        <input class="form-control" id="convenio" name="convenio" type="text" style="width: 400px;"
-                            value="{{ $presupuesto->convenio }}" readonly>
-                    @else
-                        <input type="hidden" id="convenio" name="convenio" value="">
-                    @endif
-                @endif
-                </label>
             </div>
 
             <p></p>
@@ -198,15 +184,15 @@
                             <tr>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border-none w-full">
+                                        value="{{$anestesia->complejidad}}" class="border w-auto">
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border-none w-full"
+                                        value="{{$anestesia->precio}}" class="border w-auto"
                                         oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border-none w-full" style="min-width: 200px;">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto" style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
@@ -223,7 +209,7 @@
                 <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
                 <input type="float" id="total_anestesia" name="total_anestesia"
-                    class="border rounded p-2 w-2 ml-1 text-center" value="">
+                    class="border rounded p-2 w-auto ml-1 text-center" value="">
 
             @endif
 
@@ -236,7 +222,7 @@
                 <br>
                 <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
                 <input type="float" id="total_presupuesto" name="total_presupuesto"
-                    class="border rounded p-2 w-2 ml-1 text-center" value="{{$presupuesto->total_presupuesto}}"
+                    class="border rounded p-2 w-auto ml-1 text-center" value="{{$presupuesto->total_presupuesto}}"
                     readonly>
             </div>
 

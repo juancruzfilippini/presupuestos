@@ -8,13 +8,10 @@ use App\Http\Controllers\Controller;
 
 class ConvenioController extends Controller
 {
-    public function getConvenios(Request $request)
+    public function getConvenios()
     {
-        $obraSocial = $request->get('obra_social');
-        //dd($obraSocial);
-        
         $convenios = Convenio::where('fin_vigencia', '>=', now())
-            ->where('nombre', 'like', '%' . $obraSocial . '%')
+            ->where('nombre', 'like', '%particular%')
             ->where('borrado_logico', false)
             ->get();
         return response()->json($convenios);

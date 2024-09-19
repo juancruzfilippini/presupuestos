@@ -11,7 +11,7 @@
 
 
     <form method="POST" action="{{ route('presupuestos.store') }}"
-        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
+        class="w-full mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
         <h1 class="text-2xl font-bold mb-6">CREAR PRESUPUESTO</h1>
@@ -97,8 +97,20 @@
             <p></p>
         </div>
 
-        <input type="text" id="detalle" name="detalle" class="form-control"
-            placeholder="Asunto: Prestaciones quirurgicas">
+        <div class="form-row">
+            <div class="form-groupp">
+                <input type="text" id="detalle" name="detalle" class="form-control"
+                    placeholder="Asunto: Prestaciones quirurgicas">
+            </div>
+            <div class="form-groupp">
+                <select class="form-control" name="convenio" id="">
+                    <option value="">Seleccione un convenio</option>
+                    @foreach ($convenios as $convenio)
+                        <option value="{{$convenio->id}}">{{$convenio->nombre}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
         <p></p>
 
@@ -197,13 +209,13 @@
             <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
             <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
             <input type="number" id="total_anestesia" name="total_anestesia"
-                class="border rounded p-2 w-2 ml-1 text-center" value="">
+                class="border rounded p-2 w-auto ml-1 text-center" value="">
         </div>
 
         <div class="mb-6">
             <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
             <input type="number" id="total_presupuesto" name="total_presupuesto"
-                class="border rounded p-2 w-2 ml-1 text-center" value="">
+                class="border rounded p-2 w-auto ml-1 text-center" value="">
         </div>
 
 
@@ -294,7 +306,11 @@
     <script>
         let edad;
 
+
+
         document.addEventListener('DOMContentLoaded', function () {
+
+
 
             function updateTotalPresupuesto() {
                 let totalPresupuesto = 0;
@@ -341,10 +357,10 @@
 
                 newRow.innerHTML = `
             <td class="border px-4 py-2">
-                <input type="text" name="complejidad[]" class="border-none w-full">
+                <input type="text" name="complejidad[]" class="border w-auto">
             </td>
             <td class="border px-4 py-2">
-                <input type="number" name="precio_anestesia[]" class="border-none w-full">
+                <input type="number" name="precio_anestesia[]" class="border w-auto">
             </td>
             <td>
                 <select name="anestesia_id[]" class="border rounded" style="min-width: 200px; margin-right: 20px;">
@@ -384,66 +400,24 @@
                         allowClear: true
                     });
                 }
-
-
-
-
-                // Agregar fila y configurar select2
-                $('#add-row').click(function () {
-                    var rowCount = $('#presupuesto-table tbody tr').length + 1;
-                    var newRow = `<tr data-row="${rowCount}">
-                <td class="border px-4 py-2 text-center">
-                    <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-                <td class="border px-4 py-2">
-                    <input type="text" name="codigo_${rowCount}" class="border-none w-full text-center">
-                </td>
-                <td class="border px-4 py-2">
-                    <select name="prestacion_${rowCount}" class="fixed-width border-none prestacion-select">
-                        <option value="">Seleccione prestación</option>
-                    </select>
-                </td>
-                <td class="border px-4 py-2 text-right">
-                    <input type="number" name="modulo_total_${rowCount}" class="border-none w-full text-right">
-                </td>
-                </tr>`;
-
-                    // Agregar la nueva fila a la tabla
-                    $('#presupuesto-table tbody').append(newRow);
-
-                    // Inicializar select2 para el nuevo select
-                    initializeSelect2();
-
-                    // Cargar prestaciones en el nuevo select
-                    loadPrestaciones($('#convenio').val(), $('#presupuesto-table tbody tr:last-child').find('.prestacion-select'));
-
-                    // Actualizar el total después de agregar una fila
-                    updateTotalPresupuesto();
-
-                    // Agregar el evento de cambio para los nuevos inputs
-                    $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
-                });
-
                 $('#add-row1').click(function () {
                     var rowCount = $('#no-convenida-table tbody tr').length + 1;
                     var newRow = `<tr data-row="${rowCount}">
-                <td class="border px-4 py-2 text-center">
-                    <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-                <td class="border px-4 py-2">
-                    <input type="text" name="codigo_${rowCount}" class="border-none w-full text-center">
-                </td>
-                <td class="border px-4 py-2">
-                    <input name="prestacion_${rowCount}" class="fixed-width border-none"></input>
-                </td>
-                <td class="border px-4 py-2 text-right">
-                    <input type="number" name="modulo_total_${rowCount}" class="border-none w-full text-right">
-                </td>
-                </tr>`;
+                    <td class="border px-4 py-2 text-center">
+                        <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                    <td class="border px-4 py-2">
+                        <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
+                    </td>
+                    <td class="border px-4 py-2">
+                        <input name="prestacion_${rowCount}" class="fixed-width border"></input>
+                    </td>
+                    <td class="border px-4 py-2 text-right">
+                        <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
+                    </td>
+                    </tr>`;
 
                     // Agregar la nueva fila a la tabla
                     $('#no-convenida-table tbody').append(newRow);
@@ -505,6 +479,7 @@
                     $selectElement.find('select').change(function () {
                         $hiddenInput.val($(this).val());
                     });
+
                 });
 
                 $('#search-input').keypress(function (e) {
@@ -776,16 +751,11 @@
                         $('#fileContainer_' + fileCount + ' .removeFile').show();
                     }
                 });
-
-
-
-
-
-
-
-
             });
         });
+
+
+
     </script>
 
 

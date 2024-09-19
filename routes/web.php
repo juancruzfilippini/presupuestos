@@ -19,11 +19,9 @@ use App\Http\Controllers\Admin\ConvenioController;
 */
 
 
-Route::get('/', function () {
-    return view('auth.login');
-});
 
-Route::get('/dashboard', function () {
+
+Route::get('/', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -33,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/presupuestos', [PresupuestoController::class, 'index'])->name('presupuestos.index');
 

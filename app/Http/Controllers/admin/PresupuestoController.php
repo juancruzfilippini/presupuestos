@@ -10,8 +10,10 @@ use App\Models\Firmas; // Importamos el modelo correcto
 use App\Models\Proceso; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ConvenioController;
 use App\Models\Paciente;
 use App\Models\Archivo;
+use App\Models\Convenio;
 use App\Models\Prestaciones;
 use App\Models\Anestesia_p;
 use Illuminate\Support\Facades\DB;
@@ -109,7 +111,9 @@ class PresupuestoController extends Controller
         $today = date('Y-m-d');
         $prestaciones = Prestacion::all();
         $obrasSociales = ObraSocial::getObrasSociales();
-        return view('presupuestos.create', compact('obrasSociales', 'today'));
+        $convenios = Convenio::getConvenios();
+        //dd($convenios);
+        return view('presupuestos.create', compact( 'today', 'convenios'));
     }
 
 
@@ -125,7 +129,6 @@ class PresupuestoController extends Controller
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
             'obra_social' => 'nullable|integer',
-            'convenio' => 'nullable|string',
             'input_obrasocial' => 'nullable|string',
             'especialidad' => 'nullable|string',
             'input_especialidad' => 'nullable|string',
@@ -205,7 +208,6 @@ class PresupuestoController extends Controller
         }
 
         $presupuesto->detalle = $validatedData['detalle'];
-        $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente_salutte_id = $validatedData['paciente_salutte_id'];
@@ -333,7 +335,6 @@ class PresupuestoController extends Controller
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
             'obra_social' => 'nullable|integer',
-            'convenio' => 'nullable|string',
             'input_obrasocial' => 'nullable|string',
             'especialidad' => 'nullable|string',
             'input_especialidad' => 'nullable|string',
@@ -396,7 +397,6 @@ class PresupuestoController extends Controller
             $presupuesto->edad = $validatedData['edad'];
         }
         $presupuesto->detalle = $validatedData['detalle'];
-        $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->fecha = $validatedData['fecha'];
         $presupuesto->paciente = $validatedData['paciente'];
@@ -617,52 +617,76 @@ class PresupuestoController extends Controller
     }
     public function updateFarmacia(Request $request, $id)
     {
+        // Encontrar el presupuesto
         $presupuesto = presupuesto::findOrFail($id);
         $presupuesto->total_presupuesto = $request->total_presupuesto;
         $presupuesto->save();
 
+        // Actualizar el proceso
         $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();
-        //dd($proceso);
         $proceso->farmacia = 1;
         $proceso->fecha_farmacia = now();
         $proceso->save();
 
         $rowCount = 1;
+
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
-            $prestacion = Prestaciones::find($prestacionId);
 
-            if ($prestacion) {
-                $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
-                $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
+            // Si el prestacionId no existe, es una nueva prestación que se agregará
+            if (!$prestacionId) {
+                // Crear una nueva prestación
+                $newPrestacion = new Prestaciones();
+                $newPrestacion->presupuesto_id = $presupuesto->id;
+                $newPrestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
                 if (is_numeric($prestacionInput)) {
-                    $prestacion->prestacion_salutte_id = $prestacionInput;
-                    $prestacion->nombre_prestacion = null;
+                    $newPrestacion->prestacion_salutte_id = $prestacionInput;
+                    $newPrestacion->nombre_prestacion = null;
                 } else {
-                    $prestacion->prestacion_salutte_id = null;
-                    $prestacion->nombre_prestacion = $prestacionInput;
+                    $newPrestacion->prestacion_salutte_id = null;
+                    $newPrestacion->nombre_prestacion = $prestacionInput;
                 }
-                $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+                $newPrestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+                $newPrestacion->save();
+            } else {
+                // Si el prestacionId existe, actualiza la prestación existente
+                $prestacion = Prestacion::find($prestacionId);
 
-                // Comparar cambios en las prestaciones
-                $dirtyFieldsPrestacion = $prestacion->getDirty();
-                foreach ($dirtyFieldsPrestacion as $campo => $nuevoValor) {
-                    cambios_prestaciones::create([
-                        'presupuesto_id' => $presupuesto->id,
-                        'campo' => $campo . " {$rowCount}",
-                        'valor_anterior' => $prestacionOriginal[$campo],
-                        'valor_nuevo' => $nuevoValor,
-                        'fecha_cambio' => now(),
-                        'usuario_id' => auth()->user()->id
-                    ]);
+                if ($prestacion) {
+                    $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
+                    $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
+                    $prestacionInput = $request->input("prestacion_{$rowCount}");
+                    if (is_numeric($prestacionInput)) {
+                        $prestacion->prestacion_salutte_id = $prestacionInput;
+                        $prestacion->nombre_prestacion = null;
+                    } else {
+                        $prestacion->prestacion_salutte_id = null;
+                        $prestacion->nombre_prestacion = $prestacionInput;
+                    }
+                    $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+
+                    // Comparar cambios en las prestaciones
+                    $dirtyFieldsPrestacion = $prestacion->getDirty();
+                    foreach ($dirtyFieldsPrestacion as $campo => $nuevoValor) {
+                        cambios_prestaciones::create([
+                            'presupuesto_id' => $presupuesto->id,
+                            'campo' => $campo . " {$rowCount}",
+                            'valor_anterior' => $prestacionOriginal[$campo],
+                            'valor_nuevo' => $nuevoValor,
+                            'fecha_cambio' => now(),
+                            'usuario_id' => auth()->user()->id
+                        ]);
+                    }
+                    $prestacion->save();
                 }
-                $prestacion->save();
             }
-            $rowCount++;
 
+            $rowCount++;
         }
+
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
     }
+
 
 }

@@ -32,7 +32,7 @@
 
     
     <form method="GET" action="{{ route('presupuestos.index') }}"
-        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
+        class="w-full mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
         @if (session('success'))
@@ -115,11 +115,11 @@
         <!-- Linea divisora de secciones -->
         <h2 class="text-lg font-semibold mb-2">PRESTACIONES</h2>
 
-        <table class="min-w-full bg-white border border-gray-200">
+        <table class="w-auto bg-white border border-gray-200">
             <thead>
                 <tr>
                     <th class="px-4 py-2 border-b-2 border-gray-300 text-left">CÓDIGO</th>
-                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left" style="text-transform: uppercase;">{{$presupuesto['especialidad']}}</th>
+                    <th class="px-4 py-2 border-b-2 border-gray-300 text-left" style="text-transform: uppercase;">DETALLE</th>
                     <th class="px-4 py-2 border-b-2 border-gray-300 text-left">MÓDULO TOTAL</th>
                 </tr>
             </thead>
@@ -142,7 +142,7 @@
         <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
         @endif
                 
-                <table class="min-w-full bg-white border border-gray-200">
+                <table class="w-auto bg-white border border-gray-200">
                     <thead>
                         <tr>
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-left">TIPO</th>

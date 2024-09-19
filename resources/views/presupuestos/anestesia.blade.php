@@ -11,7 +11,7 @@
     <x-slot name="title">Especificar Anestesia</x-slot>
 
     <form method="POST" action="{{ route('presupuestos.updateAnestesia', ['id' => $presupuesto->id]) }}"
-        class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
+        class="w-full mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
         @csrf
 
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
@@ -54,7 +54,7 @@
 
 
 
-                <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
+                <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
                     <thead>
                         <th class="border px-4 py-2 text-center">Complejidad</th>
                         <th class="border px-4 py-2 text-center">Precio</th>
