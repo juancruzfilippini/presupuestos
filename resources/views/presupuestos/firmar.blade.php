@@ -240,7 +240,7 @@
     @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 4)
     <div class="d-flex justify-content-between" style="width: 100%;">
         <div>
-            <form class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mr-2" 
+            <form class="w-auto  mx-auto p-6 bg-white shadow-md rounded-lg mr-2" 
                   method="GET" 
                   action="{{ route('presupuestos.sign', ['id' => $presupuesto->id, 'rol_id' => Auth::user()->rol_id]) }}"
                   id="sign-form-{{ $presupuesto->id }}">

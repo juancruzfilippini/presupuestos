@@ -14,6 +14,6 @@ class ConvenioController extends Controller
             ->where('nombre', 'like', '%particular%')
             ->where('borrado_logico', false)
             ->get();
-        return response()->json($convenios);
+        return $convenios;
     }
 }

@@ -139,6 +139,9 @@
                     @foreach($prestaciones as $prestacion)
                         <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
                             value="{{$prestacion->id}}">
+                        <input type="hidden" id="prestacion_salutte_id" name="prestacion_salutte_id_{{ $loop->iteration }}"
+                            value="{{$prestacion->prestacion_salutte_id}}">
+
 
                         <tr>
                             <td class="border px-4 py-2 text-center">
@@ -188,11 +191,11 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border w-auto"
-                                        oninput="updateTotalPresupuesto()">
+                                        value="{{$anestesia->precio}}" class="border w-auto" oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto" style="min-width: 200px;">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto"
+                                        style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
@@ -334,36 +337,36 @@
 
 
     function updateTotalPresupuesto() {
-    let totalPresupuesto = 0;
-    let totalAnestesia = 0;
+        let totalPresupuesto = 0;
+        let totalAnestesia = 0;
 
-    // Sumar todos los valores de los campos de presupuesto
-    $('input[name^="modulo_total_"]').each(function () {
-        let value = parseFloat($(this).val()) || 0;
-        totalPresupuesto += value;
-    });
+        // Sumar todos los valores de los campos de presupuesto
+        $('input[name^="modulo_total_"]').each(function () {
+            let value = parseFloat($(this).val()) || 0;
+            totalPresupuesto += value;
+        });
 
-    // Sumar los precios de anestesia
-    $('input[name^="precio_anestesia"]').each(function () {
-        let value = parseFloat($(this).val()) || 0;
-        totalAnestesia += value;
-    });
+        // Sumar los precios de anestesia
+        $('input[name^="precio_anestesia"]').each(function () {
+            let value = parseFloat($(this).val()) || 0;
+            totalAnestesia += value;
+        });
 
-    if (edad < 3 || edad > 65) {
-        totalAnestesia = totalAnestesia * 1.2;
+        if (edad < 3 || edad > 65) {
+            totalAnestesia = totalAnestesia * 1.2;
 
-        // Mostrar el label oculto si existe
-        let labelAnestesia = document.getElementById('adicional_anestesia');
-        if (labelAnestesia) {
-            labelAnestesia.style.display = 'block';
+            // Mostrar el label oculto si existe
+            let labelAnestesia = document.getElementById('adicional_anestesia');
+            if (labelAnestesia) {
+                labelAnestesia.style.display = 'block';
+            }
+        } else {
+            // Ocultar el label si no se cumple la condición
+            let labelAnestesia = document.getElementById('adicional_anestesia');
+            if (labelAnestesia) {
+                labelAnestesia.style.display = 'none';
+            }
         }
-    } else {
-        // Ocultar el label si no se cumple la condición
-        let labelAnestesia = document.getElementById('adicional_anestesia');
-        if (labelAnestesia) {
-            labelAnestesia.style.display = 'none';
-        }
-    }
 
 
 

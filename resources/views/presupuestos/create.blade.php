@@ -103,12 +103,13 @@
                     placeholder="Asunto: Prestaciones quirurgicas">
             </div>
             <div class="form-groupp">
-                <select class="form-control" name="convenio" id="">
+                <select class="form-control" name="convenio" id="convenio">
                     <option value="">Seleccione un convenio</option>
                     @foreach ($convenios as $convenio)
-                        <option value="{{$convenio->id}}">{{$convenio->nombre}}</option>
+                        <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
                     @endforeach
                 </select>
+
             </div>
         </div>
 
@@ -127,11 +128,7 @@
                         </th>
 
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
-                        <th class="fixed-width border px-4 py-2 text-center">
-                            <input id="input_especialidad" name="input_especialidad" class="w-full text-center"
-                                placeholder="Ingrese Especialidad" />
-                        </th>
-
+                        <th class="fixed-width border px-4 py-2 text-center">PRESTACIONES</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
                 </thead>
@@ -142,28 +139,7 @@
 
         </div>
 
-        <div class="mb-6">
-            <table class="table-auto w-full mb-4" id="presupuesto-table">
-                <thead>
-                    <tr>
-                        <th class="border px-4 py-2"></th>
-                        <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
-                        <th class="fixed-width border px-4 py-2 text-center">
-                            <input id="especialidad" name="especialidad" class="w-full text-center"
-                                placeholder="Ingrese Especialidad" />
-                        </th>
 
-                        <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-
-            <button type="button" id="add-row" class="btn btn-success text-white p-2 rounded-full mb-4 ml-1"> <i
-                    class="fas fa-plus"></i> Prestación </button>
-        </div>
 
         <input type="hidden" id="hidden_anestesia_id" name="anestesia_id" value="0">
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
@@ -315,7 +291,7 @@
             function updateTotalPresupuesto() {
                 let totalPresupuesto = 0;
                 let totalAnestesia = 0; // Variable para el total de anestesia
-                console.log(edad);
+                //console.log(edad);
 
                 // Sumar todos los valores de los campos de presupuesto (por ejemplo, modulo_total_)
                 $('input[name^="modulo_total_"]').each(function () {
@@ -391,40 +367,37 @@
             $(document).ready(function () {
 
                 // Inicializar select2 para selects existentes al cargar la página
-                initializeSelect2();
 
                 // Función para inicializar select2 en selects dinámicos
-                function initializeSelect2() {
-                    $('#obra_social, #convenio, .prestacion-select').select2({
-                        placeholder: 'Seleccione',
-                        allowClear: true
-                    });
-                }
                 $('#add-row1').click(function () {
                     var rowCount = $('#no-convenida-table tbody tr').length + 1;
                     var newRow = `<tr data-row="${rowCount}">
-                    <td class="border px-4 py-2 text-center">
-                        <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                    <td class="border px-4 py-2">
-                        <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
-                    </td>
-                    <td class="border px-4 py-2">
-                        <input name="prestacion_${rowCount}" class="fixed-width border"></input>
-                    </td>
-                    <td class="border px-4 py-2 text-right">
-                        <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
-                    </td>
+                        <td class="border px-4 py-2 text-center">
+                            <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                        <td class="border px-4 py-2">
+                            <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
+                        </td>
+                        <td class="border px-4 py-2">
+                            <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select"></select>
+                        </td>
+                        <td class="border px-4 py-2 text-right">
+                            <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
+                        </td>
                     </tr>`;
 
                     // Agregar la nueva fila a la tabla
                     $('#no-convenida-table tbody').append(newRow);
 
-                    // Inicializar select2 para el nuevo select
-                    initializeSelect2();
+                    // Inicializar Select2 en el nuevo select
+                    var selectElement = $(`select[name="prestacion_${rowCount}"]`);
+                    initializeSelect2(selectElement);
 
+                    // Cargar las prestaciones en el nuevo select
+                    var convenioId = $('#convenio').val(); // Supongo que tienes un select para el convenio
+                    loadPrestaciones(convenioId, selectElement);
 
                     // Actualizar el total después de agregar una fila
                     updateTotalPresupuesto();
@@ -432,6 +405,24 @@
                     // Agregar el evento de cambio para los nuevos inputs
                     $('#no-convenida-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
                 });
+
+
+                // Inicializar Select2
+                function initializeSelect2(selectElement) {
+                    selectElement.select2({
+                        tags: true, // Esto permite que el usuario edite las opciones.
+                        placeholder: 'Seleccione una prestaciónn',
+                        allowClear: true,
+                        width: '100%', // Para ajustar el ancho
+                        language: {
+                            noResults: function () {
+                                return "Seleccione un convenio.";
+                            }
+                        }
+                    });
+                }
+
+
 
                 // Agregar el evento de cambio para los inputs existentes
                 $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
@@ -603,9 +594,9 @@
 
                 // Función para cargar las prestaciones en un select
                 function loadPrestaciones(convenioId, selectElement) {
-                    console.log(convenioId);
+                    console.log(convenioId + ' aaaaaaaa');
                     $.ajax({
-                        url: '/getPrestaciones/' + convenioId,
+                        url: '{{ url("/getPrestaciones") }}/' + convenioId,
                         type: 'GET',
                         success: function (data) {
                             selectElement.empty();
@@ -616,6 +607,7 @@
                         }
                     });
                 }
+
 
                 // Escuchar el cambio en el select de prestaciones
                 $(document).on('change', '.prestacion-select', function () {
@@ -637,10 +629,10 @@
                     console.log(convenioId, codigoPrestacion);
 
                     $.ajax({
-                        url: '/obtenerPrecio/' + convenioId + '/' + codigoPrestacion,
+                        url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
                         method: 'GET',
                         success: function (response) {
-                            console.log(response);
+                            console.log('obtenerprecioooo');
                             let precio = parseFloat(response[0].PRECIO);
                             // Truncar el precio eliminando la parte decimal
                             let precioTruncado = Math.floor(precio); // También puedes usar parseInt(precio)
@@ -656,48 +648,10 @@
                     });
                 });
 
+
                 // Manejar el cambio de estado del switch de convenida/no convenida
                 // Manejar el cambio de estado del switch de convenida/no convenida
-                $(document).ready(function () {
-                    const $switchConvenida = $('#convenida');
-                    const $presupuestoTable = $('#presupuesto-table').closest('div');
-                    const $noconvenidaTable = $('#no-convenida-table').closest('div');
-                    const $inputObrasocial = $('#input_obrasocial').closest('div');
-                    const $obraSocialInput = $('#obra_social').closest('div');
-                    const $convenioInput = $('#convenio').closest('div');
 
-                    // Verificar el estado inicial del switch y mostrar/ocultar la tabla y los inputs
-                    if ($switchConvenida.is(':checked')) {
-                        $noconvenidaTable.hide();
-                        $inputObrasocial.hide();
-                        $presupuestoTable.show();
-                        $obraSocialInput.show();
-                        $convenioInput.show();
-                    } else {
-                        $noconvenidaTable.show();
-                        $inputObrasocial.show();
-                        $presupuestoTable.hide();
-                        $obraSocialInput.hide();
-                        $convenioInput.hide();
-                    }
-
-                    // Manejar el cambio de estado del switch
-                    $switchConvenida.change(function () {
-                        if ($(this).is(':checked')) {
-                            $noconvenidaTable.hide();
-                            $inputObrasocial.hide();
-                            $presupuestoTable.show();
-                            $obraSocialInput.show();
-                            $convenioInput.show();
-                        } else {
-                            $noconvenidaTable.show();
-                            $inputObrasocial.show();
-                            $presupuestoTable.hide();
-                            $obraSocialInput.hide();
-                            $convenioInput.hide();
-                        }
-                    });
-                });
 
                 document.getElementById('toggleCondicion').addEventListener('change', function () {
                     var textareaCondicion = document.getElementById('condicion');
@@ -840,6 +794,39 @@
         #addRow {
             background-color: #48bb78;
             /* Color equivalente a bg-green-500 */
+        }
+
+        /* Elimina los bordes personalizados de Select2 */
+        .select2-container .select2-selection--single {
+            border: 1px solid #d1d5db;
+            /* Aplica el mismo borde que los inputs */
+            height: 38px;
+            /* Altura similar a los inputs */
+            padding: 0.375rem 0.75rem;
+            /* Espaciado interno similar */
+            border-radius: 0.25rem;
+            /* Iguala el borde redondeado */
+            box-sizing: border-box;
+            /* Asegura que los estilos sean consistentes */
+        }
+
+        /* Asegura que el select no tenga un icono de dropdown desalineado */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px;
+            /* Ajusta la altura del icono del dropdown */
+        }
+
+        /* Elimina el fondo azul al enfocar */
+        .select2-container--default .select2-selection--single:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #d1d5db;
+        }
+
+        /* Asegura que el texto esté alineado verticalmente */
+        .select2-selection__rendered {
+            line-height: 38px;
+            /* Igualar la altura */
         }
     </style>
 

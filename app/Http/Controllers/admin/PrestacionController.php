@@ -11,7 +11,6 @@ class PrestacionController extends Controller
 
     public function getPrestaciones($convenioId)
     {
-
         try {
             $prestaciones = DB::connection('db2')->select("
             SELECT 

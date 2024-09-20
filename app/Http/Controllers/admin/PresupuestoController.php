@@ -128,9 +128,7 @@ class PresupuestoController extends Controller
 
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
-            'obra_social' => 'nullable|integer',
-            'input_obrasocial' => 'nullable|string',
-            'especialidad' => 'nullable|string',
+            'input_obrasocial' => 'nullable',
             'input_especialidad' => 'nullable|string',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
@@ -154,9 +152,6 @@ class PresupuestoController extends Controller
         // Creación del nuevo presupuesto
 
 
-        $os = $validatedData['obra_social'];
-        $esp = $validatedData['especialidad'];
-
         if (!is_null($request->presupuesto_id)) {
             // Buscar el presupuesto existente
             $presupuesto = Presupuesto::find($request->presupuesto_id);
@@ -169,44 +164,27 @@ class PresupuestoController extends Controller
             // Si no hay presupuesto_id, crea uno nuevo
             $presupuesto = new Presupuesto();
         }
-
-
-
-
-
-
-        if (is_numeric($os)) {
-            $presupuesto->obra_social = $validatedData['obra_social'];  // Guarda el ID de la obra social
-        } else {
-            $presupuesto->obra_social = $validatedData['input_obrasocial'];  // Guarda el Nombre de la obra social
-        }
-
-        if ($esp) {
-            $presupuesto->especialidad = $esp;
-        } else {
-            $presupuesto->especialidad = $validatedData['input_especialidad'];
-        }
-
         // Verificar si el toggle de 'condicion' está activado antes de asignar
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
         }
-
+        
         // Verificar si el toggle de 'incluye' está activado antes de asignar
         if ($request->has('toggleIncluye')) {
             $presupuesto->incluye = $validatedData['incluye'];
         }
-
+        
         // Verificar si el toggle de 'excluye' está activado antes de asignar
         if ($request->has('toggleExcluye')) {
             $presupuesto->excluye = $validatedData['excluye'];
         }
-
+        
         // Verificar si el toggle de 'adicionales' está activado antes de asignar
         if ($request->has('toggleAdicionales')) {
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
-
+        
+        $presupuesto->obra_social = $validatedData['input_obrasocial'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
         $presupuesto->fecha = $validatedData['fecha'];
@@ -261,7 +239,7 @@ class PresupuestoController extends Controller
 
         $prestacionesData = [];
         $rowCount = 1;  // Asume que las filas empiezan en 1
-
+        //dd($request->all());
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionInput = $request->input("prestacion_{$rowCount}");
 
@@ -270,7 +248,7 @@ class PresupuestoController extends Controller
                     'presupuesto_id' => $presupuesto->id,
                     'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
                     'prestacion_salutte_id' => $prestacionInput,
-                    'nombre_prestacion' => null, // o dejarlo vacío
+                    'nombre_prestacion' => Prestacion::getPrestacionById($prestacionInput), // o dejarlo vacío
                     'modulo_total' => $request->input("modulo_total_{$rowCount}"),
                     // Agrega otras columnas si es necesario, como oxígeno, etc.
                 ];
@@ -437,13 +415,10 @@ class PresupuestoController extends Controller
                 $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
                 $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
-                if (is_numeric($prestacionInput)) {
-                    $prestacion->prestacion_salutte_id = $prestacionInput;
-                    $prestacion->nombre_prestacion = null;
-                } else {
-                    $prestacion->prestacion_salutte_id = null;
-                    $prestacion->nombre_prestacion = $prestacionInput;
-                }
+                $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
+                $prestacion->prestacion_salutte_id = $prestacionSalutteId;
+                $prestacion->nombre_prestacion = $prestacionInput;
+
                 $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
 
                 // Comparar cambios en las prestaciones
