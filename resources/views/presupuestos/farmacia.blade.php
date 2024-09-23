@@ -6,7 +6,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 
 <x-app-layout>
@@ -74,16 +77,18 @@
                             value="{{$prestacion->id}}">
                         <tr class="original-prestacion">
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500" name="codigo_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->codigo_prestacion }}" />
+                                <input class="w-full text-center bg-gray-100 text-gray-500"
+                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}" />
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500" name="prestacion_{{ $loop->iteration }}"
+                                <input class="w-full text-center bg-gray-100 text-gray-500"
+                                    name="prestacion_{{ $loop->iteration }}"
                                     value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" />
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500 moduloTotal" name="modulo_total_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->modulo_total }}" oninput="updateTotalPresupuesto()" />
+                                <input class="w-full text-center bg-gray-100 text-gray-500 moduloTotal"
+                                    name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
+                                    oninput="updateTotalPresupuesto()" />
                             </td>
                         </tr>
                     @endforeach
@@ -93,7 +98,8 @@
             <button type="button" id="addPrestacionBtn" class="btn btn-success text-white rounded-full">
                 <i class="fas fa-plus"></i> Prestación
             </button>
-            <button type="button" id="removePrestacionBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Eliminar Última
+            <button type="button" id="removePrestacionBtn" class="btn btn-danger"><i class="fa-solid fa-trash"></i>
+                Eliminar Última
                 Prestación</button>
 
 
@@ -140,12 +146,12 @@
 
 </x-app-layout>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     let prestacionCount = {{ count($prestaciones) }};
     let addedPrestaciones = 0;
     let edad;
+
     updateTotalPresupuesto();
 
     function updateTotalPresupuesto() {
@@ -159,18 +165,20 @@
         });
 
         // Sumar los precios de anestesia
+
         $('input[name^="precio_anestesia"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
+            console.log(value);
             totalAnestesia += value;
         });
+
+
         if (edad < 3 || edad > 65) {
             totalAnestesia = totalAnestesia * 1.2;
 
             // Mostrar el label oculto
+
             document.getElementById('adicional_anestesia').style.display = 'block';
-        } else {
-            // Ocultar el label si no se cumple la condición
-            document.getElementById('adicional_anestesia').style.display = 'none';
         }
 
         // Sumar total de presupuesto y anestesia
@@ -191,12 +199,12 @@
 
             // Crear nueva fila con inputs
             let newRow = `
-            <tr class="added-prestacion">
+            <tr data-row="${prestacionCount}" class="added-prestacion">
                 <td class="border px-4 py-2 text-center">
                     <input class="w-full text-center" name="codigo_${prestacionCount}" />
                 </td>
-                <td class="border px-4 py-2 text-center">
-                    <input class="w-full text-center" name="prestacion_${prestacionCount}" />
+                <td class="border px-4 py-2">
+                    <select name="prestacion_${prestacionCount}" class="border w-full text-center prestacion-select"></select>
                 </td>
                 <td class="border px-4 py-2 text-center">
                     <input class="w-full text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="updateTotalPresupuesto()" />
@@ -206,6 +214,13 @@
 
             // Añadir la nueva fila al cuerpo de la tabla
             $('#prestacionesBody').append(newRow);
+
+            var selectElement = $(`select[name="prestacion_${prestacionCount}"]`);
+            initializeSelect2(selectElement);
+
+            var convenioId = {{$presupuesto->convenio}};// Supongo que tienes un select para el convenio
+            console.log(convenioId);
+            loadPrestaciones(convenioId, selectElement);
         });
 
         $('#removePrestacionBtn').on('click', function () {
@@ -222,49 +237,73 @@
             }
         });
 
+        function initializeSelect2(selectElement) {
 
-        /*$('#add-row111').click(function () {
+            selectElement.select2({
+                tags: true, // Esto permite que el usuario edite las opciones.
+                placeholder: 'Seleccione una prestación',
+                allowClear: true,
+                width: '100%', // Para ajustar el ancho
+                language: {
+                    noResults: function () {
+                        return "Seleccione un convenio.";
+                    }
+                }
+            });
+        }
 
-            var rowCount = $('#table-auto tbody tr').length + 1;
-            console.log(rowCount);
-            var newRow = `<tr data-row="${rowCount}">
-                    <td class="border px-4 py-2 text-center">
-                        <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </td>
-                    <td class="border px-4 py-2">
-                        <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
-                    </td>
-                    <td class="border px-4 py-2">
-                        <input name="prestacion_${rowCount}" class="fixed-width border"></input>
-                    </td>
-                    <td class="border px-4 py-2 text-right">
-                        <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
-                    </td>
-                    </tr>`;
+        function loadPrestaciones(convenioId, selectElement) {
+            console.log(convenioId + ' aaaaaaaa');
+            $.ajax({
+                url: '{{ url("/getPrestaciones") }}/' + convenioId,
+                type: 'GET',
+                success: function (data) {
+                    selectElement.empty();
+                    selectElement.append('<option value="">Seleccione Prestación</option>');
+                    $.each(data, function (key, value) {
+                        selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
+                    });
+                }
+            });
+        }
 
-            // Agregar la nueva fila a la tabla
-            $('#table-auto tbody').append(newRow);
-
-            // Inicializar select2 para el nuevo select
-
-
-            // Actualizar el total después de agregar una fila
-            updateTotalPresupuesto();
-
-            // Agregar el evento de cambio para los nuevos inputs
-            $('#table-auto').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+        $(document).on('change', '.prestacion-select', function () {
+            var selectedOption = $(this).find('option:selected');
+            var codigo = selectedOption.data('codigo');
+            $(this).closest('tr').find('input[name^="codigo"]').val(codigo);
         });
+    });
 
-        // Agregar el evento de cambio para los inputs existentes
-        $('#presupuesto-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+    $(document).on('change', '.prestacion-select', function () {
+        let selectedOption = $(this).find('option:selected');
+        let codigoPrestacion = selectedOption.data('codigo');
+        let prestacionCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
+        $('#codigo_' + prestacionCount).val(codigoPrestacion);
+        let prestacionId = selectedOption.val();
 
-        // Manejador para eliminar filas
-        $('#presupuesto-table').on('click', '.remove-row', function () {
-            $(this).closest('tr').remove();
-            updateTotalPresupuesto(); // Actualizar el total después de eliminar una fila
-        });*/
+        let convenioId = {{$presupuesto->convenio}};
+        console.log('prestacionCount ', prestacionCount);
+
+        console.log(convenioId, codigoPrestacion);
+
+        $.ajax({
+            url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
+            method: 'GET',
+            success: function (response) {
+                console.log('obtenerprecioooo');
+                let precio = parseFloat(response[0].PRECIO);
+                // Truncar el precio eliminando la parte decimal
+                let precioTruncado = Math.floor(precio); // También puedes usar parseInt(precio)
+                console.log(precioTruncado);
+                console.log("rowCount:", prestacionCount);
+
+                $('input[name="modulo_total_' + prestacionCount + '"]').val(precioTruncado);
+                updateTotalPresupuesto();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la consulta AJAX:', error);
+            }
+        });
     });
 
 </script>
@@ -334,5 +373,37 @@
     .form-groupp label {
         margin-bottom: 5px;
         /* Espacio entre el label y el input */
+    }
+
+    .select2-container .select2-selection--single {
+        border: 1px solid #d1d5db;
+        /* Aplica el mismo borde que los inputs */
+        height: 38px;
+        /* Altura similar a los inputs */
+        padding: 0.375rem 0.75rem;
+        /* Espaciado interno similar */
+        border-radius: 0.25rem;
+        /* Iguala el borde redondeado */
+        box-sizing: border-box;
+        /* Asegura que los estilos sean consistentes */
+    }
+
+    /* Asegura que el select no tenga un icono de dropdown desalineado */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+        /* Ajusta la altura del icono del dropdown */
+    }
+
+    /* Elimina el fondo azul al enfocar */
+    .select2-container--default .select2-selection--single:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #d1d5db;
+    }
+
+    /* Asegura que el texto esté alineado verticalmente */
+    .select2-selection__rendered {
+        line-height: 38px;
+        /* Igualar la altura */
     }
 </style>

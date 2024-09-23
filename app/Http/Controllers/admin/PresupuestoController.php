@@ -113,7 +113,7 @@ class PresupuestoController extends Controller
         $obrasSociales = ObraSocial::getObrasSociales();
         $convenios = Convenio::getConvenios();
         //dd($convenios);
-        return view('presupuestos.create', compact( 'today', 'convenios'));
+        return view('presupuestos.create', compact('today', 'convenios'));
     }
 
 
@@ -122,7 +122,7 @@ class PresupuestoController extends Controller
         //$validatedData = $request->except('file'); // Excluye 'file' de la validación
         //dd($validatedData);
 
-        //dd($request->all());
+        //  dd($request->all());
 
 
 
@@ -130,6 +130,7 @@ class PresupuestoController extends Controller
             'detalle' => 'nullable|string',
             'input_obrasocial' => 'nullable',
             'input_especialidad' => 'nullable|string',
+            'convenio' => 'nullable',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
             'excluye' => 'nullable|string',
@@ -168,22 +169,23 @@ class PresupuestoController extends Controller
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
         }
-        
+
         // Verificar si el toggle de 'incluye' está activado antes de asignar
         if ($request->has('toggleIncluye')) {
             $presupuesto->incluye = $validatedData['incluye'];
         }
-        
+
         // Verificar si el toggle de 'excluye' está activado antes de asignar
         if ($request->has('toggleExcluye')) {
             $presupuesto->excluye = $validatedData['excluye'];
         }
-        
+
         // Verificar si el toggle de 'adicionales' está activado antes de asignar
         if ($request->has('toggleAdicionales')) {
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
-        
+
+        $presupuesto->convenio = $validatedData['convenio'];
         $presupuesto->obra_social = $validatedData['input_obrasocial'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
@@ -221,7 +223,7 @@ class PresupuestoController extends Controller
                     'complejidad' => $complejidades[$index],
                 ]);
                 if ($anestesiaId == 0) {
-                    $presupuesto->estado = 5;
+                    $presupuesto->estado = 7;
                     $presupuesto->save();
                 }
             }
@@ -229,6 +231,10 @@ class PresupuestoController extends Controller
 
         $proceso = new Proceso();
         $proceso->presupuesto_id = $presupuesto->id;
+        if (empty($anestesias)) {
+            $proceso->anestesia = 1;
+            $proceso->fecha_anestesia = now();
+        }
         $proceso->save();
 
         $firma = new Firmas();
@@ -282,6 +288,9 @@ class PresupuestoController extends Controller
 
         // Insertar las prestaciones en la base de datos
         DB::table('prestaciones')->insert($prestacionesData);
+
+
+
 
         // Redirigir a la vista de presupuestos o a otra vista que desees
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto creado exitosamente');
@@ -531,16 +540,12 @@ class PresupuestoController extends Controller
     {
 
         $presupuesto = presupuesto::findOrFail($id);
-        $presupuesto->estado = 6;
 
-        $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();
-        //dd($proceso);
-        $proceso->anestesia = 1;
-        $proceso->fecha_anestesia = now();
-        $proceso->save();
+
 
         //dd($request->all(), $id);
         $rowCountt = 1;
+        $faltanAnestesias=0;
         while ($request->has("anestesia{$rowCountt}")) {
             $anestesiaId = $request->input("anestesia{$rowCountt}");
             $anestesia = Anestesia_p::find($anestesiaId);
@@ -570,9 +575,31 @@ class PresupuestoController extends Controller
                 //dd($anestesia);
             }
             $rowCountt++;
+
             if ($anestesia->anestesia_id == 0) {
-                $presupuesto->estado = 5;
+                $faltanAnestesias = 1;
             }
+        }
+        if ($faltanAnestesias == 1) {
+            $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();
+            $proceso->anestesia = 0;
+            $proceso->fecha_anestesia = now();
+            $proceso->save();
+        } else {
+            $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();
+            $proceso->anestesia = 1;
+            $proceso->fecha_anestesia = now();
+            $proceso->save();
+        }
+
+        if ($proceso->anestesia == 1 && $proceso->farmacia == 1) {
+            $presupuesto->estado = 6;
+        } else if ($proceso->anestesia == 1 && $proceso->farmacia != 1) {
+            $presupuesto->estado = 8;
+        } else if($presupuesto->farmacia ==1 && $proceso->anestesia==0){
+            $presupuesto->estado = 5;
+        }else{
+            $presupuesto->estado=7;
         }
 
         $presupuesto->save();
@@ -592,16 +619,25 @@ class PresupuestoController extends Controller
     }
     public function updateFarmacia(Request $request, $id)
     {
+        //dd($request->all());
         // Encontrar el presupuesto
         $presupuesto = presupuesto::findOrFail($id);
         $presupuesto->total_presupuesto = $request->total_presupuesto;
-        $presupuesto->save();
 
         // Actualizar el proceso
         $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();
         $proceso->farmacia = 1;
         $proceso->fecha_farmacia = now();
         $proceso->save();
+
+        if($proceso->farmacia == 1 && $proceso->anestesia ==1){
+            $presupuesto->estado=6;
+        } else{
+            $presupuesto->estado=5;
+        }
+
+
+        $presupuesto->save();
 
         $rowCount = 1;
 
@@ -617,7 +653,7 @@ class PresupuestoController extends Controller
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
                 if (is_numeric($prestacionInput)) {
                     $newPrestacion->prestacion_salutte_id = $prestacionInput;
-                    $newPrestacion->nombre_prestacion = null;
+                    $newPrestacion->nombre_prestacion = Prestacion::getPrestacionById($newPrestacion->prestacion_salutte_id);
                 } else {
                     $newPrestacion->prestacion_salutte_id = null;
                     $newPrestacion->nombre_prestacion = $prestacionInput;
@@ -640,6 +676,10 @@ class PresupuestoController extends Controller
                         $prestacion->nombre_prestacion = $prestacionInput;
                     }
                     $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+
+                    $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
+                    $prestacion->prestacion_salutte_id = $prestacionSalutteId;
+                    $prestacion->nombre_prestacion = $prestacionInput;
 
                     // Comparar cambios en las prestaciones
                     $dirtyFieldsPrestacion = $prestacion->getDirty();

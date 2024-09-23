@@ -95,7 +95,6 @@
                         <th class="servicio" style="">Medico Tratante</th>
                         <th class="" style="width: 5%;">Fecha</th>
                         <th class="" style="width: 5%;">Estado</th>
-                        <th style="width: 5%;">Especialidad</th>
                         <th style="width: 5%;">Detalle</th>
                         <th class="estado" style="width: 5%;">Total Presupuesto</th>
                         <th class="" style="width: 10%;">Obra Social</th>
@@ -110,7 +109,6 @@
                             <td class="">{{ $presupuesto->medico_tratante}}</td>
                             <td class="">{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
                             <td class="">{{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}</td>
-                            <td>{{ $presupuesto->especialidad }}</td>
                             <td>{{ $presupuesto->detalle }}</td>
                             <td class="">${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
                             <td class="" style="">
@@ -123,9 +121,11 @@
 
                             <td>
                                 @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                    <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
+                                    @if($presupuesto->estado != 4)
+                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    @endif
                                 @endif
                                 @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
                                     <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
@@ -133,13 +133,13 @@
                                         <i class="fa-solid fa-check"></i>
                                     </a>
                                 @endif
-                                @if(Auth::user()->rol_id == 3)
+                                @if(Auth::user()->rol_id == 3 && ($presupuesto->estado == 8 || $presupuesto->estado == 7))
                                     <a href="{{ route('presupuestos.farmacia', $presupuesto->id) }}"
                                         class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-prescription-bottle-medical"></i>
                                     </a>
                                 @endif
-                                @if(Auth::user()->rol_id == 5 && $presupuesto->estado == 5)
+                                @if(Auth::user()->rol_id == 5 && ($presupuesto->estado == 5 || $presupuesto->estado == 7))
                                     <a href="{{ route('presupuestos.anestesia', $presupuesto->id) }}"
                                         class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-prescription-bottle-medical"></i>
