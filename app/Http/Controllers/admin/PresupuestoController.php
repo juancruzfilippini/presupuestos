@@ -27,13 +27,58 @@ class PresupuestoController extends Controller
     // Muestra una lista de todos los presupuestos
     public function index(Request $request)
     {
-        // Filtra los presupuestos donde 'borrado_logico' es null o 0
-        $presupuestos = Presupuesto::where('borrado_logico', 0)
-            ->orWhereNull('borrado_logico')
-            ->get();
+        // Inicializa la consulta de los presupuestos
+        $query = Presupuesto::where('borrado_logico', 0)
+            ->orWhereNull('borrado_logico');
+
+        // Agregar filtros si están presentes en el request
+        if ($request->filled('search_nro_presupuesto')) {
+            $query->where('id', 'like', '%' . $request->input('search_nro_presupuesto') . '%');
+        }
+
+        if ($request->filled('search_paciente')) {
+            $query->where('paciente', 'like', '%' . $request->input('search_paciente') . '%');
+        }
+
+        if ($request->filled('search_medico_tratante')) {
+            $query->where('medico_tratante', 'like', '%' . $request->input('search_medico_tratante') . '%');
+        }
+
+        if ($request->filled('search_estado')) {
+            $query->join('estado', 'presupuesto.estado', '=', 'estado.id')
+                ->where('estado.nombre', 'like', '%' . $request->input('search_estado') . '%');
+        }
+
+
+        if ($request->filled('search_detalle')) {
+            $query->where('detalle', 'like', '%' . $request->input('search_detalle') . '%');
+        }
+
+        if ($request->filled('search_desde')) {
+            $query->whereDate('fecha', '>=', $request->input('search_desde'));
+        }
+
+        if ($request->filled('search_hasta')) {
+            $query->whereDate('fecha', '<=', $request->input('search_hasta'));
+        }
+
+        if ($request->filled('search_obra_social')) {
+            $query->where('obra_social', 'like', '%' . $request->input('search_obra_social') . '%');
+        }
+
+        if ($request->filled('search_total_presupuesto')) {
+            $query->where('total_presupuesto', 'like', '%' . $request->input('search_total_presupuesto') . '%');
+        }
+
+        // Paginar los resultados
+        $presupuestos = $query->paginate(20);
+
+        // Mantener los filtros aplicados en la paginación
+        $presupuestos->appends($request->all());
 
         return view('presupuestos.index', compact('presupuestos'));
     }
+
 
     public function firmar($id)
     {
@@ -545,7 +590,7 @@ class PresupuestoController extends Controller
 
         //dd($request->all(), $id);
         $rowCountt = 1;
-        $faltanAnestesias=0;
+        $faltanAnestesias = 0;
         while ($request->has("anestesia{$rowCountt}")) {
             $anestesiaId = $request->input("anestesia{$rowCountt}");
             $anestesia = Anestesia_p::find($anestesiaId);
@@ -596,10 +641,10 @@ class PresupuestoController extends Controller
             $presupuesto->estado = 6;
         } else if ($proceso->anestesia == 1 && $proceso->farmacia != 1) {
             $presupuesto->estado = 8;
-        } else if($presupuesto->farmacia ==1 && $proceso->anestesia==0){
+        } else if ($presupuesto->farmacia == 1 && $proceso->anestesia == 0) {
             $presupuesto->estado = 5;
-        }else{
-            $presupuesto->estado=7;
+        } else {
+            $presupuesto->estado = 7;
         }
 
         $presupuesto->save();
@@ -630,10 +675,10 @@ class PresupuestoController extends Controller
         $proceso->fecha_farmacia = now();
         $proceso->save();
 
-        if($proceso->farmacia == 1 && $proceso->anestesia ==1){
-            $presupuesto->estado=6;
-        } else{
-            $presupuesto->estado=5;
+        if ($proceso->farmacia == 1 && $proceso->anestesia == 1) {
+            $presupuesto->estado = 6;
+        } else {
+            $presupuesto->estado = 5;
         }
 
 

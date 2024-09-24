@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Presupuesto extends Model
 {
     use HasFactory;
-    
+
     public $timestamps = false;  // Desactiva el manejo automático de timestamps
 
     protected $connection = 'mysql'; // Para la base de datos 'db-sistema-ap'
@@ -36,7 +36,13 @@ class Presupuesto extends Model
         'file_path',
         'borrado_logico',
     ];
-    
+
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class);
+    }
+
+
 }
 
 /*

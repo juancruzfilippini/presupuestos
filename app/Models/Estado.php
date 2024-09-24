@@ -25,4 +25,34 @@ class Estado extends Model
         return $estado ? $estado->nombre : null;
     }
 
+    public static function getEstadoByNombre($estado){
+        if ($estado = 'completado') {
+            return 4;
+        }
+        if ($estado = 'esperando anestesia') {
+            return 5;
+        }
+        if ($estado = 'esperando firmas') {
+            return 6;
+        }
+        if ($estado = 'esperando anestesia y farmacia') {
+            return 7;
+        }
+        if ($estado = 'esperando farmacia') {
+            return 8;
+        }
+        if ($estado = 'creado') {
+            return 0;
+        }
+        if ($estado = 'editado') {
+            return 1;
+        }
+        if ($estado = 'informando') {
+            return 2;
+        }
+        if ($estado = 'firmando') {
+            return 3;
+        }
+    }
+
 }

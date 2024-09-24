@@ -11,33 +11,24 @@
 
 <!-- Bootstrap 4 y 5 (Elige una versión, usualmente no se usan ambas juntas) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-
-
 <!-- jQuery UI -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
 <!-- ChartJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-
 <!-- Sparkline -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sparklines/0.4.1/sparkline.js"></script>
-
 <!-- JQVMap -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jquery.vmap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.usa.js"></script>
-
 <!-- jQuery Knob Chart -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-knob/1.2.13/jquery.knob.min.js"></script>
-
 <!-- Daterangepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/daterangepicker/3.1.0/daterangepicker.js"></script>
-
 <!-- Tempusdominus Bootstrap 4 -->
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js">
     </script>
-
 <!-- Summernote -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
 
@@ -75,7 +66,100 @@
         <h1>Presupuestos</h1>
 
         <form method="GET" action="{{ route('presupuestos.index') }}" class="mb-4">
-            <!-- Aquí puedes agregar los campos de búsqueda si es necesario -->
+            <input type="hidden" name="page" value="{{ request()->input('page') }}">
+
+            <!-- Primera fila de filtros -->
+            <div class="input-group mb-3">
+                <input type="number" name="search_nro_presupuesto"
+                    value="{{ request()->input('search_nro_presupuesto') }}" class="form-control"
+                    placeholder="Buscar N° Presupuesto">
+
+                @if (request()->input('search_nro_presupuesto'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_paciente" value="{{ request()->input('search_paciente') }}"
+                    class="form-control" placeholder="Buscar Paciente">
+
+                @if (request()->input('search_paciente'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_medico_tratante"
+                    value="{{ request()->input('search_medico_tratante') }}" class="form-control"
+                    placeholder="Buscar Medico">
+
+                @if (request()->input('search_medico_tratante'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_estado" value="{{ request()->input('search_estado') }}"
+                    class="form-control" placeholder="Buscar Estado">
+
+                @if (request()->input('search_estado'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_detalle" value="{{ request()->input('search_detalle') }}"
+                    class="form-control" placeholder="Buscar Detalle">
+
+                @if (request()->input('search_detalle'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_total_presupuesto"
+                    value="{{ request()->input('search_total_presupuesto') }}" class="form-control"
+                    placeholder="Buscar por Monto">
+
+                @if (request()->input('search_total_presupuesto'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <input type="text" name="search_obra_social" value="{{ request()->input('search_obra_social') }}"
+                    class="form-control" placeholder="Buscar Obra Social">
+
+                @if (request()->input('search_obra_social'))
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
+                @endif
+            </div>
+
+            <!-- Segunda fila de filtros -->
+            <div class="input-group mb-3">
+                <!-- Filtro "Desde" -->
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Desde</span>
+                </div>
+                <input type="date" name="search_desde" value="{{ request()->input('search_desde') }}"
+                    class="form-control col-2" style="max-width: 200px" placeholder="Buscar por fecha de inicio">
+
+                @if (request()->input('search_desde'))
+                    <a href="{{ route('estudios.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <!-- Filtro "Hasta" -->
+                <div style="margin-left: 25px" class="input-group-prepend">
+                    <span class="input-group-text">Hasta</span>
+                </div>
+                <input type="date" name="search_hasta" value="{{ request()->input('search_hasta') }}"
+                    class="form-control col-2" style="max-width: 200px" placeholder="Buscar por fecha de fin">
+
+                @if (request()->input('search_hasta'))
+                    <a href="{{ route('estudios.index') }}" class="btn btn-secondary">×</a>
+                @endif
+
+                <!-- Botón de Buscar -->
+                <button style="margin-left: 5px;" class="btn btn-primary rounded" type="submit">Buscar</button>
+
+                <!-- Separador flexible que empuja el botón de Exportar hacia la derecha -->
+                <div class="ml-auto"></div>
+
+                <!-- Botón de Exportar -->
+                <button type="button" style="margin-left: auto; margin-right: 10px" class="btn btn-success rounded"
+                    onclick="exportarExcel()">
+                    <i class="fas fa-file-excel"></i> Exportar
+                </button>
+            </div>
+
         </form>
 
         @if (session('success'))
@@ -91,14 +175,14 @@
                 <thead>
                     <tr>
                         <th>N°</th>
-                        <th class="paciente" style="">Paciente</th>
-                        <th class="servicio" style="">Medico Tratante</th>
-                        <th class="" style="width: 5%;">Fecha</th>
-                        <th class="" style="width: 5%;">Estado</th>
-                        <th style="width: 5%;">Detalle</th>
-                        <th class="estado" style="width: 5%;">Total Presupuesto</th>
-                        <th class="" style="width: 10%;">Obra Social</th>
-                        <th class="" style="width: 2%;">Acciones</th>
+                        <th class="paciente">Paciente</th>
+                        <th class="servicio">Medico Tratante</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Detalle</th>
+                        <th>Total Presupuesto</th>
+                        <th>Obra Social</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -152,47 +236,48 @@
                 </tbody>
             </table>
         </div>
+
+        {{ $presupuestos->appends([
+    'search_nro_presupuesto' => request()->input('search_nro_presupuesto'),
+    'search_paciente' => request()->input('search_paciente'),
+    'search_medico_tratante' => request()->input('search_medico_tratante'),
+    'search_estado' => request()->input('search_estado'),
+    'search_detalle' => request()->input('search_detalle'),
+    'search_desde' => request()->input('search_desde'),
+    'search_hasta' => request()->input('search_hasta'),
+    'search_obra_social' => request()->input('search_obra_social'),
+    'search_total_presupuesto' => request()->input('search_total_presupuesto'),
+    'page' => request()->input('page')
+])->links() }}
+
     </div>
 </x-app-layout>
-
 
 <style>
     .form-group .input-group {
         max-width: 165px;
-        /* Ajusta el ancho máximo del input */
     }
 
     .form-group input {
         border: 1px solid gray;
         border-top-left-radius: 5px;
-        /* Bordes redondeados superior izquierdo */
         border-bottom-left-radius: 5px;
-        /* Bordes redondeados inferior izquierdo */
     }
 
     .input-group-append {
         border-top-right-radius: 5px;
-        /* Bordes redondeados superior derecho */
         border-bottom-right-radius: 5px;
-        /* Bordes redondeados inferior derecho */
     }
 
-    /* Estilo para el texto del número de registros */
     .total-registros {
         margin-bottom: 1rem;
-        /* Espaciado por debajo del texto */
     }
 
-    /* Estilo para los textos dentro de la tabla */
     .paciente {
         max-width: 23ch;
-        /* Ajusta el ancho máximo de las celdas según sea necesario */
         overflow: hidden;
-        /* Oculta el texto desbordado */
         text-overflow: ellipsis;
-        /* Añade puntos suspensivos para el texto desbordado */
         white-space: nowrap;
-        /* Evita el ajuste de texto en las celdas */
     }
 
     .diagnostico,
@@ -200,28 +285,19 @@
     .estado,
     .servicio {
         max-width: 23ch;
-        /* Ajusta el ancho máximo de las celdas según sea necesario */
         overflow: hidden;
-        /* Oculta el texto desbordado */
         text-overflow: ellipsis;
-        /* Añade puntos suspensivos para el texto desbordado */
         white-space: nowrap;
-        /* Evita el ajuste de texto en las celdas */
     }
 
-    /* Botones */
     .btn .fas {
         margin-right: 0;
     }
 
-    /* Margen superior */
     .mt-4 {
         margin-top: 1.5rem;
     }
 </style>
-
-
-
 <script>
     $(document).ready(function () {
         $("#tabla_presupuestos").DataTable({
@@ -257,6 +333,5 @@
                 }
             }
         });
-
     })
 </script>
