@@ -302,6 +302,7 @@
             },
             error: function (xhr, status, error) {
                 console.error('Error en la consulta AJAX:', error);
+                
             }
         });
     });

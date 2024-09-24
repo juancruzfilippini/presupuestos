@@ -22,9 +22,9 @@ use App\Http\Controllers\Admin\ConvenioController;
 
 
 
-Route::get('', function () {
+Route::get('/', function () {
     return view('auth/login');
-})->name('profile_view');
+})->name('login');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
