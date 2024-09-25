@@ -10,25 +10,20 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Bootstrap 4 y 5 (Elige una versión, usualmente no se usan ambas juntas) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 <!-- jQuery UI -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<!-- ChartJS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <!-- Sparkline -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sparklines/0.4.1/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jquery.vmap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.usa.js"></script>
+
 <!-- jQuery Knob Chart -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-knob/1.2.13/jquery.knob.min.js"></script>
 <!-- Daterangepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/daterangepicker/3.1.0/daterangepicker.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js">
-    </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+
 <!-- Summernote -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
 
@@ -180,21 +175,24 @@
                         <th>Fecha</th>
                         <th>Estado</th>
                         <th>Detalle</th>
-                        <th>Total Presupuesto</th>
+                        <th style="max-width: auto;">Total Presupuesto</th>
                         <th>Obra Social</th>
-                        <th>Acciones</th>
+                        <th style="max-width: auto;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($presupuestos as $presupuesto)
                         <tr>
-                            <td style="width: 5%;">{{ $presupuesto->id }}</td>
+                            <td >{{ $presupuesto->id }}</td>
                             <td class="">{{ $presupuesto->paciente }}</td>
                             <td class="">{{ $presupuesto->medico_tratante}}</td>
-                            <td class="">{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
-                            <td class="">{{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}</td>
-                            <td>{{ $presupuesto->detalle }}</td>
-                            <td class="">${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
+                            <td class="">
+                                {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
+                            <td class="">
+                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}</td>
+                            <td >{{ $presupuesto->detalle }}</td>
+                            <td class="">
+                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
                             <td class="" style="">
                                 @if (is_numeric($presupuesto->obra_social))
                                     {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
@@ -297,6 +295,12 @@
     .mt-4 {
         margin-top: 1.5rem;
     }
+
+    body {
+        overflow-x: hidden;
+    }
+
+    
 </style>
 <script>
     $(document).ready(function () {

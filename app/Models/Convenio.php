@@ -31,7 +31,7 @@ class Convenio extends Model
     public static function getConvenios()
     {
         $convenios = Convenio::where('fin_vigencia', '>=', now())
-            ->where('nombre', 'like', '%particular%')
+            ->where('nombre', 'like', '%particular completo%')
             ->where('borrado_logico', false)
             ->get();
         return $convenios->toArray();

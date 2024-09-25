@@ -93,7 +93,7 @@ class PresupuestoController extends Controller
         $cambiosPrestaciones = cambios_prestaciones::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
         $cambiosAnestesias = cambios_anestesias::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
         $today = date('Y-m-d');
-        //dd($cambiosPrestaciones);
+        //dd($anestesias);
 
 
 

@@ -1,5 +1,6 @@
 @php
     use App\Models\ObraSocial;
+    use App\Models\Users;
     use App\Models\Convenio;
     use App\Models\Prestacion;
     use App\Helpers\NumberToWordsHelper;
@@ -47,25 +48,40 @@
             text-align: center;
         }
 
-        @page {
-            margin: 100px 25px;
-        }
-
         body {
-            margin-bottom: 80px; /* Espacio para el footer */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .footer {
-            position: absolute;
-            bottom: -30px;
-            left: 0;
-            right: 0;
-            height: 50px;
-            text-align: center;
-            font-size: 12px;
-            color: #555;
-            line-height: 50px;
+
+        .content {
+            margin: 20px;
         }
+
+        /* Estilos para el footer */
+        .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10px;
+        line-height: 1.2;
+        border-top: 1px solid #000;
+        padding-top: 5px;
+    }
+
+    /* Forzar que el footer se repita en todas las páginas */
+    @page {
+        margin-top: 20mm;
+        margin-bottom: 10mm; /* Deja espacio suficiente para el footer en todas las páginas */
+        {footer: page-footer;} /* Aquí defines el nombre del footer que será usado */
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
 
     </style>
 </head>
@@ -132,30 +148,27 @@
         <!-- NECESITO MOSTRAR AQUI MIS PRESTACIONES -->
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">PRESTACIONES</div>
         <div style="margin-bottom: 5px;"></div>
-
-        
-
-                <table>
-            <thead>
-                <tr>
-                    <th>CÓDIGO</th>
-                    <th style="text-transform: uppercase;">DETALLE</th>
-                    <th>MÓDULO TOTAL</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($prestaciones as $prestacion)
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ $prestacion->codigo_prestacion }}</td>
-                        <td class="text-left">{{ $prestacion->nombre_prestacion }}</td>
-                        <td>$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
+                        <th>CÓDIGO</th>
+                        <th>DETALLE</th>
+                        <th>MÓDULO TOTAL</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($prestaciones as $prestacion)
+                        <tr>
+                            <td>{{ $prestacion->codigo_prestacion }}</td>
+                            <td class="text-left">{{ $prestacion->nombre_prestacion }}</td>
+                            <td>$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
+                        </tr>
+                    @endforeach
+                </tbody>        
+            </table>
         <br>
 
-        @if(!empty($anestesias))
+        @if(!$anestesias->isEmpty())
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">ANESTESIA</div>
 
             <div style="margin-bottom: 5px;"></div>
@@ -202,7 +215,7 @@
 
 
         
-        <div class="" style="margin-top: 10px;">
+        <div class="" style="margin-top: 5px;">
     <div style="font-size: 1rem; font-weight: 600; text-align: center; margin-bottom: 5px;">
         TOTAL PRESUPUESTO: $ {{ number_format($presupuesto['total_presupuesto'], 2, ',', '.') }}
     </div>
@@ -211,26 +224,26 @@
     </p>
     </div>
 
-        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
         @if($presupuesto['condicion'])
-            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Condición: </label> 
-            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['condicion']}}</label> 
+            <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Condición: </label> 
+            <label class="ml-4 p-2" style="font-size: 10px;">{{$presupuesto['condicion']}}</label> 
         @endif
         @if($presupuesto['incluye'])
             <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Incluye: </label> 
-            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['incluye']}}</label> 
+            <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Incluye: </label> 
+            <label class="ml-4 p-2" style="font-size: 10px;">{{$presupuesto['incluye']}}</label> 
         @endif
         @if($presupuesto['excluye'])
             <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Excluye: </label> 
-            <label class="ml-4 p-2" style="font-size: 12px;">{{$presupuesto['excluye']}}</label> 
+            <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Excluye: </label> 
+            <label class="ml-4 p-2" style="font-size: 10px;">{{$presupuesto['excluye']}}</label> 
         @endif
         @if($presupuesto['adicionales'] != '')
             <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
-            <label class="ml-4 p-2 font-semibold" style="font-size: 12px;">Adicionales: </label>
-            <ul class="ml-4 list-none" style="font-size: 12px;"> <!-- Aplicamos el mismo tamaño de fuente -->
+            <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Adicionales: </label>
+            <ul class="ml-4 list-none" style="font-size: 10px;"> <!-- Aplicamos el mismo tamaño de fuente -->
                 @foreach(explode('*',$presupuesto['adicionales']) as $item)
                     @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
                         <li class="font-semibold" style="font-size: 12px; font-weight: bold;">* {{ trim($item) }}</li> <!-- Negrita y tamaño -->
@@ -238,17 +251,22 @@
                 @endforeach
             </ul>
         @endif
-
-        <div class="footer">
-            Firmado electrónicamente por Comercialización |
-            Firmado electronicamente por Auditoría |
-            Firmado electronicamente por Dirección 
-            <br>
-            Paso de los Andes 3051, Ciudad de Mendoza / www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar
-        </div>
+        </form>
     </body>
+    <!-- Footer que se repite en todas las páginas -->
+    <htmlpagefooter name="page-footer">
+        <div class="footer" style="text-align: center; line-height: 1.2;">
+            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
+            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría Médica</div>
+            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
+            <br>
+            <span>Paso de los Andes 3051, Ciudad de Mendoza</span><br>
+            <span>www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar</span>
+        </div>
+    </htmlpagefooter>
 
-    </form>
+    
+    
 
 <!--  <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>  LINEA DIVISORA-->
 <!--  route('presupuestos.finalize', ['id' => $presupuesto->id]) -->

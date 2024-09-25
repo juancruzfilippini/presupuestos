@@ -76,6 +76,7 @@ class ExportarController extends Controller
 
         // Obtener las prestaciones asociadas al presupuesto
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
+        $firmas = Firmas::where('presupuesto_id', $id)->first();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
         $today = date('Y-m-d');
@@ -86,6 +87,7 @@ class ExportarController extends Controller
             'prestaciones' => $prestaciones,
             'paciente' => $paciente,
             'anestesias' => $anestesias,
+            'firmas' => $firmas,
             'today' => $today
         ];
 

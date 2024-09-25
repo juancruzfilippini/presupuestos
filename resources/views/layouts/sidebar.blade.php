@@ -26,6 +26,12 @@
                         Crear Presupuesto
                     </a>
                 @endif
+                @if ($rol_id = Auth::user()->rol_id == 99)
+                    <a class="nav-link" href="{{ route('presupuestos.admin') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-lock"></i></div>
+                        Administrar
+                    </a>
+                @endif
 
             </div>
         </div>
