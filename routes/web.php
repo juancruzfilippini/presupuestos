@@ -78,3 +78,5 @@ Route::get('presupuestos/exportar-datos/{id}', [ExportarController::class, 'expo
 Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 'sign'])->name('presupuestos.sign');
 
 Route::get('/presupuestos/admin', [AdministradorController::class, 'adminView'])->name('presupuestos.admin');
+
+Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio'])->name('presupuestos.convenio');

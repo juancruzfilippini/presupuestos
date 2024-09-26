@@ -78,17 +78,17 @@
                         <tr class="original-prestacion">
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500"
-                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}" />
+                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}" readonly/>
                             </td>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500"
                                     name="prestacion_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" />
+                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" Readonly/>
                             </td>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500 moduloTotal"
                                     name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
-                                    oninput="updateTotalPresupuesto()" />
+                                    oninput="updateTotalPresupuesto()" readonly/>
                             </td>
                         </tr>
                     @endforeach

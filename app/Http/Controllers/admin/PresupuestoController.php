@@ -14,6 +14,7 @@ use App\Http\Controllers\ConvenioController;
 use App\Models\Paciente;
 use App\Models\Archivo;
 use App\Models\Convenio;
+use App\Models\Convenio_actual;
 use App\Models\Prestaciones;
 use App\Models\Anestesia_p;
 use Illuminate\Support\Facades\DB;
@@ -156,26 +157,25 @@ class PresupuestoController extends Controller
         $today = date('Y-m-d');
         $prestaciones = Prestacion::all();
         $obrasSociales = ObraSocial::getObrasSociales();
-        $convenios = Convenio::getConvenios();
-        //dd($convenios);
-        return view('presupuestos.create', compact('today', 'convenios'));
+
+        // Obtener todos los convenios
+        $ultimoConvenio = Convenio_actual::orderBy('id', 'desc')->first();
+        //dd($ultimoConvenio);
+        // Enviar la variable 'ultimoConvenio' a la vista
+        return view('presupuestos.create', compact('today','ultimoConvenio'));
     }
+
 
 
     public function store(Request $request)
     {
-        //$validatedData = $request->except('file'); // Excluye 'file' de la validación
-        //dd($validatedData);
-
-        //  dd($request->all());
-
-
-
+        //dd($request->all());
         $validatedData = $request->validate([
             'detalle' => 'nullable|string',
             'input_obrasocial' => 'nullable',
             'input_especialidad' => 'nullable|string',
             'convenio' => 'nullable',
+            'convenio_id' => 'nullable',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
             'excluye' => 'nullable|string',
@@ -191,12 +191,6 @@ class PresupuestoController extends Controller
             'email' => 'nullable|string',
             'nro_afiliado' => 'nullable|string',
         ]);
-
-
-
-        //dd($validatedData);
-        // Creación del nuevo presupuesto
-
 
         if (!is_null($request->presupuesto_id)) {
             // Buscar el presupuesto existente
@@ -230,7 +224,7 @@ class PresupuestoController extends Controller
             $presupuesto->adicionales = $validatedData['adicionales'];
         }
 
-        $presupuesto->convenio = $validatedData['convenio'];
+        $presupuesto->convenio = $validatedData['convenio_id'];
         $presupuesto->obra_social = $validatedData['input_obrasocial'];
         $presupuesto->detalle = $validatedData['detalle'];
         $presupuesto->total_presupuesto = $validatedData['total_presupuesto'];
@@ -286,8 +280,6 @@ class PresupuestoController extends Controller
         $firma->presupuesto_id = $presupuesto_id;
         $firma->save();
 
-
-
         $prestacionesData = [];
         $rowCount = 1;  // Asume que las filas empiezan en 1
         //dd($request->all());
@@ -301,6 +293,8 @@ class PresupuestoController extends Controller
                     'prestacion_salutte_id' => $prestacionInput,
                     'nombre_prestacion' => Prestacion::getPrestacionById($prestacionInput), // o dejarlo vacío
                     'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    'creado_por' => auth()->user()->id,
+                    'creado_fecha' => now(),
                     // Agrega otras columnas si es necesario, como oxígeno, etc.
                 ];
             } else {
@@ -310,6 +304,8 @@ class PresupuestoController extends Controller
                     'prestacion_salutte_id' => null,
                     'nombre_prestacion' => $prestacionInput,
                     'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    'creado_por' => auth()->user()->id,
+                    'creado_fecha' => now(),
                     // Agrega otras columnas si es necesario, como oxígeno, etc.
                 ];
             }
@@ -334,15 +330,10 @@ class PresupuestoController extends Controller
         // Insertar las prestaciones en la base de datos
         DB::table('prestaciones')->insert($prestacionesData);
 
-
-
-
         // Redirigir a la vista de presupuestos o a otra vista que desees
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto creado exitosamente');
 
     }
-
-
 
     public function edit($id)
     {
@@ -401,7 +392,6 @@ class PresupuestoController extends Controller
         } else {
             $presupuesto->obra_social = $validatedData['input_obrasocial'];  // Guarda el Nombre de la obra social
         }
-        $presupuesto->especialidad = $validatedData['input_especialidad'];
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
         } else {
@@ -437,7 +427,6 @@ class PresupuestoController extends Controller
         $presupuesto->telefono = $validatedData['telefono'];
         $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
         $presupuesto->email = $validatedData['email'];
-        $presupuesto->estado = 5;
 
         // Guardar el presupuesto actualizado
 
@@ -586,15 +575,12 @@ class PresupuestoController extends Controller
 
         $presupuesto = presupuesto::findOrFail($id);
 
-
-
         //dd($request->all(), $id);
         $rowCountt = 1;
         $faltanAnestesias = 0;
         while ($request->has("anestesia{$rowCountt}")) {
             $anestesiaId = $request->input("anestesia{$rowCountt}");
             $anestesia = Anestesia_p::find($anestesiaId);
-
 
             if ($anestesia) {
                 $anestesiaOriginal = $anestesia->getOriginal(); // Guardar original
@@ -681,7 +667,6 @@ class PresupuestoController extends Controller
             $presupuesto->estado = 5;
         }
 
-
         $presupuesto->save();
 
         $rowCount = 1;
@@ -695,6 +680,8 @@ class PresupuestoController extends Controller
                 $newPrestacion = new Prestaciones();
                 $newPrestacion->presupuesto_id = $presupuesto->id;
                 $newPrestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
+                $newPrestacion->creado_por = auth()->user()->id;
+                $newPrestacion->creado_fecha = now();
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
                 if (is_numeric($prestacionInput)) {
                     $newPrestacion->prestacion_salutte_id = $prestacionInput;

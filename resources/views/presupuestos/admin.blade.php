@@ -10,38 +10,46 @@
 <x-app-layout>
     <x-slot name="title">Administrar</x-slot>
 
-    <form method="GET" action="{{ route('presupuestos.index')}} "
+    <form method="POST" action="{{ route('presupuestos.convenio') }}"
         class="w-full mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
 
+        @csrf <!-- El token CSRF dentro del formulario -->
 
         <h1 class="text-2xl font-bold mb-6">ADMINISTRAR</h1>
 
-
-
-
-
-        <div class="flex justify-between mb-4">
-
-        </div>
         <div class="mb-4">
             <label for="email" style="margin-bottom: 10px; margin-right: 10px;">MODIFICAR CONVENIO: </label>
-            <select type="text" name="convenio" class="border w-auto" style="min-width: 200px;">
+            <select id="convenio" name="convenio_id" class="border w-auto" style="min-width: 200px;">
                 <option value="">Seleccione un convenio</option>
                 @foreach ($convenios as $convenio)
                     <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
                 @endforeach
             </select>
         </div>
+
+        <!-- Campo oculto para enviar el nombre del convenio -->
+        <input type="hidden" id="nombre_convenio" name="nombre_convenio" value="">
+
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px; margin-bottom: 20px"></div>
+
         <button type="submit" class="btn btn-primary">
             Guardar cambios
         </button>
     </form>
+
 </x-app-layout>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+
+    // Cuando el select de convenio cambie, actualizamos el campo hidden con el nombre del convenio seleccionado
+    $('#convenio').on('change', function() {
+        var convenioNombre = $("#convenio option:selected").text();
+        $('#nombre_convenio').val(convenioNombre); // Actualizar el valor del campo hidden
+    });
+    
 
     function confirmDelete(id) {
         Swal.fire({

@@ -103,13 +103,10 @@
                     placeholder="Asunto: Prestaciones quirurgicas">
             </div>
             <div class="form-groupp">
-                <select class="form-control" name="convenio" id="convenio">
-                    <option value="">Seleccione un convenio</option>
-                    @foreach ($convenios as $convenio)
-                        <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
-                    @endforeach
-                </select>
-
+                <input type="text" name="convenio" class="form-control" value="{{ $ultimoConvenio['nombre_convenio'] }}"
+                    readonly></input>
+                <input type="hidden" name="convenio_id" class="form-control" value="{{ $ultimoConvenio['convenio_id'] }}"
+                    ></input>
             </div>
         </div>
 
@@ -281,9 +278,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let edad;
-
-
-
         document.addEventListener('DOMContentLoaded', function () {
 
 
@@ -381,7 +375,7 @@
                             <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
                         </td>
                         <td class="border px-4 py-2">
-                            <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select"></select>
+                            <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
                         </td>
                         <td class="border px-4 py-2 text-right">
                             <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
@@ -395,8 +389,8 @@
                     var selectElement = $(`select[name="prestacion_${rowCount}"]`);
                     initializeSelect2(selectElement);
 
-                    // Cargar las prestaciones en el nuevo select
-                    var convenioId = $('#convenio').val(); // Supongo que tienes un select para el convenio
+                    var convenioId = {{$ultimoConvenio->convenio_id}} // Supongo que tienes un select para el convenio
+                        console.log('prueba', convenioId);
                     loadPrestaciones(convenioId, selectElement);
 
                     // Actualizar el total después de agregar una fila
@@ -584,9 +578,9 @@
                 // Capturar cambio en el select de convenio
                 $('#convenio').on('change', function () {
                     var convenioId = $(this).val();
-
+                    console.log(convenioId);
                     if (convenioId) {
-                        loadPrestaciones(convenioId, $('.prestacion-select'));
+                        loadPrestaciones({{$ultimoConvenio->convenio_id}}, $('.prestacion-select'));
                     } else {
                         $('.prestacion-select').empty().append('<option value="">Seleccione Prestación</option>');
                     }
@@ -594,7 +588,7 @@
 
                 // Función para cargar las prestaciones en un select
                 function loadPrestaciones(convenioId, selectElement) {
-                    console.log(convenioId + ' aaaaaaaa');
+                    console.log(convenioId + ' aaaaaaaadddd');
                     $.ajax({
                         url: '{{ url("/getPrestaciones") }}/' + convenioId,
                         type: 'GET',
@@ -607,6 +601,8 @@
                         }
                     });
                 }
+
+
 
 
                 // Escuchar el cambio en el select de prestaciones
@@ -624,9 +620,9 @@
                     $('#codigo_' + rowCount).val(codigoPrestacion);
                     let prestacionId = selectedOption.val();
 
-                    let convenioId = $('#convenio').val();
+                    let convenioId = {{$ultimoConvenio->convenio_id}}
 
-                    console.log(convenioId, codigoPrestacion);
+                        console.log(convenioId, codigoPrestacion, 'aaaaaaaaaaasdddddddd');
 
                     $.ajax({
                         url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
@@ -827,6 +823,16 @@
         .select2-selection__rendered {
             line-height: 38px;
             /* Igualar la altura */
+        }
+
+        /* Limitar el ancho de la columna de la prestación */
+        .prestacion-select {
+            width: 100%;
+            max-width: 350px;
+            /* Puedes ajustar este valor */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
     </style>
 

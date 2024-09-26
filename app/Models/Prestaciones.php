@@ -22,6 +22,8 @@ class Prestaciones extends Model
         'codigo_prestacion',
         'nombre_prestacion',
         'modulo_total',
+        'creado_por',
+        'creado_fecha',
     ];
 
 }

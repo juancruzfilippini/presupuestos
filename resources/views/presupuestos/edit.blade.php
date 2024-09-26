@@ -125,10 +125,7 @@
                 <thead>
                     <tr>
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
-                        <th class="fixed-width border px-4 py-2 text-center">
-                            <input id="input_especialidad" name="input_especialidad" class="w-full text-center"
-                                value="{{ $presupuesto->especialidad }}" />
-                        </th>
+                        <th class="fixed-width border px-4 py-2 text-center">DETALLE</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
                     <input type="hidden" id="especialidad" name="especialidad" value="">

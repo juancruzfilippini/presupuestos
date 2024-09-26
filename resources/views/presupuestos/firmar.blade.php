@@ -418,6 +418,29 @@
                     </tbody>
                 </table>
 
+                
+
+                <h3>Detalle</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Prestacion</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach($prestaciones as $prestacion)
+                            <tr>
+                                <td>{{ Carbon::parse($prestacion->creado_fecha)->format('d/m/Y - H:i:s') }}</td>
+                                <td> Prestacion {{ $loop->index + 1 }} </td>
+                                <td>{{ Users::getNameById($prestacion->creado_por) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
                 @if($firmas->comercializacion == 1 || $firmas->auditoria == 1 || $firmas->direccion == 1)
                     <h3>Firmas</h3>
                     @if($firmas->comercializacion == 1)
@@ -432,8 +455,8 @@
                         ► Firmado por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Dirección, el día: {{ Carbon::parse($firmas->fecha_direccion)->format('d/m/Y - H:i:s') }}
                         <br>
                     @endif
-
                 @endif
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
