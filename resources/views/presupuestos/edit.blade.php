@@ -136,30 +136,30 @@
                 <tbody>
 
                     @foreach($prestaciones as $prestacion)
-                        <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
+                        <input class="h-10 border" type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
                             value="{{$prestacion->id}}">
-                        <input type="hidden" id="prestacion_salutte_id" name="prestacion_salutte_id_{{ $loop->iteration }}"
+                        <input class="h-10 border" type="hidden" id="prestacion_salutte_id" name="prestacion_salutte_id_{{ $loop->iteration }}"
                             value="{{$prestacion->prestacion_salutte_id}}">
 
 
                         <tr>
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center" name="codigo_{{ $loop->iteration }}"
+                                <input class="w-full text-center border h-10" name="codigo_{{ $loop->iteration }}"
                                     value="{{ $prestacion->codigo_prestacion }}" />
                             </td>
                             @if(is_null($prestacion->nombre_prestacion))
                                 <td class="border px-4 py-2 text-center">
-                                    <input class="w-full text-center" name="prestacion_{{ $loop->iteration }}"
+                                    <input class="w-full text-center border h-10" name="prestacion_{{ $loop->iteration }}"
                                         value="{{ Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" />
                                 </td>
                             @else
                                 <td class="border px-4 py-2 text-center">
-                                    <input class="w-full text-center" name="prestacion_{{ $loop->iteration }}"
+                                    <input class="w-full text-center border h-10" name="prestacion_{{ $loop->iteration }}"
                                         value="{{ $prestacion->nombre_prestacion }}" />
                                 </td>
                             @endif
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center" name="modulo_total_{{ $loop->iteration }}"
+                                <input class="w-full text-center border h-10" name="modulo_total_{{ $loop->iteration }}"
                                     value="{{ $prestacion->modulo_total }}" oninput="updateTotalPresupuesto()" />
                             </td>
                         </tr>
@@ -186,14 +186,14 @@
                             <tr>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border w-auto">
+                                        value="{{$anestesia->complejidad}}" class="border w-auto h-10 text-center">
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border w-auto" oninput="updateTotalPresupuesto()">
+                                        value="{{$anestesia->precio}}" class="border w-auto h-10 text-center" oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto"
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto h-10 text-center"
                                         style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>

@@ -1,7 +1,6 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-
 </head>
 
 <x-app-layout>
@@ -43,7 +42,7 @@
             <div>
                 <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
                 <input type="text" id="medico_tratante" name="medico_tratante" class="border rounded p-2 w-full"
-                    value="">
+                    value="" required>
             </div>
         </div>
 
@@ -77,12 +76,13 @@
                 </div>
                 <div class="form-groupp">
                     <label for="email" style="margin-top: 5px;">EMAIL: </label>
-                    <input type="text" id="email" name="email" class="form-control" placeholder="Email del paciente">
+                    <input type="text" id="email" name="email" class="form-control" placeholder="Email del paciente"
+                        required>
                 </div>
                 <div class="form-groupp">
                     <label for="" style="margin-top: 5px;">OBRA SOCIAL:</label>
                     <input type="text" id="input_obrasocial" name="input_obrasocial" class="border rounded p-2" value=""
-                        placeholder="Obra social del paciente">
+                        placeholder="Obra social del paciente" required>
                 </div>
                 <div class="form-groupp">
                     <label for="email" style="margin-top: 5px;">NUMERO DE AFILIADO: </label>
@@ -105,8 +105,8 @@
             <div class="form-groupp">
                 <input type="text" name="convenio" class="form-control" value="{{ $ultimoConvenio['nombre_convenio'] }}"
                     readonly></input>
-                <input type="hidden" name="convenio_id" class="form-control" value="{{ $ultimoConvenio['convenio_id'] }}"
-                    ></input>
+                <input type="hidden" name="convenio_id" class="form-control"
+                    value="{{ $ultimoConvenio['convenio_id'] }}"></input>
             </div>
         </div>
 
@@ -176,7 +176,6 @@
                     <th class="border px-4 py-2 text-center">Tipo</th>
                 </thead>
                 <tbody id="anestesia-body">
-
                 </tbody>
             </table>
             <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
@@ -281,6 +280,8 @@
         document.addEventListener('DOMContentLoaded', function () {
 
 
+           
+
 
             function updateTotalPresupuesto() {
                 let totalPresupuesto = 0;
@@ -326,22 +327,22 @@
                 var newRow = document.createElement('tr');
 
                 newRow.innerHTML = `
-            <td class="border px-4 py-2">
-                <input type="text" name="complejidad[]" class="border w-auto">
-            </td>
-            <td class="border px-4 py-2">
-                <input type="number" name="precio_anestesia[]" class="border w-auto">
-            </td>
-            <td>
-                <select name="anestesia_id[]" class="border rounded" style="min-width: 200px; margin-right: 20px;">
-                    <option value="0">Sin especificar</option>
-                    <option value="1">Local</option>
-                    <option value="2">Periférica</option>
-                    <option value="3">Central</option>
-                    <option value="4">Total</option>
-                </select>
-            </td>
-        `;
+                    <td class="border px-4 py-2">
+                        <input type="text" name="complejidad[]" class="border w-auto h-10">
+                    </td>
+                    <td class="border px-4 py-2">
+                        <input type="number" name="precio_anestesia[]" class="border w-auto h-10">
+                    </td>
+                    <td class="border px-4 py-2">
+                        <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;">
+                            <option value="0">Sin especificar</option>
+                            <option value="1">Local</option>
+                            <option value="2">Periférica</option>
+                            <option value="3">Central</option>
+                            <option value="4">Total</option>
+                        </select>
+                    </td>
+                `;
 
                 tableBody.appendChild(newRow);
 
@@ -372,13 +373,13 @@
                             </button>
                         </td>
                         <td class="border px-4 py-2">
-                            <input type="text" name="codigo_${rowCount}" class="border w-full text-center">
-                        </td>
+                                <input type="text" name="codigo_${rowCount}" class="border w-full text-center h-10">
+                            </td>
                         <td class="border px-4 py-2">
                             <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
                         </td>
                         <td class="border px-4 py-2 text-right">
-                            <input type="number" name="modulo_total_${rowCount}" class="border w-full text-right">
+                            <input type="number" name="modulo_total_${rowCount}" class="border w-full text-center h-10">
                         </td>
                     </tr>`;
 

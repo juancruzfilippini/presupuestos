@@ -128,7 +128,7 @@
                     class="form-control col-2" style="max-width: 200px" placeholder="Buscar por fecha de inicio">
 
                 @if (request()->input('search_desde'))
-                    <a href="{{ route('estudios.index') }}" class="btn btn-secondary">×</a>
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
                 @endif
 
                 <!-- Filtro "Hasta" -->
@@ -139,7 +139,7 @@
                     class="form-control col-2" style="max-width: 200px" placeholder="Buscar por fecha de fin">
 
                 @if (request()->input('search_hasta'))
-                    <a href="{{ route('estudios.index') }}" class="btn btn-secondary">×</a>
+                    <a href="{{ route('presupuestos.index') }}" class="btn btn-secondary">×</a>
                 @endif
 
                 <!-- Botón de Buscar -->
