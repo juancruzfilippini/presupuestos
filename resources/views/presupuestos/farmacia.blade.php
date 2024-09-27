@@ -31,10 +31,12 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                     <li>
-                        <a href="{{ Storage::url($archivo->file_path) }}" class="text-blue-500 hover:underline" download>
+                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}"
+                            class="text-blue-500 hover:underline" download="{{ basename($archivo->file_path) }}">
                             Descargar {{ basename($archivo->file_path) }}
                         </a>
                     </li>
+
                 @endforeach
             </div>
         @endif
@@ -78,17 +80,19 @@
                         <tr class="original-prestacion">
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500"
-                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}" readonly/>
+                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
+                                    readonly />
                             </td>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500"
                                     name="prestacion_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" Readonly/>
+                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}"
+                                    Readonly />
                             </td>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center bg-gray-100 text-gray-500 moduloTotal"
                                     name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
-                                    oninput="updateTotalPresupuesto()" readonly/>
+                                    oninput="updateTotalPresupuesto()" readonly />
                             </td>
                         </tr>
                     @endforeach
@@ -302,7 +306,7 @@
             },
             error: function (xhr, status, error) {
                 console.error('Error en la consulta AJAX:', error);
-                
+
             }
         });
     });

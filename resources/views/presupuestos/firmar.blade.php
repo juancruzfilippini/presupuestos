@@ -52,11 +52,14 @@
             <div class="mb-4">
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
-                    <li>
-                        <a href="{{ Storage::url($archivo->file_path) }}" class="text-blue-500 hover:underline" download>
-                            Descargar {{ basename($archivo->file_path) }}
-                        </a>
-                    </li>
+                <li>
+                    <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}" 
+                    class="text-blue-500 hover:underline" 
+                    download="{{ basename($archivo->file_path) }}">
+                        Descargar {{ basename($archivo->file_path) }}
+                    </a>
+                </li>
+
                 @endforeach
             </div>
         @endif

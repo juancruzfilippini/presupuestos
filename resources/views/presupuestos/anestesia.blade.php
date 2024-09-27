@@ -26,10 +26,12 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                     <li>
-                        <a href="{{ Storage::url($archivo->file_path) }}" class="text-blue-500 hover:underline" download>
+                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}"
+                            class="text-blue-500 hover:underline" download="{{ basename($archivo->file_path) }}">
                             Descargar {{ basename($archivo->file_path) }}
                         </a>
                     </li>
+
                 @endforeach
             </div>
         @endif
@@ -74,7 +76,8 @@
                                         oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-full" style="min-width: 200px;">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-full"
+                                        style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
