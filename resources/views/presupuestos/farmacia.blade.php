@@ -79,18 +79,18 @@
                             value="{{$prestacion->id}}">
                         <tr class="original-prestacion">
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500"
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
                                     name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
                                     readonly />
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500"
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
                                     name="prestacion_{{ $loop->iteration }}"
                                     value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}"
                                     Readonly />
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                <input class="w-full text-center bg-gray-100 text-gray-500 moduloTotal"
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500 moduloTotal"
                                     name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
                                     oninput="updateTotalPresupuesto()" readonly />
                             </td>
@@ -205,13 +205,13 @@
             let newRow = `
             <tr data-row="${prestacionCount}" class="added-prestacion">
                 <td class="border px-4 py-2 text-center">
-                    <input class="w-full text-center" name="codigo_${prestacionCount}" />
+                    <input class="w-full border h-10 text-center" name="codigo_${prestacionCount}" />
                 </td>
                 <td class="border px-4 py-2">
-                    <select name="prestacion_${prestacionCount}" class="border w-full text-center prestacion-select"></select>
+                    <select name="prestacion_${prestacionCount}" class="border border h-10 w-full text-center prestacion-select"></select>
                 </td>
                 <td class="border px-4 py-2 text-center">
-                    <input class="w-full text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="updateTotalPresupuesto()" />
+                    <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="updateTotalPresupuesto()" />
                 </td>
             </tr>
         `;

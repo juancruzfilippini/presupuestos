@@ -68,15 +68,15 @@
                             <tr>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border-none w-full">
+                                        value="{{$anestesia->complejidad}}" class="border h-10 text-center w-full">
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border-none w-full"
+                                        value="{{$anestesia->precio}}" class="border h-10 text-center w-full"
                                         oninput="updateTotalPresupuesto()">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-full"
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border text-center w-full h-10"
                                         style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
