@@ -46,8 +46,10 @@ class PresupuestoController extends Controller
         }
 
         if ($request->filled('search_estado')) {
-            $query->join('estado', 'presupuesto.estado', '=', 'estado.id')
+            $query->select('presupuesto.*')
+                ->join('estado', 'presupuesto.estado', '=', 'estado.id')
                 ->where('estado.nombre', 'like', '%' . $request->input('search_estado') . '%');
+
         }
 
 
@@ -162,7 +164,7 @@ class PresupuestoController extends Controller
         $ultimoConvenio = Convenio_actual::orderBy('id', 'desc')->first();
         //dd($ultimoConvenio);
         // Enviar la variable 'ultimoConvenio' a la vista
-        return view('presupuestos.create', compact('today','ultimoConvenio'));
+        return view('presupuestos.create', compact('today', 'ultimoConvenio'));
     }
 
 
@@ -237,7 +239,11 @@ class PresupuestoController extends Controller
         $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
         $presupuesto->telefono = $validatedData['telefono'];
         $presupuesto->email = $validatedData['email'];
-        $presupuesto->estado = 7;
+        if (is_array($request->anestesia_id)) {
+            $presupuesto->estado = 7;
+        } else {
+            $presupuesto->estado = 8;
+        }
 
 
         // Guardar en la base de datos

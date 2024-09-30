@@ -166,7 +166,7 @@
         <p class="total-registros">Total de registros: {{ $presupuestos->count() }}</p>
 
         <div class="table-responsive">
-            <table class="table table-bordered" id="tabla_presupuestos">
+            <table class="table table-bordered" id="tabla_presupuestos" style="max-width: 100%">
                 <thead>
                     <tr>
                         <th>N°</th>
@@ -203,7 +203,7 @@
 
                             <td>
                                 @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                    @if($presupuesto->estado != 4)
+                                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3)
                                         <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
