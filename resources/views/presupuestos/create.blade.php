@@ -281,6 +281,10 @@
         let edad;
         document.addEventListener('DOMContentLoaded', function () {
 
+
+
+
+
             function updateTotalPresupuesto() {
                 let totalPresupuesto = 0;
                 let totalAnestesia = 0; // Variable para el total de anestesia
@@ -373,8 +377,8 @@
                         <td class="border px-4 py-2">
                                 <input type="text" name="codigo_${rowCount}" class="border w-full text-center h-10">
                             </td>
-                        <td class="border">
-                            <select name="prestacion_${rowCount}" class="border text-center"></select>
+                        <td class="border px-4 py-2" style="max-width: 500px">
+                            <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
                         </td>
                         <td class="border px-4 py-2 text-right">
                             <input type="number" name="modulo_total_${rowCount}" class="border w-full text-center h-10">
@@ -546,6 +550,34 @@
                     updateTotalPresupuesto();
                 });
 
+                // Manejar el cambio en el select de obra social
+                $('#obra_social').on('change', function () {
+                    let obraSocial = $(this).find('option:selected').data('id');
+
+                    if (obraSocial) {
+                        $.ajax({
+                            url: '{{ route('getConvenios') }}',
+                            type: 'GET',
+                            data: { obra_social: obraSocial },
+                            success: function (data) {
+                                let convenioSelect = $('#convenio');
+                                convenioSelect.empty();
+                                convenioSelect.append('<option value="">Seleccione Convenio</option>');
+
+                                if (data.length > 0) {
+                                    data.forEach(function (item) {
+                                        convenioSelect.append(`<option value="${item.id}">${item.nombre}</option>`);
+                                    });
+                                } else {
+                                    convenioSelect.append('<option value="">No hay convenios disponibles</option>');
+                                }
+                            }
+                        });
+                    } else {
+                        $('#convenio').empty().append('<option value="">Seleccione Convenio</option>');
+                    }
+                });
+
                 // Capturar cambio en el select de convenio
                 $('#convenio').on('change', function () {
                     var convenioId = $(this).val();
@@ -677,7 +709,6 @@
 
 
 
-
     </script>
 
 
@@ -696,8 +727,7 @@
         }
 
         .fixed-width {
-            width: 650px;
-            max-width: 650px !important;
+            width: 550px;
         }
 
 
@@ -800,20 +830,12 @@
 
         /* Limitar el ancho de la columna de la prestación */
         .prestacion-select {
-            max-width: 350px;
-            /* Ajusta el tamaño máximo */
             width: 100%;
-            /* Para asegurar que se ajuste al contenedor */
-            white-space: nowrap;
-            /* Evita que el texto se divida en varias líneas */
+            max-width: 350px;
+            /* Puedes ajustar este valor */
             overflow: hidden;
-            /* Oculta cualquier contenido que exceda el área del select */
+            white-space: nowrap;
             text-overflow: ellipsis;
-            /* Muestra "..." cuando el texto es demasiado largo */
-            display: block;
-            /* Asegura que no se rompa la vista */
-            box-sizing: border-box;
-            /* Asegura que padding y border no expandan el ancho */
         }
     </style>
 
