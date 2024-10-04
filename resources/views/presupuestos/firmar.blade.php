@@ -295,18 +295,26 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                
                 <form method="POST" action="{{ route('presupuestos.guardarArchivo', ['id' => $presupuesto->id]) }}" enctype="multipart/form-data">
                     @csrf
+                    <!-- Nuevo campo para el valor aprobado -->
+                    <div class="mb-4">
+                        <label for="valor_aprobado" class="form-label">Valor Aprobado</label>
+                        <input type="number" step="0.01" name="valor_aprobado" id="valor_aprobado" class="form-control" placeholder="Ingrese el valor aprobado" required>
+                    </div>
                     <div class="mb-4">
                         <label for="archivo" class="form-label">Seleccionar PDF o Imagen</label>
                         <input type="file" name="archivo" id="archivo" class="form-control" accept=".pdf, .jpg, .jpeg, .png" required>
                     </div>
+                    
                     <button type="submit" class="btn btn-primary">Subir Archivo</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

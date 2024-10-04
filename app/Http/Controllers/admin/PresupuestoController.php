@@ -706,7 +706,7 @@ class PresupuestoController extends Controller
 
     public function guardarArchivo(Request $request, $id)
     {
-        //dd($id);
+        //dd($request->all());
         $request->validate([
             'archivo' => 'required|mimes:pdf,jpg,jpeg,png|max:2048', // Valida que sea un PDF o imagen y que no supere los 2MB
         ]);
@@ -716,11 +716,13 @@ class PresupuestoController extends Controller
             $archivo = $request->file('archivo');
             $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
             $rutaArchivo = $archivo->storeAs('presupuestos_aprobados', $nombreArchivo, 'public');
+            $valorAprobado = $request->valor_aprobado; 
 
             // Guardar información en la tabla presupuestos_aprobados
             Presupuestos_aprobados::create([
                 'presupuesto_id' => $id,
                 'file_path' => $rutaArchivo,
+                'valor_aprobado' => $valorAprobado,
             ]);
 
             $presupuesto = Presupuesto::findOrFail($id);

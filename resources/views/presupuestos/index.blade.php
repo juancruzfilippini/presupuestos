@@ -5,6 +5,7 @@
 @php
     use App\Models\ObraSocial;
     use App\Models\Estado;
+    use App\Models\Presupuestos_aprobados;
 @endphp
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -184,17 +185,26 @@
                 <tbody>
                     @foreach ($presupuestos as $presupuesto)
                         <tr>
-                            <td >{{ $presupuesto->id }}</td>
+                            <td>{{ $presupuesto->id }}</td>
                             <td class="">{{ $presupuesto->paciente }}</td>
                             <td class="">{{ $presupuesto->paciente_salutte_id }}</td>
                             <td class="">{{ $presupuesto->medico_tratante}}</td>
                             <td class="">
-                                {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
+                                {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}
+                            </td>
                             <td class="">
-                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}</td>
-                            <td >{{ $presupuesto->detalle }}</td>
+                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
+                            </td>
+                            <td>{{ $presupuesto->detalle }}</td>
                             <td class="">
-                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}</td>
+                                @if($presupuesto->estado == 9)
+                                    ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}<br>
+                                    <span>Aprobado por:
+                                        ${{ number_format( Presupuestos_aprobados::getAprobadoById($presupuesto->id), 0, ',', '.') }}</span>
+                                @else
+                                    ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}
+                                @endif
+                            </td>
                             <td class="" style="">
                                 @if (is_numeric($presupuesto->obra_social))
                                     {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
@@ -301,8 +311,6 @@
     body {
         overflow-x: hidden;
     }
-
-    
 </style>
 <script>
     $(document).ready(function () {

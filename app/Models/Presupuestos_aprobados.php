@@ -19,6 +19,12 @@ class Presupuestos_aprobados extends Model
         'id',
         'presupuesto_id',
         'file_path',
+        'valor_aprobado',
     ];
 
+    public static function getAprobadoById($id)
+    {
+        $aprobado = self::where('presupuesto_id', $id)->first();
+        return $aprobado->valor_aprobado ;
+    }
 }
