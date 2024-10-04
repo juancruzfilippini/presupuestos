@@ -244,7 +244,7 @@ class PresupuestoController extends Controller
             $presupuesto->estado = 5;
         } else {
             $presupuesto->estado = 8;
-        }   
+        }
 
 
         // Guardar en la base de datos
@@ -459,6 +459,7 @@ class PresupuestoController extends Controller
 
         // Manejar prestaciones
         $rowCount = 1;
+        //dd($request->all());
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
             $prestacion = Prestaciones::find($prestacionId);
@@ -495,6 +496,7 @@ class PresupuestoController extends Controller
 
 
         // Manejar anestesias
+        // Manejar anestesias
         $rowCountt = 1;
         while ($request->has("anestesia{$rowCountt}")) {
             $anestesiaId = $request->input("anestesia{$rowCountt}");
@@ -503,6 +505,7 @@ class PresupuestoController extends Controller
             if ($anestesia) {
                 $anestesiaOriginal = $anestesia->getOriginal(); // Guardar original
 
+                // Actualizar los valores de la anestesia
                 $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
                 $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
                 $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
@@ -513,11 +516,18 @@ class PresupuestoController extends Controller
 
                 // Comparar cambios en las anestesias
                 $dirtyFieldsAnestesia = $anestesia->getDirty();
-                //dd($dirtyFieldsAnestesia);
+
+                // Guardar los cambios en la tabla `cambios_anestesias`
                 foreach ($dirtyFieldsAnestesia as $campo => $nuevoValor) {
+                    // Concatenar el número de anestesia al nombre del campo
+                    $campoConNumero = $campo . ' '. $rowCountt;
+                    if (str_contains($campo, 'anestesia_id')) {
+                        $campoConNumero = "tipo anestesia {$rowCountt}";
+                    }
+
                     cambios_anestesias::create([
                         'presupuesto_id' => $presupuesto->id,
-                        'campo' => $campo,
+                        'campo' => $campoConNumero, // Usar el nombre del campo con el número de anestesia
                         'valor_anterior' => $anestesiaOriginal[$campo],
                         'valor_nuevo' => $nuevoValor,
                         'fecha_cambio' => now(),
@@ -525,10 +535,12 @@ class PresupuestoController extends Controller
                     ]);
                 }
                 $anestesia->save();
-
             }
+
+            // Incrementar el contador para la siguiente anestesia
             $rowCountt++;
         }
+
 
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
     }
@@ -716,7 +728,7 @@ class PresupuestoController extends Controller
             $archivo = $request->file('archivo');
             $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
             $rutaArchivo = $archivo->storeAs('presupuestos_aprobados', $nombreArchivo, 'public');
-            $valorAprobado = $request->valor_aprobado; 
+            $valorAprobado = $request->valor_aprobado;
 
             // Guardar información en la tabla presupuestos_aprobados
             Presupuestos_aprobados::create([
@@ -726,7 +738,7 @@ class PresupuestoController extends Controller
             ]);
 
             $presupuesto = Presupuesto::findOrFail($id);
-            $presupuesto->estado=9;
+            $presupuesto->estado = 9;
             $presupuesto->save();
 
             return redirect()->back()->with('success', 'Archivo subido correctamente.');

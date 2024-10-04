@@ -425,7 +425,7 @@
                         <tr>
                             <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
                             <td>
-                                @if($cambio->campo== 'anestesia_id')
+                                @if($cambio->campo== 'anestesia_id%')
                                     tipo de anestesia
                                 @elseif($cambio->campo== 'precio_anestesia')
                                     precio anestesia
@@ -434,19 +434,20 @@
                                 @endif
                             </td>
                             <td>
-                                @if($cambio->campo == 'anestesia_id')
+                                @if(str_contains($cambio->campo, 'tipo anestesia'))
                                     {{ Anestesia::getAnestesiaById($cambio->valor_anterior) }}
                                 @else
                                     {{ $cambio->valor_anterior }}
                                 @endif
                             </td>
                             <td>
-                                @if($cambio->campo == 'anestesia_id')
+                                @if(str_contains($cambio->campo, 'tipo anestesia'))
                                     {{ Anestesia::getAnestesiaById($cambio->valor_nuevo) }}
                                 @else
                                     {{ $cambio->valor_nuevo }}
                                 @endif
                             </td>
+
                             <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
                         </tr>
                     @endforeach
