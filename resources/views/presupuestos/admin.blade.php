@@ -15,11 +15,11 @@
 
         @csrf <!-- El token CSRF dentro del formulario -->
 
-        <h1 class="text-2xl font-bold mb-6">ADMINISTRAR</h1>
+        <h1 class="text-2xl font-bold mb-6">CONVENIO</h1>
 
         <div class="mb-4">
             <label for="email" style="margin-bottom: 10px; margin-right: 10px;">MODIFICAR CONVENIO: </label>
-            <select id="convenio" name="convenio_id" class="border w-auto" style="min-width: 200px;">
+            <select id="convenio" name="convenio_id" class="border w-auto h-10" style="min-width: 200px;">
                 <option value="">Seleccione un convenio</option>
                 @foreach ($convenios as $convenio)
                     <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
@@ -31,6 +31,38 @@
         <input type="hidden" id="nombre_convenio" name="nombre_convenio" value="">
 
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px; margin-bottom: 20px"></div>
+
+        <h1 class="text-2xl font-bold mb-6">USUARIOS</h1>
+
+        <table class="w-auto table table-borderless">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($usuarios as $usuario)
+                    <tr>
+                        <td class="px-4 py-2 border-b-2 border-gray-300 text-left">{{ $usuario->name }} - {{$usuario->email}}</td>
+                        <td class="px-4 py-2 border-b-2 border-gray-300 text-left">
+                            <!-- Input oculto para enviar el id del usuario -->
+                            <input type="hidden" name="usuarios_ids[]" value="{{ $usuario->id }}">
+
+                            <!-- Select con el rol del usuario -->
+                            <select name="roles[]" class="form-select">
+                                @foreach ($roles as $rol)
+                                    <option value="{{ $rol->id }}" {{ $usuario->rol_id == $rol->id ? 'selected' : '' }}>
+                                        {{ $rol->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
 
         <button type="submit" class="btn btn-primary">
             Guardar cambios
@@ -45,28 +77,10 @@
 <script>
 
     // Cuando el select de convenio cambie, actualizamos el campo hidden con el nombre del convenio seleccionado
-    $('#convenio').on('change', function() {
+    $('#convenio').on('change', function () {
         var convenioNombre = $("#convenio option:selected").text();
         $('#nombre_convenio').val(convenioNombre); // Actualizar el valor del campo hidden
     });
-    
-
-    function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminarlo',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
 
 </script>
 
