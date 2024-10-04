@@ -24,41 +24,33 @@
             font-family: Arial, sans-serif;
             font-size: 12px;
         }
-
         th, td {
             border: 1px solid #000;
             padding: 8px;
             text-align: center;
         }
-
         th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
-
         .text-left {
             text-align: left;
         }
-
         .text-right {
             text-align: right;
         }
-
         .text-center {
             text-align: center;
         }
-
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            margin-bottom: 30mm; /* Asegura espacio para el footer */
         }
-
-
         .content {
-            margin: 20px;
+            margin-bottom: 60mm; /* Deja suficiente espacio antes del footer */
         }
-
         /* Estilos para el footer */
         .footer {
         position: fixed;
@@ -70,26 +62,22 @@
         line-height: 1.2;
         border-top: 1px solid #000;
         padding-top: 5px;
-    }
+        }
+        @page {
+            margin-top: 10mm;
+            margin-bottom: 5mm; /* Deja espacio suficiente para el footer en todas las páginas */
+        }
+        .page-break {
+            page-break-after: always;
+        }
 
-    /* Forzar que el footer se repita en todas las páginas */
-    @page {
-        margin-top: 20mm;
-        margin-bottom: 10mm; /* Deja espacio suficiente para el footer en todas las páginas */
-        {footer: page-footer;} /* Aquí defines el nombre del footer que será usado */
-    }
-
-    .page-break {
-        page-break-after: always;
-    }
-
+        .fixed{
+            position: fixed;
+        }
     </style>
 </head>
-
     <x-slot name="title">Ver Presupuesto</x-slot>
-    
     <body>
-    
     <form method="GET" action="{{ route('presupuestos.index') }}"
     
         class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg" enctype="multipart/form-data">
@@ -100,9 +88,6 @@
             </div>
         @endif
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{ $presupuesto['id'] }}">
-        
-        <!-- <div style="border-top: 1px solid #000; padding-top: 20px; margin-top: 20px;"></div> -->
-        <!-- Linea divisora de secciones -->
 
         <div style="width: 100%; display: table; margin-bottom: 16px;">
             <div style="display: table-cell; text-align: left; vertical-align: middle;">
@@ -114,7 +99,6 @@
         </div>
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
-        <!-- Linea divisora de secciones -->
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">PACIENTE</div>
 
         <div class="form-group">
@@ -131,7 +115,6 @@
             <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
 
-
         <div style="margin-bottom: 5px;" class="d-flex justify-content-between align-items-center">
 
             @if(is_numeric($presupuesto['obra_social']))
@@ -143,10 +126,7 @@
         </div>
         <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
 
-        <!-- Linea divisora de secciones -->
-
-        <!-- NECESITO MOSTRAR AQUI MIS PRESTACIONES -->
-        <div style="font-size: 1rem; font-weight: 600; text-align: center;">PRESTACIONES</div>
+        <div class="" style="font-size: 1rem; font-weight: 600; text-align: center;">PRESTACIONES</div>
         <div style="margin-bottom: 5px;"></div>
             <table>
                 <thead>
@@ -167,7 +147,6 @@
                 </tbody>        
             </table>
         <br>
-
         @if(!$anestesias->isEmpty())
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">ANESTESIA</div>
 
@@ -213,8 +192,6 @@
                 </table>
         @endif
 
-
-        
         <div class="" style="margin-top: 5px;">
     <div style="font-size: 1rem; font-weight: 600; text-align: center; margin-bottom: 5px;">
         TOTAL PRESUPUESTO: $ {{ number_format($presupuesto['total_presupuesto'], 2, ',', '.') }}
@@ -223,7 +200,6 @@
     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
     </p>
     </div>
-
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
         @if($presupuesto['condicion'])
@@ -243,31 +219,32 @@
         @if($presupuesto['adicionales'] != '')
             <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
             <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Adicionales: </label>
-            <ul class="ml-4 list-none" style="font-size: 10px;"> <!-- Aplicamos el mismo tamaño de fuente -->
+            <ul class="ml-4 list-none" style="font-size: 8px;"> <!-- Aplicamos el mismo tamaño de fuente -->
                 @foreach(explode('*',$presupuesto['adicionales']) as $item)
                     @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
-                        <li class="font-semibold" style="font-size: 12px; font-weight: bold;">* {{ trim($item) }}</li> <!-- Negrita y tamaño -->
+                        <li class="font-semibold" style="font-size: 11px; font-weight: bold;">* {{ trim($item) }}</li> <!-- Negrita y tamaño -->
                     @endif
                 @endforeach
             </ul>
         @endif
         </form>
     </body>
-    <!-- Footer que se repite en todas las páginas -->
     <htmlpagefooter name="page-footer">
         <div class="footer" style="text-align: center; line-height: 1.2;">
-            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
-            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría Médica</div>
-            <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
+            <div style="color: black; font-size: 10px">Según art. 5 de la Ley 25.506 "Firma Digital"</div>
             <br>
+            @if ($firmas->comercializacion == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
+            @endif
+            @if ($firmas->auditoria == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría Médica</div>
+            @endif
+            @if ($firmas->direccion == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
+            @endif
+            <br>
+            
             <span>Paso de los Andes 3051, Ciudad de Mendoza</span><br>
             <span>www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar</span>
         </div>
     </htmlpagefooter>
-
-    
-    
-
-<!--  <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>  LINEA DIVISORA-->
-<!--  route('presupuestos.finalize', ['id' => $presupuesto->id]) -->
-

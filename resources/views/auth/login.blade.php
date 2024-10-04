@@ -62,7 +62,8 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="login-form card p-4">
             <div class="text-center mb-4 login-logo">
-                <img src="{{ asset('storage/img/hu_logo.png') }}" alt="Logo" class="img-fluid">
+                <img src="https://github.com/juancruzfilippini/logo-presupuestos/blob/main/hu_logo.png?raw=true"
+                    alt="Logo" class="img-fluid">
             </div>
 
             <form method="POST" action="{{ route('login') }}">
@@ -93,8 +94,8 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center">
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="btn btn-link">Olvidaste la contraseña?</a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="btn btn-link">Crear una cuenta</a>
                     @endif
                     <button type="submit" class="btn btn-primary">Ingresar</button>
                 </div>

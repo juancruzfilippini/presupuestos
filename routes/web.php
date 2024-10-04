@@ -80,3 +80,5 @@ Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 's
 Route::get('/presupuestos/admin', [AdministradorController::class, 'adminView'])->name('presupuestos.admin');
 
 Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio'])->name('presupuestos.convenio');
+
+Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class, 'guardarArchivo'])->name('presupuestos.guardarArchivo');

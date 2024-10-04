@@ -53,8 +53,8 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                 <li>
-                    <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}" 
-                    class="text-blue-500 hover:underline" 
+                    <a href="http://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}" 
+                    target="_blank" class="text-blue-500 hover:underline" 
                     download="{{ basename($archivo->file_path) }}">
                         Descargar {{ basename($archivo->file_path) }}
                     </a>
@@ -100,15 +100,8 @@
             <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
 
-
         <div class="d-flex justify-content-between align-items-center">
-
-            @if(is_numeric($presupuesto->obra_social))
-                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} - Nro Afiliado:  {{$presupuesto->nro_afiliado}}
-            @else
-                Obra Social: {{ $presupuesto->obra_social }} - Nro Afiliado: {{$presupuesto->nro_afiliado}}
-            @endif
-
+            Obra Social: {{ $presupuesto->obra_social }} @if(!empty($presupuesto->nro_afiliado))- Nro Afiliado: {{$presupuesto->nro_afiliado}} @endif
         </div>
 
 
@@ -233,22 +226,41 @@
                  Volver
             </button>
             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
-    Ver Historial de Cambios
-</button>
-
+                Ver Historial de Cambios
+            </button>
+            <!-- Lógica para mostrar el botón correcto (subir o ver archivo) -->
+            @if($firmas->direccion == 1 && ($firmas->comercializacion == 1 || $firmas->auditoria == 1))
+                    <div class="d-inline-block float-end">
+                        <a href="{{ route('presupuestos.exportarDatos', $presupuesto->id) }}" target="_blank" class="btn btn-primary">
+                            Generar Presupuesto
+                        </a>
+                        @if($presupuestoAprobado) <!-- Comprobar si hay un archivo subido -->
+                            <!-- Botón para ver el archivo subido -->
+                            <a href="{{ asset('storage/' . $presupuestoAprobado->file_path) }}" target="_blank" class="btn btn-secondary">
+                                Ver Presupuesto Aprobado
+                            </a>
+                        @else
+                            <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
+                                Subir Presupuesto Aprobado
+                            </button>
+                        @endif
+                    </div>
+            @endif
         </div>
     </form>
 
     
     @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 4)
-    <div class="d-flex justify-content-between" style="width: 100%;">
-        <div>
-            <form class="w-auto  mx-auto p-6 bg-white shadow-md rounded-lg mr-2" 
-                  method="GET" 
-                  action="{{ route('presupuestos.sign', ['id' => $presupuesto->id, 'rol_id' => Auth::user()->rol_id]) }}"
-                  id="sign-form-{{ $presupuesto->id }}">
+    <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
+        <!-- Formulario de firmas -->
+        <div class="d-inline-block">
+            <form class="w-auto mx-auto p-6 bg-white shadow-md rounded-lg mr-2" 
+                method="GET" 
+                action="{{ route('presupuestos.sign', ['id' => $presupuesto->id, 'rol_id' => Auth::user()->rol_id]) }}"
+                id="sign-form-{{ $presupuesto->id }}">
                 @csrf
-                <!-- Botón para Auditoría (Rol 1) -->
+                <!-- Botones de firma según el rol -->
                 <button type="button" 
                         class="btn {{ $firmas->auditoria == 1 ? 'btn-secondary' : 'btn-success' }}" 
                         {{ $firmas->auditoria == 1 || Auth::user()->rol_id != 1 ? 'disabled' : '' }}
@@ -256,7 +268,6 @@
                     {{ $firmas->auditoria == 1 ? 'Firmado por Auditoría' : 'Firmar Presupuesto como Auditoría' }}
                 </button>
 
-                <!-- Botón para Comercialización (Rol 2) -->
                 <button type="button" 
                         class="btn {{ $firmas->comercializacion == 1 ? 'btn-secondary' : 'btn-success' }}" 
                         {{ $firmas->comercializacion == 1 || Auth::user()->rol_id != 2 ? 'disabled' : '' }}
@@ -264,7 +275,6 @@
                     {{ $firmas->comercializacion == 1 ? 'Firmado por Comercialización' : 'Firmar Presupuesto como Comercialización' }}
                 </button>
 
-                <!-- Botón para Dirección (Rol 6) -->
                 <button type="button" 
                         class="btn {{ $firmas->direccion == 1 ? 'btn-secondary' : 'btn-success' }}" 
                         {{ $firmas->direccion == 1 || Auth::user()->rol_id != 6 ? 'disabled' : '' }}
@@ -273,18 +283,33 @@
                 </button>
             </form>
         </div>
-
-        <!-- Botón adicional que aparece solo si todas las partes han firmado -->
-        @if($firmas->auditoria == 1 && $firmas->comercializacion == 1 && $firmas->direccion == 1)
-            <form class="max-w-4xl p-6 bg-white shadow-md rounded-lg mr-2" method="GET" action="{{ route('presupuestos.exportarDatos', ['id' => $presupuesto->id]) }}">
-                @csrf
-                <button type="submit" class="btn btn-primary">
-                    Generar Presupuesto
-                </button>
-            </form>
-        @endif
     </div>
 @endif
+
+<!-- Modal para subir archivo -->
+<div class="modal fade" id="archivoModal" tabindex="-1" aria-labelledby="archivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="archivoModalLabel">Subir Archivo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('presupuestos.guardarArchivo', ['id' => $presupuesto->id]) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="archivo" class="form-label">Seleccionar PDF o Imagen</label>
+                        <input type="file" name="archivo" id="archivo" class="form-control" accept=".pdf, .jpg, .jpeg, .png" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subir Archivo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <!-- Modal REGISTRO AUDITORIA -->
 <div class="modal fade" id="cambiosModal" tabindex="-1" aria-labelledby="cambiosModalLabel" aria-hidden="true">

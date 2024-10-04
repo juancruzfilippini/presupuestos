@@ -97,22 +97,12 @@
             <p></p>
         </div>
 
-        <div class="form-row">
-            <div class="form-groupp">
-                <input type="text" id="detalle" name="detalle" class="form-control"
-                    placeholder="Asunto: Prestaciones quirurgicas">
-            </div>
-            <div class="form-groupp">
-                <input type="text" name="convenio" class="form-control" value="{{ $ultimoConvenio['nombre_convenio'] }}"
-                    readonly></input>
-                <input type="hidden" name="convenio_id" class="form-control"
-                    value="{{ $ultimoConvenio['convenio_id'] }}"></input>
-            </div>
-        </div>
+
 
         <p></p>
 
         <div class="mb-6" id="no-convenida-table">
+
 
             <p></p>
             <table class="table-auto w-full mb-4">
@@ -133,6 +123,18 @@
 
                 </tbody>
             </table>
+            <div class="form-row">
+                <div class="form-groupp">
+                    <input type="text" id="detalle" name="detalle" class="form-control"
+                        placeholder="Asunto: Prestaciones quirurgicas">
+                </div>
+                <div class="form-groupp">
+                    <input type="text" name="convenio" class="form-control"
+                        value="{{ $ultimoConvenio['nombre_convenio'] }}" readonly></input>
+                    <input type="hidden" name="convenio_id" class="form-control"
+                        value="{{ $ultimoConvenio['convenio_id'] }}"></input>
+                </div>
+            </div>
 
         </div>
 
@@ -280,7 +282,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
 
-           
+
 
 
             function updateTotalPresupuesto() {
@@ -334,7 +336,7 @@
                         <input type="number" name="precio_anestesia[]" class="border w-auto h-10">
                     </td>
                     <td class="border px-4 py-2">
-                        <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;">
+                        <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
                             <option value="0">Sin especificar</option>
                             <option value="1">Local</option>
                             <option value="2">Periférica</option>

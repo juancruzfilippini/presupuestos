@@ -15,6 +15,7 @@ use App\Models\Paciente;
 use App\Models\Archivo;
 use App\Models\Convenio;
 use App\Models\Convenio_actual;
+use App\Models\Presupuestos_aprobados;
 use App\Models\Prestaciones;
 use App\Models\Anestesia_p;
 use Illuminate\Support\Facades\DB;
@@ -95,13 +96,13 @@ class PresupuestoController extends Controller
         $cambiosPresupuestos = cambios_presupuestos::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
         $cambiosPrestaciones = cambios_prestaciones::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
         $cambiosAnestesias = cambios_anestesias::where('presupuesto_id', $id)->orderBy('fecha_cambio', 'desc')->get();
+        $presupuestoAprobado = Presupuestos_aprobados::where('presupuesto_id', $id)->first();
         $today = date('Y-m-d');
         //dd($anestesias);
 
 
 
-        return view('presupuestos.firmar', compact
-        ('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today', 'anestesias', 'proceso', 'cambiosPresupuestos', 'cambiosPrestaciones', 'cambiosAnestesias'));
+        return view('presupuestos.firmar', compact('presupuesto', 'archivos', 'prestaciones', 'firmas', 'id', 'paciente', 'today', 'anestesias', 'proceso', 'cambiosPresupuestos', 'cambiosPrestaciones', 'cambiosAnestesias', 'presupuestoAprobado'));
     }
 
     public function sign($id, $rol_id)
@@ -240,10 +241,10 @@ class PresupuestoController extends Controller
         $presupuesto->telefono = $validatedData['telefono'];
         $presupuesto->email = $validatedData['email'];
         if (is_array($request->anestesia_id)) {
-            $presupuesto->estado = 7;
+            $presupuesto->estado = 5;
         } else {
             $presupuesto->estado = 8;
-        }
+        }   
 
 
         // Guardar en la base de datos
@@ -268,7 +269,7 @@ class PresupuestoController extends Controller
                     'complejidad' => $complejidades[$index],
                 ]);
                 if ($anestesiaId == 0) {
-                    $presupuesto->estado = 7;
+                    $presupuesto->estado = 5;
                     $presupuesto->save();
                 }
             }
@@ -287,37 +288,39 @@ class PresupuestoController extends Controller
         $firma->save();
 
         $prestacionesData = [];
-        $rowCount = 1;  // Asume que las filas empiezan en 1
-        //dd($request->all());
-        while ($request->has("codigo_{$rowCount}")) {
-            $prestacionInput = $request->input("prestacion_{$rowCount}");
+        $prestacionKeys = preg_grep('/^codigo_\d+$/', array_keys($request->all())); // Encuentra todas las claves que siguen el patrón
+
+        foreach ($prestacionKeys as $key) {
+            // Extraer el número del índice, por ejemplo, para 'codigo_3', $index sería 3
+            $index = explode('_', $key)[1];
+
+            $prestacionInput = $request->input("prestacion_{$index}");
 
             if (is_numeric($prestacionInput)) {
                 $prestacionesData[] = [
                     'presupuesto_id' => $presupuesto->id,
-                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
+                    'codigo_prestacion' => $request->input("codigo_{$index}"),
                     'prestacion_salutte_id' => $prestacionInput,
                     'nombre_prestacion' => Prestacion::getPrestacionById($prestacionInput), // o dejarlo vacío
-                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    'modulo_total' => $request->input("modulo_total_{$index}"),
                     'creado_por' => auth()->user()->id,
                     'creado_fecha' => now(),
-                    // Agrega otras columnas si es necesario, como oxígeno, etc.
+                    // Agrega otras columnas si es necesario
                 ];
             } else {
                 $prestacionesData[] = [
                     'presupuesto_id' => $presupuesto->id,
-                    'codigo_prestacion' => $request->input("codigo_{$rowCount}"),
+                    'codigo_prestacion' => $request->input("codigo_{$index}"),
                     'prestacion_salutte_id' => null,
                     'nombre_prestacion' => $prestacionInput,
-                    'modulo_total' => $request->input("modulo_total_{$rowCount}"),
+                    'modulo_total' => $request->input("modulo_total_{$index}"),
                     'creado_por' => auth()->user()->id,
                     'creado_fecha' => now(),
-                    // Agrega otras columnas si es necesario, como oxígeno, etc.
+                    // Agrega otras columnas si es necesario
                 ];
             }
-
-            $rowCount++;
         }
+
 
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
@@ -633,10 +636,6 @@ class PresupuestoController extends Controller
             $presupuesto->estado = 6;
         } else if ($proceso->anestesia == 1 && $proceso->farmacia != 1) {
             $presupuesto->estado = 8;
-        } else if ($presupuesto->farmacia == 1 && $proceso->anestesia == 0) {
-            $presupuesto->estado = 5;
-        } else {
-            $presupuesto->estado = 7;
         }
 
         $presupuesto->save();
@@ -698,47 +697,40 @@ class PresupuestoController extends Controller
                 }
                 $newPrestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
                 $newPrestacion->save();
-            } else {
-                // Si el prestacionId existe, actualiza la prestación existente
-                $prestacion = Prestacion::find($prestacionId);
-
-                if ($prestacion) {
-                    $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
-                    $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
-                    $prestacionInput = $request->input("prestacion_{$rowCount}");
-                    if (is_numeric($prestacionInput)) {
-                        $prestacion->prestacion_salutte_id = $prestacionInput;
-                        $prestacion->nombre_prestacion = null;
-                    } else {
-                        $prestacion->prestacion_salutte_id = null;
-                        $prestacion->nombre_prestacion = $prestacionInput;
-                    }
-                    $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
-
-                    $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
-                    $prestacion->prestacion_salutte_id = $prestacionSalutteId;
-                    $prestacion->nombre_prestacion = $prestacionInput;
-
-                    // Comparar cambios en las prestaciones
-                    $dirtyFieldsPrestacion = $prestacion->getDirty();
-                    foreach ($dirtyFieldsPrestacion as $campo => $nuevoValor) {
-                        cambios_prestaciones::create([
-                            'presupuesto_id' => $presupuesto->id,
-                            'campo' => $campo . " {$rowCount}",
-                            'valor_anterior' => $prestacionOriginal[$campo],
-                            'valor_nuevo' => $nuevoValor,
-                            'fecha_cambio' => now(),
-                            'usuario_id' => auth()->user()->id
-                        ]);
-                    }
-                    $prestacion->save();
-                }
             }
-
             $rowCount++;
         }
 
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
+    }
+
+    public function guardarArchivo(Request $request, $id)
+    {
+        //dd($id);
+        $request->validate([
+            'archivo' => 'required|mimes:pdf,jpg,jpeg,png|max:2048', // Valida que sea un PDF o imagen y que no supere los 2MB
+        ]);
+
+        // Manejo del archivo subido
+        if ($request->hasFile('archivo')) {
+            $archivo = $request->file('archivo');
+            $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+            $rutaArchivo = $archivo->storeAs('presupuestos_aprobados', $nombreArchivo, 'public');
+
+            // Guardar información en la tabla presupuestos_aprobados
+            Presupuestos_aprobados::create([
+                'presupuesto_id' => $id,
+                'file_path' => $rutaArchivo,
+            ]);
+
+            $presupuesto = Presupuesto::findOrFail($id);
+            $presupuesto->estado=9;
+            $presupuesto->save();
+
+            return redirect()->back()->with('success', 'Archivo subido correctamente.');
+        }
+
+        return redirect()->back()->with('error', 'No se pudo subir el archivo.');
     }
 
 

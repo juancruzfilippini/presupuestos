@@ -31,7 +31,7 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                     <li>
-                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}"
+                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}" target="_blank"
                             class="text-blue-500 hover:underline" download="{{ basename($archivo->file_path) }}">
                             Descargar {{ basename($archivo->file_path) }}
                         </a>
@@ -109,10 +109,43 @@
 
             @if (count($anestesias) > 0)
                 <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-                @foreach($anestesias as $anestesia)
-                    <input type="hidden" name="precio_anestesia{{ $loop->iteration }}" value="{{$anestesia->precio}}"
-                        class="border-none w-auto" oninput="updateTotalPresupuesto()" disabled>
-                @endforeach
+                <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
+                <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
+                    <thead>
+                        <th class="border px-4 py-2 text-center">Complejidad</th>
+                        <th class="border px-4 py-2 text-center">Precio</th>
+                        <th class="border px-4 py-2 text-center">Tipo</th>
+                    </thead>
+                    <tbody id="anestesia-body">
+                        @foreach($anestesias as $anestesia)
+                            <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
+                            <tr>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="complejidad{{ $loop->iteration }}"
+                                        value="{{$anestesia->complejidad}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500" readonly>
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="precio_anestesia{{ $loop->iteration }}"
+                                        value="{{$anestesia->precio}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500"
+                                        oninput="updateTotalPresupuesto()" readonly>
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}"
+                                        class="border text-center w-full h-10 bg-gray-100 text-gray-500" style="min-width: 200px;" disabled>
+                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
+                                        </option>
+                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
+                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
+                                        </option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                
                 </tbody>
                 <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
                 <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>

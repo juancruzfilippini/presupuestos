@@ -163,7 +163,7 @@
             </div>
         @endif
 
-        <p class="total-registros">Total de registros: {{ $presupuestos->count() }}</p>
+        <p class="total-registros">Total de presupuestos: {{ $presupuestos->count() }}</p>
 
         <div class="table-responsive">
             <table class="table table-bordered" id="tabla_presupuestos" style="max-width: 100%">
@@ -171,6 +171,7 @@
                     <tr>
                         <th>N°</th>
                         <th class="paciente">Paciente</th>
+                        <th class="paciente">HC</th>
                         <th class="servicio">Medico Tratante</th>
                         <th>Fecha</th>
                         <th>Estado</th>
@@ -185,6 +186,7 @@
                         <tr>
                             <td >{{ $presupuesto->id }}</td>
                             <td class="">{{ $presupuesto->paciente }}</td>
+                            <td class="">{{ $presupuesto->paciente_salutte_id }}</td>
                             <td class="">{{ $presupuesto->medico_tratante}}</td>
                             <td class="">
                                 {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
@@ -202,18 +204,18 @@
                             </td>
 
                             <td>
-                                @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3)
-                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                    @endif
-                                @endif
                                 @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
                                     <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
                                         class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-check"></i>
                                     </a>
+                                @endif
+                                @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
+                                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    @endif
                                 @endif
                                 @if(Auth::user()->rol_id == 3 && ($presupuesto->estado == 8 || $presupuesto->estado == 7))
                                     <a href="{{ route('presupuestos.farmacia', $presupuesto->id) }}"
