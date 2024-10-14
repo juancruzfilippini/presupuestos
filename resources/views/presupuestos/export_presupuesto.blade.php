@@ -53,7 +53,6 @@
         }
         /* Estilos para el footer */
         .footer {
-        position: fixed;
         bottom: 0;
         left: 0;
         right: 0;

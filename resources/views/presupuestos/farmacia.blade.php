@@ -185,7 +185,10 @@ use App\Models\Prestacion;
 
 
 <script>
-    let prestacionCount = {{count($prestaciones)}};
+    let convenioId = {!! json_encode($presupuesto->convenio) !!};
+
+    let prestacionCount = {{ count($prestaciones) }};
+
     let addedPrestaciones = 0;
     let edad;
 
@@ -255,11 +258,7 @@ use App\Models\Prestacion;
             var selectElement = $(`select[name="prestacion_${prestacionCount}"]`);
             initializeSelect2(selectElement);
 
-            var convenioId = {
-                {
-                    $presupuesto->convenio
-                }
-            }; // Supongo que tienes un select para el convenio
+            // Supongo que tienes un select para el convenio
             console.log(convenioId);
             loadPrestaciones(convenioId, selectElement);
         });
@@ -322,11 +321,7 @@ use App\Models\Prestacion;
         $('#codigo_' + prestacionCount).val(codigoPrestacion);
         let prestacionId = selectedOption.val();
 
-        let convenioId = {
-            {
-                $presupuesto - > convenio
-            }
-        };
+        
         console.log('prestacionCount ', prestacionCount);
 
         console.log(convenioId, codigoPrestacion);

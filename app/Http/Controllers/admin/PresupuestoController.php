@@ -667,6 +667,7 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
+        
         //dd($anestesias);  
         return view('presupuestos.farmacia', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
     }
