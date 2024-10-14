@@ -14,7 +14,7 @@ class Anestesia extends Model
 
     public static function getAnestesiaById($id){
     $anestesia = self::find($id);
-    return $anestesia ? $anestesia->nombre : null;
+    return $anestesia->nombre;
 }
 
     

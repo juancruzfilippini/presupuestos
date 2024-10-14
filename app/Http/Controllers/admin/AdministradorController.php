@@ -14,9 +14,10 @@ class AdministradorController extends Controller
     public static function adminView(Request $request)
     {
         $convenios = Convenio::getConvenios();
+        $convenioActual = Convenio_actual::orderBy('id', 'desc')->first();
         $usuarios = Users::all();
         $roles = Rol::all();
-        return view('presupuestos.admin', compact('convenios', 'usuarios', 'roles'));
+        return view('presupuestos.admin', compact('convenios', 'usuarios', 'roles', 'convenioActual'));
     }
 
     public static function updateConvenio(Request $request)

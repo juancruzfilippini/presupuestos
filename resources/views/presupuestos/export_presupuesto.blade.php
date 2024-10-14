@@ -46,7 +46,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            margin-bottom: 30mm; /* Asegura espacio para el footer */
+            margin-bottom: 35mm; /* Asegura espacio para el footer */
         }
         .content {
             margin-bottom: 60mm; /* Deja suficiente espacio antes del footer */
@@ -117,11 +117,8 @@
 
         <div style="margin-bottom: 5px;" class="d-flex justify-content-between align-items-center">
 
-            @if(is_numeric($presupuesto['obra_social']))
-                Obra Social: {{ ObraSocial::getObraSocialById($presupuesto['obra_social']) }} - Nro Afiliado:  {{ $presupuesto['nro_afiliado'] }}
-            @else
-                Obra Social: {{ $presupuesto['obra_social'] }} - Nro Afiliado:  {{ $presupuesto['nro_afiliado'] }}
-            @endif
+                Obra Social: {{ $presupuesto['obra_social'] }} @if($presupuesto['nro_afiliado'] != '') - Nro Afiliado:  {{ $presupuesto['nro_afiliado'] }} @endif
+        
             <br>
         </div>
         <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>

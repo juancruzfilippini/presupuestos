@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PresupuestoController;
 use App\Http\Controllers\Admin\ExportarController;
 use App\Http\Controllers\Admin\PrestacionController;
 use App\Http\Controllers\Admin\ConvenioController;
+use App\Http\Controllers\MailController;
 
 use App\Http\Controllers\Admin\AdministradorController;
 
@@ -28,9 +29,9 @@ Route::get('/', function () {
     return view('auth/login');
 })->name('login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/presupuestos', [PresupuestoController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('presupuestos');
 
 
 Route::middleware('auth')->group(function () {
@@ -82,3 +83,6 @@ Route::get('/presupuestos/admin', [AdministradorController::class, 'adminView'])
 Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio'])->name('presupuestos.convenio');
 
 Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class, 'guardarArchivo'])->name('presupuestos.guardarArchivo');
+
+Route::get('/presupuestos/enviar-datos/{id}', [MailController::class, 'sendMail'])->name('enviar.datos');
+

@@ -1,7 +1,7 @@
 @php
-    use App\Models\ObraSocial;
-    use App\Models\Convenio;
-    use App\Models\Prestacion;
+use App\Models\ObraSocial;
+use App\Models\Convenio;
+use App\Models\Prestacion;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -20,9 +20,8 @@
         <div class="mb-4">
             <label for="email" style="margin-bottom: 10px; margin-right: 10px;">MODIFICAR CONVENIO: </label>
             <select id="convenio" name="convenio_id" class="border w-auto h-10" style="min-width: 200px;">
-                <option value="">Seleccione un convenio</option>
                 @foreach ($convenios as $convenio)
-                    <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
+                <option value="{{ $convenio['id'] }}">{{ $convenio['nombre'] }}</option>
                 @endforeach
             </select>
         </div>
@@ -43,22 +42,22 @@
             </thead>
             <tbody>
                 @foreach ($usuarios as $usuario)
-                    <tr>
-                        <td class="px-4 py-2 border-b-2 border-gray-300 text-left">{{ $usuario->name }} - {{$usuario->email}}</td>
-                        <td class="px-4 py-2 border-b-2 border-gray-300 text-left">
-                            <!-- Input oculto para enviar el id del usuario -->
-                            <input type="hidden" name="usuarios_ids[]" value="{{ $usuario->id }}">
+                <tr>
+                    <td class="px-4 py-2 border-b-2 border-gray-300 text-left">{{ $usuario->name }} - {{$usuario->email}}</td>
+                    <td class="px-4 py-2 border-b-2 border-gray-300 text-left">
+                        <!-- Input oculto para enviar el id del usuario -->
+                        <input type="hidden" name="usuarios_ids[]" value="{{ $usuario->id }}">
 
-                            <!-- Select con el rol del usuario -->
-                            <select name="roles[]" class="form-select">
-                                @foreach ($roles as $rol)
-                                    <option value="{{ $rol->id }}" {{ $usuario->rol_id == $rol->id ? 'selected' : '' }}>
-                                        {{ $rol->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </td>
-                    </tr>
+                        <!-- Select con el rol del usuario -->
+                        <select name="roles[]" class="form-select">
+                            @foreach ($roles as $rol)
+                            <option value="{{ $rol->id }}" {{ $usuario->rol_id == $rol->id ? 'selected' : '' }}>
+                                {{ $rol->nombre }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -75,13 +74,18 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-
     // Cuando el select de convenio cambie, actualizamos el campo hidden con el nombre del convenio seleccionado
-    $('#convenio').on('change', function () {
+    $(document).ready(function() {
+        // Ejecutar cuando la página se carga
         var convenioNombre = $("#convenio option:selected").text();
         $('#nombre_convenio').val(convenioNombre); // Actualizar el valor del campo hidden
-    });
 
+        // Ejecutar cuando el select cambia
+        $('#convenio').on('change', function() {
+            convenioNombre = $("#convenio option:selected").text();
+            $('#nombre_convenio').val(convenioNombre); // Actualizar el valor del campo hidden
+        });
+    });
 </script>
 
 <style>

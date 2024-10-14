@@ -18,9 +18,9 @@
 
 <!-- jQuery Knob Chart -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-knob/1.2.13/jquery.knob.min.js"></script>
-<!-- Daterangepicker -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/daterangepicker/3.1.0/daterangepicker.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
 <!-- Tempusdominus Bootstrap 4 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
@@ -56,10 +56,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 <x-app-layout>
-    <x-slot name="title">Presupuestos</x-slot>
+    <x-slot name="title"> Presupuestos</x-slot>
     @section('title', 'Presupuestos')
     <div class="mt-4">
-        <h1>Presupuestos</h1>
+        <h1 class="ml-2">Presupuestos</h1>
 
         <form method="GET" action="{{ route('presupuestos.index') }}" class="mb-4">
             <input type="hidden" name="page" value="{{ request()->input('page') }}">
@@ -150,10 +150,7 @@
                 <div class="ml-auto"></div>
 
                 <!-- Botón de Exportar -->
-                <button type="button" style="margin-left: auto; margin-right: 10px" class="btn btn-success rounded"
-                    onclick="exportarExcel()">
-                    <i class="fas fa-file-excel"></i> Exportar
-                </button>
+                
             </div>
 
         </form>
@@ -166,86 +163,80 @@
 
         <p class="total-registros">Total de presupuestos: {{ $presupuestos->count() }}</p>
 
-        <div class="table-responsive">
-            <table class="table table-bordered" id="tabla_presupuestos" style="max-width: 100%">
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th class="paciente">Paciente</th>
-                        <th class="paciente">HC</th>
-                        <th class="servicio">Medico Tratante</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Detalle</th>
-                        <th style="max-width: auto;">Total Presupuesto</th>
-                        <th>Obra Social</th>
-                        <th style="max-width: auto;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($presupuestos as $presupuesto)
-                        <tr>
-                            <td>{{ $presupuesto->id }}</td>
-                            <td class="">{{ $presupuesto->paciente }}</td>
-                            <td class="">{{ $presupuesto->paciente_salutte_id }}</td>
-                            <td class="">{{ $presupuesto->medico_tratante}}</td>
-                            <td class="">
-                                {{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}
-                            </td>
-                            <td class="">
-                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
-                            </td>
-                            <td>{{ $presupuesto->detalle }}</td>
-                            <td class="">
-                                @if($presupuesto->estado == 9)
-                                    ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}<br>
-                                    <span>Aprobado por:
-                                        ${{ number_format( Presupuestos_aprobados::getAprobadoById($presupuesto->id), 0, ',', '.') }}</span>
-                                @else
-                                    ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}
-                                @endif
-                            </td>
-                            <td class="" style="">
-                                @if (is_numeric($presupuesto->obra_social))
-                                    {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
-                                @else
-                                    {{ $presupuesto->obra_social }}
-                                @endif
-                            </td>
-
-                            <td>
-                                @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
-                                    <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
-                                        class="btn btn-success btn-sm">
-                                        <i class="fa-solid fa-check"></i>
-                                    </a>
-                                @endif
-                                @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
-                                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                    @endif
-                                @endif
-                                @if(Auth::user()->rol_id == 3 && ($presupuesto->estado == 8 || $presupuesto->estado == 7))
-                                    <a href="{{ route('presupuestos.farmacia', $presupuesto->id) }}"
-                                        class="btn btn-success btn-sm">
-                                        <i class="fa-solid fa-prescription-bottle-medical"></i>
-                                    </a>
-                                @endif
-                                @if(Auth::user()->rol_id == 5 && ($presupuesto->estado == 5 || $presupuesto->estado == 7))
-                                    <a href="{{ route('presupuestos.anestesia', $presupuesto->id) }}"
-                                        class="btn btn-success btn-sm">
-                                        <i class="fa-solid fa-prescription-bottle-medical"></i>
-                                    </a>
-                                @endif
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        <div class="table-responsive" style="overflow: hidden !important;">
+    <table class="table table-bordered" id="tabla_presupuestos" style="max-width: 100%;">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 5%;">N°</th>
+                <th class="paciente">Paciente</th>
+                <th class="paciente">HC</th>
+                <th class="servicio">Medico Tratante</th>
+                <th style="width: 10%;">Fecha</th>
+                <th style="width: 10%;">Estado</th>
+                <th>Detalle</th>
+                <th style="width: 12%;">Total Presupuesto</th>
+                <th>Obra Social</th>
+                <th style="width: 15%;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($presupuestos as $presupuesto)
+                <tr>
+                    <td>{{ $presupuesto->id }}</td>
+                    <td class="paciente">{{ $presupuesto->paciente }}</td>
+                    <td class="paciente">{{ $presupuesto->paciente_salutte_id }}</td>
+                    <td class="servicio">{{ $presupuesto->medico_tratante }}</td>
+                    <td>{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
+                    <td class="estado">
+                        <span class="badge {{ $presupuesto->estado == 9 ? 'bg-success' : 'bg-secondary' }}">
+                            {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
+                        </span>
+                    </td>
+                    <td class="detalle">{{ $presupuesto->detalle }}</td>
+                    <td class="text-end">
+                        @if($presupuesto->estado == 9)
+                            ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}<br>
+                            <small>Aprobado por: ${{ number_format(Presupuestos_aprobados::getAprobadoById($presupuesto->id), 2, ',', '.') }}</small>
+                        @else
+                            ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}
+                        @endif
+                    </td>
+                    <td>
+                        @if (is_numeric($presupuesto->obra_social))
+                            {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
+                        @else
+                            {{ $presupuesto->obra_social }}
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
+                            <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                        @endif
+                        @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
+                            @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                                <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            @endif
+                        @endif
+                        @if(Auth::user()->rol_id == 3 && ($presupuesto->estado == 8 || $presupuesto->estado == 7))
+                            <a href="{{ route('presupuestos.farmacia', $presupuesto->id) }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-prescription-bottle-medical"></i>
+                            </a>
+                        @endif
+                        @if(Auth::user()->rol_id == 5 && ($presupuesto->estado == 5 || $presupuesto->estado == 7))
+                            <a href="{{ route('presupuestos.anestesia', $presupuesto->id) }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-prescription-bottle-medical"></i>
+                            </a>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
         {{ $presupuestos->appends([
     'search_nro_presupuesto' => request()->input('search_nro_presupuesto'),
@@ -311,6 +302,28 @@
     body {
         overflow-x: hidden;
     }
+
+    
+    .paciente, .servicio, .detalle {
+        max-width: 20ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .table-responsive {
+        margin: 20px 0;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+    .table td.text-end {
+        text-align: right;
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+    }
+
 </style>
 <script>
     $(document).ready(function () {

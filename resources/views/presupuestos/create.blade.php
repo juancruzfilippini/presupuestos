@@ -163,12 +163,12 @@
         <div class="mb-4" style="display:none;">
             <div style="margin-left: 30%">
                 <button type="button" id="addRow"
-                    class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded mb-4">
-                    Agregar anestesia
+                    class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-4">
+                    <i class="fas fa-plus"></i>
                 </button>
                 <button type="button" id="removeRow"
-                    class="bg-red-500 hover:bg-red-700 text-black font-bold py-2 px-4 rounded mb-4">
-                    Eliminar ultima
+                    class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded mb-4">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
             <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
@@ -354,11 +354,7 @@
 
             document.getElementById('removeRow').addEventListener('click', function () {
                 var tableBody = document.getElementById('anestesia-body');
-                if (tableBody.rows.length > 1) {
                     tableBody.deleteRow(-1);
-                } else {
-                    alert('No puedes eliminar todas las filas.');
-                }
             });
 
             $(document).ready(function () {

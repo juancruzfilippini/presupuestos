@@ -1,7 +1,7 @@
 @php
-    use App\Models\ObraSocial;
-    use App\Models\Convenio;
-    use App\Models\Prestacion;
+use App\Models\ObraSocial;
+use App\Models\Convenio;
+use App\Models\Prestacion;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -27,18 +27,18 @@
         <p></p>
 
         @if ($archivos->count() > 0)
-            <div class="mb-4">
-                <label for="download_file" class="font-semibold">Archivo adjunto:</label>
-                @foreach ($archivos as $archivo)
-                    <li>
-                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}" target="_blank"
-                            class="text-blue-500 hover:underline" download="{{ basename($archivo->file_path) }}">
-                            Descargar {{ basename($archivo->file_path) }}
-                        </a>
-                    </li>
+        <div class="mb-4">
+            <label for="download_file" class="font-semibold">Archivo adjunto:</label>
+            @foreach ($archivos as $archivo)
+            <li>
+                <a href="{{ asset('storage/' . $archivo->file_path) }}"
+                    target="_blank" class="text-blue-500 hover:underline">
+                    Ver {{ basename($archivo->file_path) }}
+                </a>
+            </li>
 
-                @endforeach
-            </div>
+            @endforeach
+        </div>
         @endif
 
         <div class="flex justify-between mb-4">
@@ -69,32 +69,32 @@
                 <thead>
                     <tr>
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
-                        <th class="fixed-width border px-4 py-2 text-center"> {{$presupuesto->especialidad }}</th>
+                        <th class="fixed-width border px-4 py-2 text-center"> DETALLE</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
                 </thead>
                 <tbody id="prestacionesBody">
                     @foreach($prestaciones as $prestacion)
-                        <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
-                            value="{{$prestacion->id}}">
-                        <tr class="original-prestacion">
-                            <td class="border px-4 py-2 text-center">
-                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
-                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
-                                    readonly />
-                            </td>
-                            <td class="border px-4 py-2 text-center">
-                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
-                                    name="prestacion_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}"
-                                    Readonly />
-                            </td>
-                            <td class="border px-4 py-2 text-center">
-                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500 moduloTotal"
-                                    name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
-                                    oninput="updateTotalPresupuesto()" readonly />
-                            </td>
-                        </tr>
+                    <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
+                        value="{{$prestacion->id}}">
+                    <tr class="original-prestacion">
+                        <td class="border px-4 py-2 text-center">
+                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
+                                name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
+                                readonly />
+                        </td>
+                        <td class="border px-4 py-2 text-center" style="max-width: 500px">
+                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
+                                name="prestacion_{{ $loop->iteration }}"
+                                value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}"
+                                Readonly />
+                        </td>
+                        <td class="border px-4 py-2 text-center">
+                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500 moduloTotal"
+                                name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
+                                oninput="updateTotalPresupuesto()" readonly />
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -108,49 +108,49 @@
 
 
             @if (count($anestesias) > 0)
-                <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-                <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
-                <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
-                    <thead>
-                        <th class="border px-4 py-2 text-center">Complejidad</th>
-                        <th class="border px-4 py-2 text-center">Precio</th>
-                        <th class="border px-4 py-2 text-center">Tipo</th>
-                    </thead>
-                    <tbody id="anestesia-body">
-                        @foreach($anestesias as $anestesia)
-                            <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
-                            <tr>
-                                <td class="border px-4 py-2">
-                                    <input type="text" name="complejidad{{ $loop->iteration }}"
-                                        value="{{$anestesia->complejidad}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500" readonly>
-                                </td>
-                                <td class="border px-4 py-2">
-                                    <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500"
-                                        oninput="updateTotalPresupuesto()" readonly>
-                                </td>
-                                <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}"
-                                        class="border text-center w-full h-10 bg-gray-100 text-gray-500" style="min-width: 200px;" disabled>
-                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
-                                        </option>
-                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
-                                        </option>
-                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
-                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                
+            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+            <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
+            <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
+                <thead>
+                    <th class="border px-4 py-2 text-center">Complejidad</th>
+                    <th class="border px-4 py-2 text-center">Precio</th>
+                    <th class="border px-4 py-2 text-center">Tipo</th>
+                </thead>
+                <tbody id="anestesia-body">
+                    @foreach($anestesias as $anestesia)
+                    <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
+                    <tr>
+                        <td class="border px-4 py-2">
+                            <input type="text" name="complejidad{{ $loop->iteration }}"
+                                value="{{$anestesia->complejidad}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500" readonly>
+                        </td>
+                        <td class="border px-4 py-2">
+                            <input type="text" name="precio_anestesia{{ $loop->iteration }}"
+                                value="{{$anestesia->precio}}" class="border h-10 text-center w-full bg-gray-100 text-gray-500"
+                                oninput="updateTotalPresupuesto()" readonly>
+                        </td>
+                        <td class="border px-4 py-2">
+                            <select type="text" name="anestesia_id{{ $loop->iteration }}"
+                                class="border text-center w-full h-10 bg-gray-100 text-gray-500" style="min-width: 200px;" disabled>
+                                <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
+                                </option>
+                                <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
+                                <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
+                                </option>
+                                <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
+                                <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
+                            </select>
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
-                <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
-                <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
-                <input type="float" id="total_anestesia" name="total_anestesia"
-                    class="border rounded p-2 w-auto ml-1 text-center" value="" disabled>
+            </table>
+
+            </tbody>
+            <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
+            <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
+            <input type="float" id="total_anestesia" name="total_anestesia"
+                class="border rounded p-2 w-auto ml-1 text-center" value="" disabled>
             @endif
 
 
@@ -185,7 +185,7 @@
 
 
 <script>
-    let prestacionCount = {{ count($prestaciones) }};
+    let prestacionCount = {{count($prestaciones)}};
     let addedPrestaciones = 0;
     let edad;
 
@@ -196,14 +196,14 @@
         let totalAnestesia = 0;
 
         // Sumar todos los valores de los campos de presupuesto
-        $('input[name^="modulo_total_"]').each(function () {
+        $('input[name^="modulo_total_"]').each(function() {
             let value = parseFloat($(this).val()) || 0;
             totalPresupuesto += value;
         });
 
         // Sumar los precios de anestesia
 
-        $('input[name^="precio_anestesia"]').each(function () {
+        $('input[name^="precio_anestesia"]').each(function() {
             let value = parseFloat($(this).val()) || 0;
             console.log(value);
             totalAnestesia += value;
@@ -228,9 +228,9 @@
         $('#total_anestesia').val(totalAnestesia.toFixed(2));
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-        $('#addPrestacionBtn').on('click', function () {
+        $('#addPrestacionBtn').on('click', function() {
             prestacionCount++; // Incrementar el contador de prestaciones
             addedPrestaciones++; // Contar las prestaciones agregadas
 
@@ -240,7 +240,7 @@
                 <td class="border px-4 py-2 text-center">
                     <input class="w-full border h-10 text-center" name="codigo_${prestacionCount}" />
                 </td>
-                <td class="border px-4 py-2">
+                <td class="border px-4 py-2" style="max-width: 500px">
                     <select name="prestacion_${prestacionCount}" class="border border h-10 w-full text-center prestacion-select"></select>
                 </td>
                 <td class="border px-4 py-2 text-center">
@@ -255,12 +255,16 @@
             var selectElement = $(`select[name="prestacion_${prestacionCount}"]`);
             initializeSelect2(selectElement);
 
-            var convenioId = {{$presupuesto->convenio}};// Supongo que tienes un select para el convenio
+            var convenioId = {
+                {
+                    $presupuesto->convenio
+                }
+            }; // Supongo que tienes un select para el convenio
             console.log(convenioId);
             loadPrestaciones(convenioId, selectElement);
         });
 
-        $('#removePrestacionBtn').on('click', function () {
+        $('#removePrestacionBtn').on('click', function() {
             if (addedPrestaciones > 0) { // Verificar si hay filas añadidas que se puedan eliminar
                 $('#prestacionesBody').find('tr.added-prestacion').last().remove(); // Eliminar la última fila agregada
                 addedPrestaciones--; // Reducir el contador de prestaciones añadidas
@@ -282,7 +286,7 @@
                 allowClear: true,
                 width: '100%', // Para ajustar el ancho
                 language: {
-                    noResults: function () {
+                    noResults: function() {
                         return "Seleccione un convenio.";
                     }
                 }
@@ -294,31 +298,35 @@
             $.ajax({
                 url: '{{ url("/getPrestaciones") }}/' + convenioId,
                 type: 'GET',
-                success: function (data) {
+                success: function(data) {
                     selectElement.empty();
                     selectElement.append('<option value="">Seleccione Prestación</option>');
-                    $.each(data, function (key, value) {
+                    $.each(data, function(key, value) {
                         selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
                     });
                 }
             });
         }
 
-        $(document).on('change', '.prestacion-select', function () {
+        $(document).on('change', '.prestacion-select', function() {
             var selectedOption = $(this).find('option:selected');
             var codigo = selectedOption.data('codigo');
             $(this).closest('tr').find('input[name^="codigo"]').val(codigo);
         });
     });
 
-    $(document).on('change', '.prestacion-select', function () {
+    $(document).on('change', '.prestacion-select', function() {
         let selectedOption = $(this).find('option:selected');
         let codigoPrestacion = selectedOption.data('codigo');
         let prestacionCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
         $('#codigo_' + prestacionCount).val(codigoPrestacion);
         let prestacionId = selectedOption.val();
 
-        let convenioId = {{$presupuesto->convenio}};
+        let convenioId = {
+            {
+                $presupuesto - > convenio
+            }
+        };
         console.log('prestacionCount ', prestacionCount);
 
         console.log(convenioId, codigoPrestacion);
@@ -326,7 +334,7 @@
         $.ajax({
             url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
             method: 'GET',
-            success: function (response) {
+            success: function(response) {
                 console.log('obtenerprecioooo');
                 let precio = parseFloat(response[0].PRECIO);
                 // Truncar el precio eliminando la parte decimal
@@ -337,13 +345,12 @@
                 $('input[name="modulo_total_' + prestacionCount + '"]').val(precioTruncado);
                 updateTotalPresupuesto();
             },
-            error: function (xhr, status, error) {
+            error: function(xhr, status, error) {
                 console.error('Error en la consulta AJAX:', error);
 
             }
         });
     });
-
 </script>
 
 <style>

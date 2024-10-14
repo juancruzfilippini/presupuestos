@@ -26,9 +26,9 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                     <li>
-                        <a href="https://172.22.116.35/presupuestos/public/storage/{{ $archivo->file_path }}"
-                        target="_blank" class="text-blue-500 hover:underline" download="{{ basename($archivo->file_path) }}">
-                            Descargar {{ basename($archivo->file_path) }}
+                    <a href="{{ asset('storage/' . $archivo->file_path) }}"
+                        target="_blank" class="text-blue-500 hover:underline" >
+                            Ver {{ basename($archivo->file_path) }}
                         </a>
                     </li>
 
