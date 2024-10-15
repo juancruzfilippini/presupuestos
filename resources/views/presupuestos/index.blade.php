@@ -58,7 +58,7 @@
 <x-app-layout>
     <x-slot name="title"> Presupuestos</x-slot>
     @section('title', 'Presupuestos')
-    <div class="mt-4">
+    <div class="mt-4 p-4">
         <h1 class="ml-2">Presupuestos</h1>
 
         <form method="GET" action="{{ route('presupuestos.index') }}" class="mb-4">
@@ -161,7 +161,6 @@
             </div>
         @endif
 
-        <p class="total-registros">Total de presupuestos: {{ $presupuestos->count() }}</p>
 
         <div class="table-responsive" style="overflow: hidden !important;">
     <table class="table table-bordered" id="tabla_presupuestos" style="max-width: 100%;">
@@ -332,10 +331,12 @@
             "order": [
                 [0, 'desc']
             ],
+            "paging": false,
+            "info": false,
             "responsive": true,
             "lengthChange": false,
             "autoWidth": true,
-            "pageLength": 20, // Establecer paginación por 20
+            "pageLength": 30, // Establecer paginación por 20
             "searching": false, // Quitar la barra de búsqueda
             "language": {
                 "decimal": "",

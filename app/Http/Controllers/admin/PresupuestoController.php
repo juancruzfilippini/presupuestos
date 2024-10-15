@@ -74,7 +74,8 @@ class PresupuestoController extends Controller
         }
 
         // Paginar los resultados
-        $presupuestos = $query->paginate(20);
+        $presupuestos = $query->orderBy('id', 'desc')->paginate(20);
+
 
         // Mantener los filtros aplicados en la paginación
         $presupuestos->appends($request->all());
