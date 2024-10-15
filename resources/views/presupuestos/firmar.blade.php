@@ -303,8 +303,8 @@ use Carbon\Carbon;
                         @csrf
                         <!-- Nuevo campo para el valor aprobado -->
                         <div class="mb-4">
-                            <label for="valor_aprobado" class="form-label">Valor Aprobado</label>
-                            <input type="number" step="0.01" name="valor_aprobado" id="valor_aprobado" class="form-control" placeholder="Ingrese el valor aprobado" required>
+                            <label for="valor_aprobado" class="form-label">Ingrese el valor aprobado</label>
+                            <input type="number" step="0.01" name="valor_aprobado" id="valor_aprobado" class="form-control" placeholder="{{$presupuesto->total_presupuesto}}" required>
                         </div>
                         <div class="mb-4">
                             <label for="archivo" class="form-label">Seleccionar PDF o Imagen</label>
