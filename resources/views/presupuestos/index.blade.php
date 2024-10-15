@@ -231,6 +231,7 @@
                                 <i class="fa-solid fa-prescription-bottle-medical"></i>
                             </a>
                         @endif
+                        
                     </td>
                 </tr>
             @endforeach

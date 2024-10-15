@@ -133,9 +133,9 @@ use Carbon\Carbon;
         @if(!$anestesias->isEmpty())
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
         <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
-        @if ( Carbon::parse($paciente->fecha_nacimiento)->age < 3 || Carbon::parse($paciente->fecha_nacimiento)->age >65 )
-            <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
-            @endif
+        @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
+            <label id="adicional_anestesia" style="color: red;">*20% de recargo por anestesia*</label>
+        @endif
 
             <table class="w-auto bg-white border border-gray-200">
                 <thead>
@@ -512,6 +512,7 @@ use Carbon\Carbon;
 <!--  route('presupuestos.finalize', ['id' => $presupuesto->id]) -->
 
 <script>
+
     function confirmSign(id) {
         Swal.fire({
             title: '¿Estás seguro?',

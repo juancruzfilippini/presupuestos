@@ -330,10 +330,10 @@
 
                 newRow.innerHTML = `
                     <td class="border px-4 py-2">
-                        <input type="text" name="complejidad[]" class="border w-auto h-10">
+                        <input type="text" name="complejidad[]" class="border w-auto h-10 text-center">
                     </td>
                     <td class="border px-4 py-2">
-                        <input type="number" name="precio_anestesia[]" class="border w-auto h-10">
+                        <input type="number" name="precio_anestesia[]" class="border w-auto h-10 text-center">
                     </td>
                     <td class="border px-4 py-2">
                         <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
@@ -354,7 +354,7 @@
 
             document.getElementById('removeRow').addEventListener('click', function () {
                 var tableBody = document.getElementById('anestesia-body');
-                    tableBody.deleteRow(-1);
+                tableBody.deleteRow(-1);
             });
 
             $(document).ready(function () {
@@ -363,21 +363,22 @@
 
                 // Función para inicializar select2 en selects dinámicos
                 $('#add-row1').click(function () {
-                    var rowCount = $('#no-convenida-table tbody tr').length + 1;
-                    var newRow = `<tr data-row="${rowCount}">
+                    // Usamos un identificador único en lugar de un contador de filas
+                    var uniqueId = Date.now(); // Esto asegura un ID único basado en el timestamp actual
+                    var newRow = `<tr data-row="${uniqueId}">
                         <td class="border px-4 py-2 text-center">
                             <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
                         <td class="border px-4 py-2">
-                                <input type="text" name="codigo_${rowCount}" class="border w-full text-center h-10">
-                            </td>
+                            <input type="text" name="codigo_${uniqueId}" class="border w-full text-center h-10">
+                        </td>
                         <td class="border px-4 py-2" style="max-width: 500px">
-                            <select name="prestacion_${rowCount}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
+                            <select name="prestacion_${uniqueId}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
                         </td>
                         <td class="border px-4 py-2 text-right">
-                            <input type="number" name="modulo_total_${rowCount}" class="border w-full text-center h-10">
+                            <input type="number" name="modulo_total_${uniqueId}" class="border w-full text-center h-10">
                         </td>
                     </tr>`;
 
@@ -385,19 +386,19 @@
                     $('#no-convenida-table tbody').append(newRow);
 
                     // Inicializar Select2 en el nuevo select
-                    var selectElement = $(`select[name="prestacion_${rowCount}"]`);
+                    var selectElement = $(`select[name="prestacion_${uniqueId}"]`);
                     initializeSelect2(selectElement);
 
-                    var convenioId = {{$ultimoConvenio->convenio_id}} // Supongo que tienes un select para el convenio
-                        console.log('prueba', convenioId);
+                    var convenioId = {{$ultimoConvenio->convenio_id}}; // Supongo que tienes un select para el convenio
                     loadPrestaciones(convenioId, selectElement);
 
                     // Actualizar el total después de agregar una fila
                     updateTotalPresupuesto();
 
                     // Agregar el evento de cambio para los nuevos inputs
-                    $('#no-convenida-table').on('input', 'input[name^="modulo_total_"]', updateTotalPresupuesto);
+                    $('#no-convenida-table').on('input', `input[name="modulo_total_${uniqueId}"]`, updateTotalPresupuesto);
                 });
+
 
 
                 // Inicializar Select2

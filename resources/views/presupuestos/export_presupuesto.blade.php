@@ -147,6 +147,10 @@
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">ANESTESIA</div>
 
             <div style="margin-bottom: 5px;"></div>
+            @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
+                    <label id="adicional_anestesia" style="color: red;">*20% de recargo por riesgo de edad*</label>
+                    <div style="margin-bottom: 5px;"></div>
+                @endif
                 
             <table class="min-w-full bg-white border border-gray-200">
                     <thead>
@@ -186,6 +190,9 @@
                     @endforeach
                     </tbody>
                 </table>
+                
+
+
         @endif
 
         <div class="" style="margin-top: 5px;">
