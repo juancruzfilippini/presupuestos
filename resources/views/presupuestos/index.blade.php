@@ -225,6 +225,11 @@
                                 <i class="fa-solid fa-prescription-bottle-medical"></i>
                             </a>
                         @endif
+                        @if(Auth::user()->rol_id == 3 && $presupuesto->estado == 6)
+                            <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-edit"></i>
+                            </a>
+                        @endif
                         @if(Auth::user()->rol_id == 5 && ($presupuesto->estado == 5 || $presupuesto->estado == 7))
                             <a href="{{ route('presupuestos.anestesia', $presupuesto->id) }}" class="btn btn-success btn-sm">
                                 <i class="fa-solid fa-prescription-bottle-medical"></i>
