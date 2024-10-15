@@ -236,6 +236,7 @@ use App\Models\Prestacion;
         $('#addPrestacionBtn').on('click', function() {
             prestacionCount++; // Incrementar el contador de prestaciones
             addedPrestaciones++; // Contar las prestaciones agregadas
+            console.log(prestacionCount);
 
             // Crear nueva fila con inputs
             let newRow = `
@@ -267,7 +268,10 @@ use App\Models\Prestacion;
             if (addedPrestaciones > 0) { // Verificar si hay filas añadidas que se puedan eliminar
                 $('#prestacionesBody').find('tr.added-prestacion').last().remove(); // Eliminar la última fila agregada
                 addedPrestaciones--; // Reducir el contador de prestaciones añadidas
+                prestacionCount--;
                 updateTotalPresupuesto(); // Actualizar el total del presupuesto
+            console.log(addedPrestaciones);
+
             } else {
                 Swal.fire({
                     icon: 'warning',
