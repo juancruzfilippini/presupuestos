@@ -241,7 +241,13 @@
                                                     <i class="fa-solid fa-prescription-bottle-medical"></i>
                                                 </a>
                                             @endif
-
+                                            @if (($presupuesto->estado == 4) && (Auth::user()->rol_id == 4))
+                                                <a href="{{ route('enviar.datos', ['id' => $presupuesto->id]) }}" 
+                                                    class="btn btn-secondary btn-sm {{ $presupuesto->enviado == 1 ? 'disabled' : '' }}" 
+                                                    {{ $presupuesto->enviado == 1 ? 'aria-disabled=true' : '' }}>
+                                                    <i class="fas fa-envelope"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                     @endforeach

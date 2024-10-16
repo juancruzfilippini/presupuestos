@@ -84,5 +84,5 @@ Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio
 
 Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class, 'guardarArchivo'])->name('presupuestos.guardarArchivo');
 
-Route::get('/presupuestos/enviar-datos/{id}', [MailController::class, 'sendMail'])->name('enviar.datos');
+Route::get('/presupuestos/enviar-datos/{id}', [ExportarController::class, 'enviarDatosPorCorreo'])->name('enviar.datos');
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail; // Añadir esta línea
 use App\Models\Presupuesto; // Importamos el modelo correcto
 use App\Models\Prestaciones; // Importamos el modelo correcto
 use App\Models\Prestacion; // Importamos el modelo correcto
@@ -15,6 +16,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Archivo;
 use App\Models\Convenio;
 use App\Models\Exportar;
+use App\Mail\mailPresupuesto; // Importar la clase de correo
+
 use PDF;
 
 
@@ -102,10 +105,10 @@ class ExportarController extends Controller
     }
 
 
-    public function enviarDatosPorCorreo(Request $request, $nro_servicio)
+    public function enviarDatosPorCorreo(Request $request, $id)
     {
         $exportar = new Exportar();
-        $presupuesto = $exportar->getPresupuesto($nro_servicio);
+        $presupuesto = $exportar->getPresupuesto($id);
 
         $os = '';
         $conv = '';
@@ -174,43 +177,26 @@ class ExportarController extends Controller
 
 
             // Definir el nombre del archivo
-            $pdfFilename = 'Informe Anatomía Patológica HU.' . $nro_servicio . '.pdf';
+            $pdfFilename = 'Presupuesto HU. ' . $presupuesto->paciente . '.pdf';
             $pdfPath = storage_path('app/public/' . $pdfFilename);
             $pdf->save($pdfPath);
 
-            $autoEmail = 'anatomiapatologica@hospital.uncu.edu.ar';
+            $autoEmail = 'no-reply@hospital.uncu.edu.ar';
 
             // Enviar el PDF por correo al paciente y asi mismo
-            Mail::to([$contacto->email, $autoEmail])->send(new EstudioMail($data, $pdfPath));
+            Mail::to([$presupuesto->email, $autoEmail])->send(new mailPresupuesto($data1, $pdfPath));
 
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
-            Estudio::where('nro_servicio', $nro_servicio)->update(['enviado' => 1]);
+            Presupuesto::where('id', $id)->update(['enviado' => 1]);
 
             // Eliminar el archivo temporal después de enviar
             unlink($pdfPath);
-
             //Obtener la posicion mediante una consulta para redireccionar
-            $posicion = Estudio::getPosition($nro_servicio);
-            $estudios_por_pagina = 20;
-            $pagina = ceil($posicion / $estudios_por_pagina);
 
-
-            return redirect()->route('estudios.index', [
-                'page' => $pagina,
-                'finalizado' => $nro_servicio
-            ])->with('success', 'Estudio enviado por correo con éxito');
+            return redirect()->route('presupuestos.index')->with('success', 'Presupuesto enviado por correo con éxito');
         } else {
             // Redirigir con un mensaje de error si no hay email
-
-            $posicion = Estudio::getPosition($nro_servicio);
-            $estudios_por_pagina = 20;
-            $pagina = ceil($posicion / $estudios_por_pagina);
-
-
-            return redirect()->route('estudios.index', [
-                'page' => $pagina,
-                'finalizado' => $nro_servicio
-            ])->with('error', 'El paciente no cuenta con un email registrado');
+            return redirect()->route('estudios.index')->with('error', 'El paciente no cuenta con un email registrado');
         }
     }
 }

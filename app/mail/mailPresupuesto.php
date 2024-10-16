@@ -12,15 +12,18 @@ class mailPresupuesto extends Mailable
     use Queueable, SerializesModels;
 
     public $presupuesto;
+    public $data1;
+    public $pdfPath;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Presupuesto $presupuesto)
+    public function __construct($data1, $pdfPath)
     {
-        $this->presupuesto = $presupuesto;
+        $this->data1 = $data1;
+        $this->pdfPath = $pdfPath;
     }
 
     /**
@@ -30,7 +33,11 @@ class mailPresupuesto extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.mail')
-                    ->subject('Presupuesto - Hospital Universitario');
+        return $this->view('presupuestos.email_presupuesto') 
+                    ->attach($this->pdfPath, [
+                        'as' => 'presupuesto.pdf',
+                        'mime' => 'application/pdf',
+                    ])
+                    ->subject('PRESUPUESTO HOSPITAL UNIVERSITARIO');
     }
 }
