@@ -254,7 +254,9 @@ use Carbon\Carbon;
     </form>
 
 
-    @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 4)
+    @if((Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 4) && 
+   ($presupuesto->estado == 6 || $presupuesto->estado == 3 || $presupuesto->estado == 4 || $presupuesto->estado == 9))
+
     <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
         <!-- Formulario de firmas -->
         <div class="d-inline-block">
