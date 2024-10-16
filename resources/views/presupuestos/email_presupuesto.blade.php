@@ -27,5 +27,6 @@
 <p class="parrafo">Admisión HU</p>
 <p class="parrafo">Hospital Universitario</p>
 <p class="parrafo">Universidad Nacional de Cuyo</p>
+<p class="parrafo">www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar</p>
 </body>
 </html>
