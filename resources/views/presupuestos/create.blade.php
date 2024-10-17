@@ -182,13 +182,13 @@
             </table>
             <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
             <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
-            <input type="number" id="total_anestesia" name="total_anestesia"
+            <input type="text" id="total_anestesia" name="total_anestesia"
                 class="border rounded p-2 w-auto ml-1 text-center" value="">
         </div>
 
         <div class="mb-6">
             <label for="total_presupuesto" class="font-semibold">TOTAL PRESUPUESTO: $</label>
-            <input type="number" id="total_presupuesto" name="total_presupuesto"
+            <input type="text" id="total_presupuesto" name="total_presupuesto"
                 class="border rounded p-2 w-auto ml-1 text-center" value="">
         </div>
 
@@ -333,7 +333,7 @@
                         <input type="text" name="complejidad[]" class="border w-auto h-10 text-center">
                     </td>
                     <td class="border px-4 py-2">
-                        <input type="number" name="precio_anestesia[]" class="border w-auto h-10 text-center">
+                        <input type="text" name="precio_anestesia[]" class="border w-auto h-10 text-center" oninput="this.value = this.value.replace(',', '.');">
                     </td>
                     <td class="border px-4 py-2">
                         <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
@@ -378,7 +378,7 @@
                             <select name="prestacion_${uniqueId}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
                         </td>
                         <td class="border px-4 py-2 text-right">
-                            <input type="number" name="modulo_total_${uniqueId}" class="border w-full text-center h-10">
+                            <input type="text" name="modulo_total_${uniqueId}" class="border w-full text-center h-10" oninput="this.value = this.value.replace(',', '.');">
                         </td>
                     </tr>`;
 
@@ -397,6 +397,7 @@
 
                     // Agregar el evento de cambio para los nuevos inputs
                     $('#no-convenida-table').on('input', `input[name="modulo_total_${uniqueId}"]`, updateTotalPresupuesto);
+
                 });
 
 

@@ -251,7 +251,7 @@
                     <select name="prestacion_${prestacionCount}" class="border border h-10 w-full text-center prestacion-select"></select>
                 </td>
                 <td class="border px-4 py-2 text-center">
-                    <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="updateTotalPresupuesto()" />
+                    <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
                 </td>
             </tr>
         `;

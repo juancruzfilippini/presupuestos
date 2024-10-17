@@ -26,8 +26,8 @@
                 <label for="download_file" class="font-semibold">Archivo adjunto:</label>
                 @foreach ($archivos as $archivo)
                     <li>
-                    <a href="{{ asset('storage/' . $archivo->file_path) }}"
-                        target="_blank" class="text-blue-500 hover:underline" >
+                        <a href="{{ asset('storage/' . $archivo->file_path) }}" target="_blank"
+                            class="text-blue-500 hover:underline">
                             Ver {{ basename($archivo->file_path) }}
                         </a>
                     </li>
@@ -136,9 +136,10 @@
                 <tbody>
 
                     @foreach($prestaciones as $prestacion)
-                        <input class="h-10 border" type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
-                            value="{{$prestacion->id}}">
-                        <input class="h-10 border" type="hidden" id="prestacion_salutte_id" name="prestacion_salutte_id_{{ $loop->iteration }}"
+                        <input class="h-10 border" type="hidden" id="prestacion_id"
+                            name="prestacion_id_{{ $loop->iteration }}" value="{{$prestacion->id}}">
+                        <input class="h-10 border" type="hidden" id="prestacion_salutte_id"
+                            name="prestacion_salutte_id_{{ $loop->iteration }}"
                             value="{{$prestacion->prestacion_salutte_id}}">
 
 
@@ -160,7 +161,9 @@
                             @endif
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center border h-10" name="modulo_total_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->modulo_total }}" oninput="updateTotalPresupuesto()" />
+                                    value="{{ $prestacion->modulo_total }}"
+                                    oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
+
                             </td>
                         </tr>
                     @endforeach
@@ -190,11 +193,12 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                        value="{{$anestesia->precio}}" class="border w-auto h-10 text-center" oninput="updateTotalPresupuesto()">
+                                        value="{{$anestesia->precio}}" class="border w-auto h-10 text-center"
+                                        oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();">
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <select type="text" name="anestesia_id{{ $loop->iteration }}" class="border w-auto h-10 text-center"
-                                        style="min-width: 200px;">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}"
+                                        class="border w-auto h-10 text-center" style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
