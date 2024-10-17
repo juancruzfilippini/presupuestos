@@ -497,10 +497,12 @@ class PresupuestoController extends Controller
 
 
         // Manejar anestesias
-        // Manejar anestesias
+        //dd($request->all());
+        $anestesiaConIdCero = false; // Variable para controlar si hay alguna anestesia con ID 0
         $rowCountt = 1;
         while ($request->has("anestesia{$rowCountt}")) {
             $anestesiaId = $request->input("anestesia{$rowCountt}");
+            $anestesiaTipo = $request->input("anestesia_id{$rowCountt}");
             $anestesia = Anestesia_p::find($anestesiaId);
 
             if ($anestesia) {
@@ -510,9 +512,9 @@ class PresupuestoController extends Controller
                 $anestesia->complejidad = $request->input("complejidad{$rowCountt}");
                 $anestesia->precio = $request->input("precio_anestesia{$rowCountt}");
                 $anestesia->anestesia_id = $request->input("anestesia_id{$rowCountt}");
-
-                if ($anestesiaId == 0) {
-                    $presupuesto->estado = 5;
+                //dd($anestesiaTipo);
+                if ($anestesiaTipo == 0) {
+                    $anestesiaConIdCero = true; // Si es 0, actualizar la variable de control
                 }
 
                 // Comparar cambios en las anestesias
@@ -541,6 +543,17 @@ class PresupuestoController extends Controller
             // Incrementar el contador para la siguiente anestesia
             $rowCountt++;
         }
+
+        //dd($anestesiaConIdCero);
+        if ($anestesiaConIdCero == true) {
+            $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
+            $presupuesto->save();
+        } else if($anestesiaConIdCero == false){
+            $presupuesto->estado=8; // Si todas las anestesias tienen IDs diferentes de 0
+            //dd($presupuesto->estado);
+            $presupuesto->save();
+        }
+    
 
 
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
