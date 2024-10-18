@@ -339,9 +339,10 @@
                         <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
                             <option value="0">Sin especificar</option>
                             <option value="1">Local</option>
-                            <option value="2">Periférica</option>
-                            <option value="3">Central</option>
-                            <option value="4">Total</option>
+                            <option value="2">Sedación</option>
+                            <option value="3">Raquídea central</option>
+                            <option value="4">Periférica</option>
+                            <option value="5">General</option>
                         </select>
                     </td>
                 `;

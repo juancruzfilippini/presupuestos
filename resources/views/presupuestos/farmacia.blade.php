@@ -138,10 +138,11 @@
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
                                         <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Periférica
+                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Sedación
                                         </option>
-                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Central</option>
-                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Total</option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Raquídea central</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Periférica</option>
+                                        <option value="5" {{ $anestesia->anestesia_id == 5 ? 'selected' : '' }}>General</option>
                                     </select>
                                 </td>
                             </tr>

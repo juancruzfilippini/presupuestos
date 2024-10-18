@@ -133,9 +133,7 @@ use Carbon\Carbon;
         @if(!$anestesias->isEmpty())
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
         <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
-        @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
-            <label id="adicional_anestesia" style="color: red;">*20% de recargo por anestesia*</label>
-        @endif
+        
 
             <table class="w-auto bg-white border border-gray-200">
                 <thead>
@@ -157,13 +155,16 @@ use Carbon\Carbon;
                             Local
                             @break
                             @case(2)
-                            Periferica
+                            Sedación
                             @break
                             @case(3)
-                            Central
+                            Raquídea central
                             @break
                             @case(4)
-                            Total
+                            Periférica
+                            @break
+                            @case(5)
+                            General
                             @break
                             @default
                             No especificado
@@ -187,6 +188,11 @@ use Carbon\Carbon;
                 <p style="text-align: center;">
                     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
                 </p>
+                @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
+                    <div style="text-align: center;">
+                        <label id="adicional_anestesia" style="color: red;">*Incluye 20% de recargo al total de anestesia por riesgo de edad*</label>
+                    </div>
+                @endif
             </div>
 
 

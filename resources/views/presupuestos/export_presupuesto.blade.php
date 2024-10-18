@@ -147,10 +147,7 @@
         <div style="font-size: 1rem; font-weight: 600; text-align: center;">ANESTESIA</div>
 
             <div style="margin-bottom: 5px;"></div>
-            @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
-                    <label id="adicional_anestesia" style="color: red;">*20% de recargo por riesgo de edad*</label>
-                    <div style="margin-bottom: 5px;"></div>
-                @endif
+            
                 
             <table class="min-w-full bg-white border border-gray-200">
                     <thead>
@@ -172,13 +169,16 @@
                         Local
                         @break
                     @case(2)
-                        Periferica
+                        Sedación
                         @break
                     @case(3)
-                        Central
+                        Raquídea central
                         @break
                     @case(4)
-                        Total
+                        Periférica
+                        @break
+                    @case(5)
+                        General
                         @break
                     @default
                         No especificado
@@ -190,19 +190,19 @@
                     @endforeach
                     </tbody>
                 </table>
-                
-
-
         @endif
 
-        <div class="" style="margin-top: 5px;">
-    <div style="font-size: 1rem; font-weight: 600; text-align: center; margin-bottom: 5px;">
+    <div style="font-size: 1.1rem; font-weight: 600; text-align: center; margin-bottom: 5px; margin-top: 7px;">
         TOTAL PRESUPUESTO: $ {{ number_format($presupuesto['total_presupuesto'], 2, ',', '.') }}
     </div>
     <p style="text-align: center; margin-top: 0;">
     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
     </p>
-    </div>
+    @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
+        <div style="margin-bottom: 5px; text-align: center;">
+                <label id="adicional_anestesia" style="font-size: 12px; color: red;">*Incluye 20% de recargo al total de anestesia por riesgo de edad*</label>
+        </div>
+    @endif
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
         @if($presupuesto['condicion'])
