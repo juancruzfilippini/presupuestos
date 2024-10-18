@@ -234,7 +234,6 @@
     </body>
     <htmlpagefooter name="page-footer">
         <div class="footer" style="text-align: center; line-height: 1.2;">
-            <div style="color: black; font-size: 10px">Según art. 5 de la Ley 25.506 "Firma Digital"</div>
             <br>
             @if ($firmas->comercializacion == 1)
                 <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
@@ -245,6 +244,7 @@
             @if ($firmas->direccion == 1)
                 <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
             @endif
+            <div style="color: black; font-size: 10px; margin-top: 10px">Validado según art. 5 de la Ley 25.506 "Firma Digital"</div>
             <br>
             
             <span>Paso de los Andes 3051, Ciudad de Mendoza</span><br>

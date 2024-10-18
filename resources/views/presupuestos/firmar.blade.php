@@ -342,6 +342,7 @@ use Carbon\Carbon;
                 </div>
                 <div class="modal-body">
                     <!-- Tabla para Cambios en Presupuestos -->
+                    @if($cambiosPresupuestos->isNotEmpty())
                     <h3>Cambios en Presupuesto</h3>
                     <table class="table table-striped" style="table-layout: auto; width: 100%;">
                         <thead>
@@ -385,41 +386,45 @@ use Carbon\Carbon;
                             @endforeach
                         </tbody>
                     </table>
-
+                    @endif
                     <!-- Tabla para Cambios en Prestaciones -->
-                    <h3>Cambios en Prestaciones</h3>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Campo</th>
-                                <th>Valor Anterior</th>
-                                <th>Valor Nuevo</th>
-                                <th>Usuario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($cambiosPrestaciones as $cambio)
-                            <tr>
-                                <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
-                                <td>
-                                    @if($cambio->campo== 'modulo_total')
-                                    precio prestacion
-                                    @elseif($cambio->campo== 'codigo_prestacion')
-                                    codigo prestacion
-                                    @else
-                                    {{ $cambio->campo }}
-                                    @endif
-                                </td>
-                                <td>{{ $cambio->valor_anterior }} </td>
-                                <td>{{ $cambio->valor_nuevo }}</td>
-                                <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    
+                    @if($cambiosPrestaciones->isNotEmpty())
+                        <h3>Cambios en Prestaciones</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Campo</th>
+                                    <th>Valor Anterior</th>
+                                    <th>Valor Nuevo</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($cambiosPrestaciones as $cambio)
+                                <tr>
+                                    <td>{{ Carbon::parse($cambio->fecha_cambio)->format('d/m/Y - H:i:s') }}</td>
+                                    <td>
+                                        @if($cambio->campo == 'modulo_total')
+                                        precio prestacion
+                                        @elseif($cambio->campo == 'codigo_prestacion')
+                                        codigo prestacion
+                                        @else
+                                        {{ $cambio->campo }}
+                                        @endif
+                                    </td>
+                                    <td>{{ $cambio->valor_anterior }} </td>
+                                    <td>{{ $cambio->valor_nuevo }}</td>
+                                    <td>{{ Users::getNameById($cambio->usuario_id) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
 
                     <!-- Tabla para Cambios en Anestesias -->
+                    @if($cambiosAnestesias->isNotEmpty())
                     <h3>Cambios en Anestesias</h3>
                     <table class="table table-striped">
                         <thead>
@@ -466,8 +471,7 @@ use Carbon\Carbon;
 
                         </tbody>
                     </table>
-
-
+                    @endif
 
                     <h3>Detalle</h3>
                     <table class="table table-striped">
@@ -475,7 +479,7 @@ use Carbon\Carbon;
                             <tr>
                                 <th>Fecha</th>
                                 <th>Prestacion</th>
-                                <th>Usuario</th>
+                                <th>Creada por</th>
                             </tr>
                         </thead>
                         <tbody>
