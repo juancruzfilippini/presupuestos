@@ -233,6 +233,13 @@ use Carbon\Carbon;
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
                     Ver Historial de Cambios
                 </button>
+                @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
+                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-danger"><i class="fa-solid fa-edit"></i>
+                            Editar
+                        </a>
+                    @endif
+                @endif
                 <!-- Lógica para mostrar el botón correcto (subir o ver archivo) -->
                 @if($firmas->direccion == 1 && ($firmas->comercializacion == 1 || $firmas->auditoria == 1))
                 <div class="d-inline-block float-end">
