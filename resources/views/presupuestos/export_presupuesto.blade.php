@@ -93,7 +93,7 @@
                 <label for="medico_tratante" style="">MEDICO TRATANTE: {{$presupuesto['medico_tratante']}}</label>
             </div>
             <div style="display: table-cell; text-align: right; vertical-align: middle;">
-                <label for="fecha" style="">FECHA: {{ \Carbon\Carbon::parse($presupuesto['fecha'])->format('d/m/Y') }}</label>
+                <label for="fecha" style="">FECHA: {{ \Carbon\Carbon::parse($firmas->fecha_direccion)->format('d/m/Y') }}</label>
             </div>
         </div>
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
