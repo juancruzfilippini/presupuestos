@@ -293,6 +293,7 @@ class PresupuestoController extends Controller
         $prestacionesData = [];
         $prestacionKeys = preg_grep('/^codigo_\d+$/', array_keys($request->all())); // Encuentra todas las claves que siguen el patrón
 
+        //dd($request->all());
         foreach ($prestacionKeys as $key) {
             // Extraer el número del índice, por ejemplo, para 'codigo_3', $index sería 3
             $index = explode('_', $key)[1];
@@ -306,6 +307,7 @@ class PresupuestoController extends Controller
                     'prestacion_salutte_id' => $prestacionInput,
                     'nombre_prestacion' => Prestacion::getPrestacionById($prestacionInput), // o dejarlo vacío
                     'modulo_total' => $request->input("modulo_total_{$index}"),
+                    'cantidad' => $request->input("cantidad_{$index}"),
                     'creado_por' => auth()->user()->id,
                     'creado_fecha' => now(),
                     // Agrega otras columnas si es necesario
@@ -317,6 +319,7 @@ class PresupuestoController extends Controller
                     'prestacion_salutte_id' => null,
                     'nombre_prestacion' => $prestacionInput,
                     'modulo_total' => $request->input("modulo_total_{$index}"),
+                    'cantidad' => $request->input("cantidad_{$index}"),
                     'creado_por' => auth()->user()->id,
                     'creado_fecha' => now(),
                     // Agrega otras columnas si es necesario

@@ -160,6 +160,7 @@
                                 </td>
                             @endif
                             <td class="border px-4 py-2 text-center">
+                                
                                 <input class="w-full text-center border h-10" name="modulo_total_{{ $loop->iteration }}"
                                     value="{{ $prestacion->modulo_total }}"
                                     oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
