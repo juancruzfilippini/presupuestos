@@ -6,6 +6,7 @@ use App\Models\Prestacion;
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<title>Sistema de Presupuestos</title>
 
 <x-app-layout>
     <x-slot name="title">Especificar Anestesia</x-slot>
@@ -80,12 +81,11 @@ use App\Models\Prestacion;
                                 style="min-width: 200px;">
                                 <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                 </option>
-                                <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                                <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Sedación
+                                <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local</option>
+                                <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Anestesia Regional
                                 </option>
-                                <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Raquídea central</option>
-                                <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Periférica</option>
-                                <option value="5" {{ $anestesia->anestesia_id == 5 ? 'selected' : '' }}>General</option>
+                                <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación Superficial</option>
+                                <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General</option>
                             </select>
                         </td>
                     </tr>

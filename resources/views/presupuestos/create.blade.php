@@ -2,6 +2,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 </head>
+<title>Sistema de Presupuestos</title>
 
 <x-app-layout>
 
@@ -338,11 +339,10 @@
                     <td class="border px-4 py-2">
                         <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
                             <option value="0">Sin especificar</option>
-                            <option value="1">Local</option>
-                            <option value="2">Sedación</option>
-                            <option value="3">Raquídea central</option>
-                            <option value="4">Periférica</option>
-                            <option value="5">General</option>
+                            <option value="1">Anestesia Local</option>
+                            <option value="2">Anestesia Regional</option>
+                            <option value="3">Sedación Superficial</option>
+                            <option value="4">Anestesia General</option>
                         </select>
                     </td>
                 `;

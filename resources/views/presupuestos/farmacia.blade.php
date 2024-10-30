@@ -10,6 +10,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<title>Sistema de Presupuestos</title>
 
 
 <x-app-layout>
@@ -137,12 +138,11 @@
                                         style="min-width: 200px;" disabled>
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
-                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Local</option>
-                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Sedación
+                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local</option>
+                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Anestesia Regional
                                         </option>
-                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Raquídea central</option>
-                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Periférica</option>
-                                        <option value="5" {{ $anestesia->anestesia_id == 5 ? 'selected' : '' }}>General</option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación Superficial</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General</option>
                                     </select>
                                 </td>
                             </tr>

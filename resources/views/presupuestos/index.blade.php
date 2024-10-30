@@ -55,8 +55,10 @@
 <!-- JSZip (Necesario para la exportación a Excel) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
+<title>Sistema de Presupuestos</title>
+
 <x-app-layout>
-    <x-slot name="title"> Presupuestos</x-slot>
+    
     @section('title', 'Presupuestos')
     <div class="mt-4 p-4">
         <h1 class="ml-2">Presupuestos</h1>

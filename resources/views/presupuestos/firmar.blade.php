@@ -8,6 +8,7 @@ use App\Models\Users;
 use App\Helpers\NumberToWordsHelper;
 use Carbon\Carbon;
 
+
 @endphp
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -25,7 +26,7 @@ use Carbon\Carbon;
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
+<title>Sistema de Presupuestos</title>
 <x-app-layout>
     <x-slot name="title">Ver Presupuesto</x-slot>
 
@@ -152,18 +153,15 @@ use Carbon\Carbon;
                             Sin especificar
                             @break
                             @case(1)
-                            Local
+                            Anestesia Local
                             @break
                             @case(2)
-                            Sedación
+                            Anestesia Regional
                             @break
                             @case(3)
-                            Raquídea central
+                            Sedación Superficial
                             @break
                             @case(4)
-                            Periférica
-                            @break
-                            @case(5)
                             General
                             @break
                             @default
