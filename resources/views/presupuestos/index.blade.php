@@ -64,7 +64,8 @@
         <h1 class="ml-2">Presupuestos</h1>
 
         <form method="GET" action="{{ route('presupuestos.index') }}" class="mb-4">
-            <input type="hidden" name="page" value="{{ request()->input('page') }}">
+            <!-- No se necesita el campo "page" para que comience siempre desde la página 1 -->
+
 
             <!-- Primera fila de filtros -->
             <div class="input-group mb-3">
@@ -351,6 +352,10 @@
     }
 </style>
 <script>
+    document.querySelector('form').addEventListener('submit', function() {
+        this.querySelector('input[name="page"]')?.remove(); // Elimina el input 'page' antes de enviar
+    });
+
     $(document).ready(function () {
         $("#tabla_presupuestos").DataTable({
             "order": [
