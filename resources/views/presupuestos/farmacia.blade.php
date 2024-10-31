@@ -87,7 +87,7 @@
                             <td class="border px-4 py-2 text-center" style="max-width: 500px">
                                 <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
                                     name="prestacion_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}"
+                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif"
                                     Readonly />
                             </td>
                             <td class="border px-4 py-2 text-center">
@@ -250,6 +250,7 @@
                 </td>
                 <td class="border px-4 py-2" style="max-width: 500px">
                     <select name="prestacion_${prestacionCount}" class="border border h-10 w-full text-center prestacion-select"></select>
+                    <input type="hidden" name="cantidad_${prestacionCount}" value="1">
                 </td>
                 <td class="border px-4 py-2 text-center">
                     <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />

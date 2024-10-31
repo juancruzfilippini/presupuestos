@@ -160,11 +160,20 @@
                                 </td>
                             @endif
                             <td class="border px-4 py-2 text-center">
-                                
-                                <input class="w-full text-center border h-10" name="modulo_total_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->modulo_total }}"
-                                    oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
-
+                                <div style="display: flex;">
+                                    <select name="cantidad_{{ $loop->iteration }}"
+                                        class="border w-full text-center h-10 cantidad-select"
+                                        style="max-width: 80px; margin-right: 10px;">
+                                        @for ($i = 1; $i <= 20; $i++)
+                                            <option value="{{ $i }}" {{ $i == $prestacion->cantidad ? 'selected' : '' }}>
+                                                {{ $i }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <input class="w-full text-center border h-10" name="modulo_total_{{ $loop->iteration }}"
+                                        value="{{ $prestacion->modulo_total }}"
+                                        oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -202,11 +211,14 @@
                                         class="border w-auto h-10 text-center" style="min-width: 200px;">
                                         <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
                                         </option>
-                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local</option>
+                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local
+                                        </option>
                                         <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Anestesia Regional
                                         </option>
-                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación Superficial</option>
-                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General</option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación
+                                            Superficial</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General
+                                        </option>
                                     </select>
                                 </td>
                             </tr>
@@ -319,7 +331,7 @@
         @method('DELETE')
         <button style="margin-top: 50px" type="button" class="btn btn-danger"
             onclick="confirmDelete({{ $presupuesto->id }})">
-            Eliminar Presupuesto
+            Anular Presupuesto
         </button>
     </form>
 
@@ -331,12 +343,10 @@
 
     let edad;
     updateEdad({{ $presupuesto->edad }});
-    console.log({{$presupuesto->edad}});
     updateTotalPresupuesto();
 
     function updateEdad($edad) {
         edad = $edad;
-        console.log(edad);
     }
 
 
@@ -591,6 +601,67 @@
 
         toggleAdicionales.addEventListener('change', updateTextareaVisibility);
         updateTextareaVisibility(); // Llama a la función al cargar la página para manejar el estado inicial
+    });
+
+    // Función para escuchar cambios en el select de cantidad
+    function updateModuloTotal(element, initialTotal) {
+        const cantidadSelect = element;
+        const cantidad = parseInt(cantidadSelect.value);
+
+        // Tomamos el valor unitario actual basado en el data-attribute recalibrado en recalibrateUnitPrice.
+        const valorUnitario = parseFloat(cantidadSelect.getAttribute('data-valor-unitario'));
+
+        // Calculamos el nuevo módulo total.
+        const nuevoModuloTotal = valorUnitario * cantidad;
+
+        // Obtenemos el input del módulo total y actualizamos su valor.
+        const moduloTotalInput = cantidadSelect.closest('td').querySelector('input[name^="modulo_total_"]');
+        moduloTotalInput.value = nuevoModuloTotal.toFixed(2); // Formateamos a 2 decimales.
+
+        // Llamamos a la función para actualizar el total del presupuesto.
+        updateTotalPresupuesto();
+    }
+
+    function recalibrateUnitPrice(moduloTotalInput) {
+        const cantidadSelect = moduloTotalInput.closest('td').querySelector('.cantidad-select');
+        const cantidad = parseInt(cantidadSelect.value);
+        const nuevoModuloTotal = parseFloat(moduloTotalInput.value);
+
+        // Si el nuevo módulo total está vacío o no es un número, salimos de la función.
+        if (isNaN(nuevoModuloTotal) || moduloTotalInput.value.trim() === '') {
+            moduloTotalInput.value = ''; // Limpia el campo en lugar de mostrar 'NaN'.
+            return;
+        }
+
+        // Calculamos el nuevo valor unitario.
+        const nuevoValorUnitario = nuevoModuloTotal / cantidad;
+
+        // Asignamos el nuevo valor unitario al data-attribute para que se use en updateModuloTotal.
+        cantidadSelect.setAttribute('data-valor-unitario', nuevoValorUnitario.toFixed(2));
+
+        // Actualizamos el total del presupuesto.
+        updateTotalPresupuesto();
+    }
+
+    // Inicializar escucha en cada select de cantidad.
+    document.querySelectorAll('.cantidad-select').forEach(select => {
+        const moduloTotalInput = select.closest('td').querySelector('input[name^="modulo_total_"]');
+        const initialTotal = parseFloat(moduloTotalInput.value);
+        const cantidadInicial = parseInt(select.value);
+
+        // Calculamos el valor unitario inicial y lo guardamos como data-attribute.
+        const valorUnitarioInicial = initialTotal / cantidadInicial;
+        select.setAttribute('data-valor-unitario', valorUnitarioInicial.toFixed(2));
+
+        // Evento de cambio para recalcular el módulo total al cambiar la cantidad.
+        select.addEventListener('change', function () {
+            updateModuloTotal(this, parseFloat(moduloTotalInput.value));
+        });
+
+        // Evento blur para recalibrar el valor unitario al cambiar el módulo total manualmente.
+        moduloTotalInput.addEventListener('blur', function () {
+            recalibrateUnitPrice(this);
+        });
     });
 
 </script>

@@ -679,12 +679,11 @@
                         success: function (response) {
                             console.log('obtenerprecioooo');
                             let precio = parseFloat(response[0].PRECIO);
-                            // Truncar el precio eliminando la parte decimal
-                            let precioTruncado = Math.floor(precio); // También puedes usar parseInt(precio)
-                            console.log(precioTruncado);
+                            let precioConDecimales = precio.toFixed(2); // Mantiene dos decimales
+                            console.log(precioConDecimales);
                             console.log("rowCount:", rowCount);
 
-                            $('input[name="modulo_total_' + rowCount + '"]').val(precioTruncado);
+                            $('input[name="modulo_total_' + rowCount + '"]').val(precioConDecimales);
                             updateTotalPresupuesto();
                         },
                         error: function (xhr, status, error) {
@@ -692,6 +691,7 @@
                         }
                     });
                 });
+
 
 
                 // Manejar el cambio de estado del switch de convenida/no convenida

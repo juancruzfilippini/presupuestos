@@ -190,20 +190,21 @@
                                         <td class="servicio">{{ $presupuesto->medico_tratante }}</td>
                                         <td>{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
                                         <td class="estado">
-                                            <span class="badge 
-                                                {{ $presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary') }}">
-                                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
-                                            </span>
+                                        <span class="badge 
+                                            {{ $presupuesto->estado == 10 ? 'bg-danger' : ($presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary')) }}">
+                                            {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
+                                        </span>
+
                                         </td>
 
                                         <td class="detalle">{{ $presupuesto->detalle }}</td>
                                         <td class="text-end">
                                             @if($presupuesto->estado == 9)
-                                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}<br>
+                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}<br>
                                                 <small>Aprobado por:
                                                     ${{ number_format(Presupuestos_aprobados::getAprobadoById($presupuesto->id), 2, ',', '.') }}</small>
                                             @else
-                                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}
+                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}
                                             @endif
                                         </td>
                                         <td>
@@ -221,7 +222,7 @@
                                                 </a>
                                             @endif
                                             @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                                @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                                                @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9 && $presupuesto->estado != 10)
                                                     <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>

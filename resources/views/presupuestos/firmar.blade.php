@@ -45,7 +45,16 @@ use Carbon\Carbon;
 
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
 
-        <h1 class="text-2xl font-bold mb-6">VER PRESUPUESTO {{$presupuesto->id}}</h1>
+        <div class="d-flex mb-6">
+            <h1 class="text-2xl font-bold">VER PRESUPUESTO {{$presupuesto->id}}</h1>
+
+            @if($presupuesto->estado == 10)
+                <div class="bg-red-500 text-white font-semibold p-2 rounded ml-4">
+                    Este presupuesto fue anulado.
+                </div>
+            @endif
+        </div>
+        
 
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>
@@ -123,7 +132,9 @@ use Carbon\Carbon;
                 @foreach($prestaciones as $prestacion)
                 <tr>
                     <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->codigo_prestacion }}</td>
-                    <td class="px-4 py-2 border-b border-gray-300">{{ $prestacion->nombre_prestacion }}</td>
+                    <td class="px-4 py-2 border-b border-gray-300">
+                        {{ $prestacion->nombre_prestacion }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif
+                    </td>
                     <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
                 </tr>
                 @endforeach
@@ -232,7 +243,7 @@ use Carbon\Carbon;
                     Ver Historial de Cambios
                 </button>
                 @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                    @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9 && $presupuesto->estado != 10)
                         <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-danger"><i class="fa-solid fa-edit"></i>
                             Editar
                         </a>

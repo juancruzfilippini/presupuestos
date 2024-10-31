@@ -31,6 +31,7 @@ class PresupuestoController extends Controller
     {
         // Inicializa la consulta de los presupuestos
         $query = Presupuesto::where('borrado_logico', 0)
+            ->orWhere('borrado_logico', 1)
             ->orWhereNull('borrado_logico');
 
         // Agregar filtros si están presentes en el request
@@ -245,7 +246,7 @@ class PresupuestoController extends Controller
         } else {
             $presupuesto->estado = 8;
         }
-        
+
 
 
         // Guardar en la base de datos
@@ -473,6 +474,7 @@ class PresupuestoController extends Controller
                 $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
                 $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
+                $prestacion->cantidad = $request->input("cantidad_{$rowCount}");
                 $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
                 $prestacion->prestacion_salutte_id = $prestacionSalutteId;
                 $prestacion->nombre_prestacion = $prestacionInput;
@@ -551,12 +553,12 @@ class PresupuestoController extends Controller
         if ($anestesiaConIdCero == true) {
             $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
             $presupuesto->save();
-        } else if($anestesiaConIdCero == false){
-            $presupuesto->estado=8; // Si todas las anestesias tienen IDs diferentes de 0
+        } else if ($anestesiaConIdCero == false) {
+            $presupuesto->estado = 8; // Si todas las anestesias tienen IDs diferentes de 0
             //dd($presupuesto->estado);
             $presupuesto->save();
         }
-    
+
 
 
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado con éxito.');
@@ -580,7 +582,10 @@ class PresupuestoController extends Controller
             ->update(['borrado_logico' => 1]);
 
         // Actualiza la columna 'borrado_logico' a 1 en el presupuesto
-        $presupuesto->update(['borrado_logico' => 1]);
+        $presupuesto->borrado_logico = 1;
+        $presupuesto->estado = 10;
+        $presupuesto->save();
+
 
         // Redirige con mensaje de éxito
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
@@ -684,7 +689,7 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
-        
+
         //dd($anestesias);  
         return view('presupuestos.farmacia', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
     }
@@ -701,7 +706,7 @@ class PresupuestoController extends Controller
         $proceso->fecha_farmacia = now();
         $proceso->save();
 
-        
+
         $presupuesto->estado = 6;
         $presupuesto->save();
 
@@ -718,6 +723,7 @@ class PresupuestoController extends Controller
                 $newPrestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
                 $newPrestacion->creado_por = auth()->user()->id;
                 $newPrestacion->creado_fecha = now();
+                $newPrestacion->cantidad = 1;
                 $prestacionInput = $request->input("prestacion_{$rowCount}");
                 if (is_numeric($prestacionInput)) {
                     $newPrestacion->prestacion_salutte_id = $prestacionInput;
