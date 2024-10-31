@@ -136,7 +136,9 @@
                     @foreach($prestaciones as $prestacion)
                         <tr>
                             <td>{{ $prestacion->codigo_prestacion }}</td>
-                            <td class="text-left">{{ $prestacion->nombre_prestacion }}</td>
+                            <td class="text-left">
+                                {{ $prestacion->nombre_prestacion }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif
+                            </td>
                             <td>$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
                         </tr>
                     @endforeach

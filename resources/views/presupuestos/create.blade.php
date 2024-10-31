@@ -364,24 +364,29 @@
 
                 // Función para inicializar select2 en selects dinámicos
                 $('#add-row1').click(function () {
-                    // Usamos un identificador único en lugar de un contador de filas
-                    var uniqueId = Date.now(); // Esto asegura un ID único basado en el timestamp actual
+                    var uniqueId = Date.now(); // Identificador único
                     var newRow = `<tr data-row="${uniqueId}">
-                        <td class="border px-4 py-2 text-center">
-                            <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                        <td class="border px-4 py-2">
-                            <input type="text" name="codigo_${uniqueId}" class="border w-full text-center h-10">
-                        </td>
-                        <td class="border px-4 py-2" style="max-width: 500px">
-                            <select name="prestacion_${uniqueId}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
-                        </td>
-                        <td class="border px-4 py-2 text-right">
-                            <input type="text" name="modulo_total_${uniqueId}" class="border w-full text-center h-10" oninput="this.value = this.value.replace(',', '.');">
-                        </td>
-                    </tr>`;
+        <td class="border px-4 py-2 text-center">
+            <button type="button" class="bg-red-500 text-white px-2 py-1 rounded remove-row">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+        <td class="border px-4 py-2">
+            <input type="text" name="codigo_${uniqueId}" class="border w-full text-center h-10">
+        </td>
+        <td class="border px-4 py-2" style="max-width: 500px">
+            <select name="prestacion_${uniqueId}" class="border w-full text-center prestacion-select" style="max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></select>
+            
+        </td>
+        <td class="border px-4 py-2">
+            <div style="display: flex;">
+                <select name="cantidad_${uniqueId}" class="border w-full text-center h-10 cantidad-select" style="max-width: 80px; margin-right: 10px;">
+                    ${Array.from({ length: 20 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+                </select>
+                <input type="text" name="modulo_total_${uniqueId}" class="ml-2 border w-full text-center h-10" oninput="this.value = this.value.replace(',', '.');">
+            </div>
+        </td>
+    </tr>`;
 
                     // Agregar la nueva fila a la tabla
                     $('#no-convenida-table tbody').append(newRow);
@@ -390,16 +395,53 @@
                     var selectElement = $(`select[name="prestacion_${uniqueId}"]`);
                     initializeSelect2(selectElement);
 
-                    var convenioId = {{$ultimoConvenio->convenio_id}}; // Supongo que tienes un select para el convenio
+                    var convenioId = {{$ultimoConvenio->convenio_id}}; // Convenio
                     loadPrestaciones(convenioId, selectElement);
 
                     // Actualizar el total después de agregar una fila
                     updateTotalPresupuesto();
 
+                    // Agregar evento de cambio para actualizar el total cuando cambie la cantidad
+                    $('#no-convenida-table').on('change', `select[name="cantidad_${uniqueId}"]`, function () {
+                        updateModuloTotal(uniqueId);
+                    });
+
+                    $('#no-convenida-table').on('change', `select[name="prestacion_${uniqueId}"]`, function () {
+                        // Restablecer cantidad a 1 y limpiar precio base y valor de modulo_total
+                        $(`select[name="cantidad_${uniqueId}"]`).val(1);
+                        var moduloInput = $(`input[name="modulo_total_${uniqueId}"]`);
+                        moduloInput.val(''); // Limpia el valor de modulo_total
+                        moduloInput.removeData('precio-base'); // Elimina el precio base previo
+
+                        updateModuloTotal(uniqueId);
+                    });
+
+
                     // Agregar el evento de cambio para los nuevos inputs
                     $('#no-convenida-table').on('input', `input[name="modulo_total_${uniqueId}"]`, updateTotalPresupuesto);
-
                 });
+
+                // Función para actualizar el precio total dependiendo de la cantidad seleccionada
+                function updateModuloTotal(uniqueId) {
+
+                    var cantidad = $(`select[name="cantidad_${uniqueId}"]`).val();
+                    var moduloInput = $(`input[name="modulo_total_${uniqueId}"]`);
+                    var precioPorUnidad = moduloInput.data('precio-base') || moduloInput.val(); // Guardamos el precio base en el data-attribute
+
+                    console.log('cantidad:', cantidad, 'moduloInput:', moduloInput, 'precioxUnidad:', precioPorUnidad);
+
+                    // Si no existe el precio base, lo establecemos al valor actual del módulo total
+                    if (!moduloInput.data('precio-base')) {
+                        moduloInput.data('precio-base', moduloInput.val());
+                    }
+
+                    var nuevoTotal = parseFloat(precioPorUnidad) * parseInt(cantidad);
+                    moduloInput.val(nuevoTotal.toFixed(2));
+
+                    updateTotalPresupuesto(); // Recalcula el total general del presupuesto
+
+                }
+
 
 
 
@@ -415,6 +457,11 @@
                                 return "Seleccione un convenio.";
                             }
                         }
+                    });
+                }
+                function initializeSelect22(selectElement) {
+                    selectElement.select2({
+                        width: '20%', // Para ajustar el ancho
                     });
                 }
 
@@ -646,6 +693,7 @@
                 });
 
 
+
                 // Manejar el cambio de estado del switch de convenida/no convenida
                 // Manejar el cambio de estado del switch de convenida/no convenida
 
@@ -830,6 +878,15 @@
         .prestacion-select {
             width: 100%;
             max-width: 350px;
+            /* Puedes ajustar este valor */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .cantidad-select {
+            width: 100%;
+            max-width: 80px !important;
             /* Puedes ajustar este valor */
             overflow: hidden;
             white-space: nowrap;

@@ -64,7 +64,8 @@
         <h1 class="ml-2">Presupuestos</h1>
 
         <form method="GET" action="{{ route('presupuestos.index') }}" class="mb-4">
-            <input type="hidden" name="page" value="{{ request()->input('page') }}">
+            <!-- No se necesita el campo "page" para que comience siempre desde la página 1 -->
+
 
             <!-- Primera fila de filtros -->
             <div class="input-group mb-3">
@@ -189,10 +190,11 @@
                                         <td class="servicio">{{ $presupuesto->medico_tratante }}</td>
                                         <td>{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
                                         <td class="estado">
-                                            <span class="badge 
-                                                {{ $presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary') }}">
-                                                {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
-                                            </span>
+                                        <span class="badge 
+                                            {{ $presupuesto->estado == 10 ? 'bg-danger' : ($presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary')) }}">
+                                            {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
+                                        </span>
+
                                         </td>
 
                                         <td class="detalle">{{ $presupuesto->detalle }}</td>
@@ -220,7 +222,7 @@
                                                 </a>
                                             @endif
                                             @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
-                                                @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9)
+                                                @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9 && $presupuesto->estado != 10)
                                                     <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-warning btn-sm">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
@@ -351,6 +353,10 @@
     }
 </style>
 <script>
+    document.querySelector('form').addEventListener('submit', function() {
+        this.querySelector('input[name="page"]')?.remove(); // Elimina el input 'page' antes de enviar
+    });
+
     $(document).ready(function () {
         $("#tabla_presupuestos").DataTable({
             "order": [
