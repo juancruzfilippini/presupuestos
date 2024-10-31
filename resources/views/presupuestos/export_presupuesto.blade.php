@@ -46,10 +46,10 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            margin-bottom: 35mm; /* Asegura espacio para el footer */
+            margin-bottom: 10mm; /* Asegura espacio para el footer */
         }
         .content {
-            margin-bottom: 60mm; /* Deja suficiente espacio antes del footer */
+            margin-bottom: 20mm; /* Deja suficiente espacio antes del footer */
         }
         /* Estilos para el footer */
         .footer {

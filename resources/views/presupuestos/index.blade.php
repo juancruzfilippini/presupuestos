@@ -198,11 +198,11 @@
                                         <td class="detalle">{{ $presupuesto->detalle }}</td>
                                         <td class="text-end">
                                             @if($presupuesto->estado == 9)
-                                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}<br>
+                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}<br>
                                                 <small>Aprobado por:
                                                     ${{ number_format(Presupuestos_aprobados::getAprobadoById($presupuesto->id), 2, ',', '.') }}</small>
                                             @else
-                                                ${{ number_format($presupuesto->total_presupuesto, 0, ',', '.') }}
+                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}
                                             @endif
                                         </td>
                                         <td>
