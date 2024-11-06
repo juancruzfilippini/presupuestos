@@ -135,7 +135,8 @@ use Carbon\Carbon;
                     <td class="px-4 py-2 border-b border-gray-300">
                         {{ $prestacion->nombre_prestacion }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif
                     </td>
-                    <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($prestacion->modulo_total, 2, ',', '.');}}</td>
+                    <td class="px-4 py-2 border-b border-gray-300">$ {{ number_format((float) $prestacion->modulo_total, 2, ',', '.') }}</td>
+
                 </tr>
                 @endforeach
             </tbody>

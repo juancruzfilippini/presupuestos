@@ -593,6 +593,7 @@
                     $('#selected-person').val(selectedName);
                     $('#paciente_salutte_id').val(selectedId);
                     $('#edad').val(selectedEdad);
+                    edad= selectedEdad;
                     updateTotalPresupuesto();
                 });
 
