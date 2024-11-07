@@ -51,6 +51,7 @@
                     <option value="Correa, Agustin">Correa, Agustin</option>
                     <option value="Cremaschi, Fabian">Cremaschi, Fabian</option>
                     <option value="Diaz, Jose">Diaz, Jose</option>
+                    <option value="Di Cicco, Marcelo">Di Cicco, Marcelo</option>
                     <option value="Dutto, Carolina">Dutto, Carolina</option>
                     <option value="Erice, Maria">Erice, Maria</option>
                     <option value="Gonzalez, Diego">Gonzalez, Diego</option>

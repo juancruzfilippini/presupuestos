@@ -191,6 +191,7 @@ class ExportarController extends Controller
                 "Correa, Agustin" => "agustin.correa@hospital.uncu.edu.ar",
                 "Cremaschi, Fabian" => "fabian.cremaschi@hospital.uncu.edu.ar",
                 "Diaz, Jose" => "jose.diaz@hospital.uncu.edu.ar",
+                "Di Cicco, Marcelo" => "marcelo.dicicco@hospital.uncu.edu.ar",
                 "Dutto, Carolina" => "carolina.dutto@hospital.uncu.edu.ar",
                 "Erice, Maria" => "maria.erice@hospital.uncu.edu.ar",
                 "Gonzalez, Diego" => "diego.gonzalez@hospital.uncu.edu.ar",

@@ -60,6 +60,8 @@
                     <option value="Cremaschi, Fabian" <?= $presupuesto->medico_tratante === "Cremaschi, Fabian" ? 'selected' : '' ?>>Cremaschi, Fabian</option>
                     <option value="Diaz, Jose" <?= $presupuesto->medico_tratante === "Diaz, Jose" ? 'selected' : '' ?>>
                         Diaz, Jose</option>
+                    <option value="Di Cicco, Marcelo" <?= $presupuesto->medico_tratante === "Di Cicco, Marcelo" ? 'selected' : '' ?>>
+                        Di Cicco, Marcelo</option>
                     <option value="Dutto, Carolina" <?= $presupuesto->medico_tratante === "Dutto, Carolina" ? 'selected' : '' ?>>Dutto, Carolina</option>
                     <option value="Erice, Maria" <?= $presupuesto->medico_tratante === "Erice, Maria" ? 'selected' : '' ?>>
                         Erice, Maria</option>
