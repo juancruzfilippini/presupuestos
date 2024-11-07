@@ -57,6 +57,7 @@
                     <option value="Carral, Pablo" <?= $presupuesto->medico_tratante === "Carral, Pablo" ? 'selected' : '' ?>>Carral, Pablo</option>
                     <option value="Cinca, Leticia" <?= $presupuesto->medico_tratante === "Cinca, Leticia" ? 'selected' : '' ?>>Cinca, Leticia</option>
                     <option value="Correa, Agustin" <?= $presupuesto->medico_tratante === "Correa, Agustin" ? 'selected' : '' ?>>Correa, Agustin</option>
+                    <option value="Cremaschi, Fabian" <?= $presupuesto->medico_tratante === "Cremaschi, Fabian" ? 'selected' : '' ?>>Cremaschi, Fabian</option>
                     <option value="Diaz, Jose" <?= $presupuesto->medico_tratante === "Diaz, Jose" ? 'selected' : '' ?>>
                         Diaz, Jose</option>
                     <option value="Dutto, Carolina" <?= $presupuesto->medico_tratante === "Dutto, Carolina" ? 'selected' : '' ?>>Dutto, Carolina</option>
