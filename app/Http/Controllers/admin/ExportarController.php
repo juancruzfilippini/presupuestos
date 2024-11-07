@@ -101,7 +101,7 @@ class ExportarController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         // Descargar el PDF directamente sin almacenarlo en el servidor
-        return $pdf->stream('Presupuesto:', $presupuesto->paciente ,'.pdf');
+        return $pdf->stream('Presupuesto:', $presupuesto->paciente, '.pdf');
     }
 
 
@@ -181,11 +181,35 @@ class ExportarController extends Controller
             $pdfPath = storage_path('app/public/' . $pdfFilename);
             $pdf->save($pdfPath);
 
-            $autoEmail = 'no-reply@hospital.uncu.edu.ar';
+            $autoEmail1 = 'no-reply@hospital.uncu.edu.ar';
             $autoEmail2 = 'comercializacionhospitaluncuyo@gmail.com';
+            $emails = [
+                "Benitez, Laura" => "laura.benitez@hospital.uncu.edu.ar",
+                "Bort, Ana" => "ana.bort@hospital.uncu.edu.ar",
+                "Carral, Pablo" => "pablo.carral@hospital.uncu.edu.ar",
+                "Cinca, Leticia" => "leticia.cinca@hospital.uncu.edu.ar",
+                "Correa, Agustin" => "agustin.correa@hospital.uncu.edu.ar",
+                "Diaz, Jose" => "jose.diaz@hospital.uncu.edu.ar",
+                "Dutto, Carolina" => "carolina.dutto@hospital.uncu.edu.ar",
+                "Erice, Maria" => "maria.erice@hospital.uncu.edu.ar",
+                "Gonzalez, Diego" => "diego.gonzalez@hospital.uncu.edu.ar",
+                "Gonzalez, Martin" => "martin.gonzalez@hospital.uncu.edu.ar",
+                "Gonzalez, Pablo" => "pablo.gonzalez@hospital.uncu.edu.ar",
+                "Ojeda, Victoria" => "victoria.ojeda@hospital.uncu.edu.ar",
+                "Rigoni, Nicolas" => "nicolas.rigoni@hospital.uncu.edu.ar",
+                "Saenz, Alexander" => "alexander.saenz@hospital.uncu.edu.ar",
+                "Scalia, Gabriela" => "gabriela.scalia@hospital.uncu.edu.ar",
+                "Torres, Alfredo" => "alfredo.torres@hospital.uncu.edu.ar",
+                "Ulloa, Ana" => "ana.ulloa@hospital.uncu.edu.ar",
+                "Vendrell, Lucas" => "lucas.vendrell@hospital.uncu.edu.ar"
+            ];
+
+            // Asigna el email correspondiente a $autoEmail3
+            $autoEmail3 = $emails[$presupuesto->medico_tratante] ?? '';
+
 
             // Enviar el PDF por correo al paciente y asi mismo
-            Mail::to([$presupuesto->email, $autoEmail, $autoEmail2])->send(new mailPresupuesto($data1, $pdfPath));
+            Mail::to([$presupuesto->email, $autoEmail1, $autoEmail2, $autoEmail3])->send(new mailPresupuesto($data1, $pdfPath));
 
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
             Presupuesto::where('id', $id)->update(['enviado' => 1]);

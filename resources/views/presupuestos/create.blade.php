@@ -42,8 +42,27 @@
             </div>
             <div>
                 <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
-                <input type="text" id="medico_tratante" name="medico_tratante" class="border rounded p-2 w-full"
-                    value="" required>
+                <select name="medico_tratante" id="medico_tratante" class="border rounded p-2 w-full" required>
+                    <option value="">Seleccione un profesional</option>
+                    <option value="Benitez, Laura">Benitez, Laura</option>
+                    <option value="Bort, Ana">Bort, Ana</option>
+                    <option value="Carral, Pablo">Carral, Pablo</option>
+                    <option value="Cinca, Leticia">Cinca, Leticia</option>
+                    <option value="Correa, Agustin">Correa, Agustin</option>
+                    <option value="Diaz, Jose">Diaz, Jose</option>
+                    <option value="Dutto, Carolina">Dutto, Carolina</option>
+                    <option value="Erice, Maria">Erice, Maria</option>
+                    <option value="Gonzalez, Diego">Gonzalez, Diego</option>
+                    <option value="Gonzalez, Martin">Gonzalez, Martin</option>
+                    <option value="Gonzalez, Pablo">Gonzalez, Pablo</option>
+                    <option value="Ojeda, Victoria">Ojeda, Victoria</option>
+                    <option value="Rigoni, Nicolas">Rigoni, Nicolas</option>
+                    <option value="Saenz, Alexander">Saenz, Alexander</option>
+                    <option value="Scalia, Gabriela">Scalia, Gabriela</option>
+                    <option value="Torres, Alfredo">Torres, Alfredo</option>
+                    <option value="Ulloa, Ana">Ulloa, Ana</option>
+                    <option value="Vendrell, Lucas">Vendrell, Lucas</option>
+                </select>
             </div>
         </div>
 
@@ -593,7 +612,7 @@
                     $('#selected-person').val(selectedName);
                     $('#paciente_salutte_id').val(selectedId);
                     $('#edad').val(selectedEdad);
-                    edad= selectedEdad;
+                    edad = selectedEdad;
                     updateTotalPresupuesto();
                 });
 
