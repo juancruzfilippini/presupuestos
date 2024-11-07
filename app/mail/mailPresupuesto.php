@@ -33,9 +33,10 @@ class mailPresupuesto extends Mailable
      */
     public function build()
     {
+        
         return $this->view('presupuestos.email_presupuesto') 
                     ->attach($this->pdfPath, [
-                        'as' => 'presupuesto.pdf',
+                        'as' => 'Presupuesto_'. $this->data1['presupuesto']['paciente'] .'.pdf',
                         'mime' => 'application/pdf',
                     ])
                     ->subject('PRESUPUESTO HOSPITAL UNIVERSITARIO');

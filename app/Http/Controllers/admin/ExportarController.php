@@ -101,7 +101,7 @@ class ExportarController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         // Descargar el PDF directamente sin almacenarlo en el servidor
-        return $pdf->stream('presupuesto.pdf');
+        return $pdf->stream('Presupuesto:', $presupuesto->paciente ,'.pdf');
     }
 
 
@@ -182,9 +182,10 @@ class ExportarController extends Controller
             $pdf->save($pdfPath);
 
             $autoEmail = 'no-reply@hospital.uncu.edu.ar';
+            $autoEmail2 = 'comercializacionhospitaluncuyo@gmail.com';
 
             // Enviar el PDF por correo al paciente y asi mismo
-            Mail::to([$presupuesto->email, $autoEmail])->send(new mailPresupuesto($data1, $pdfPath));
+            Mail::to([$presupuesto->email, $autoEmail, $autoEmail2])->send(new mailPresupuesto($data1, $pdfPath));
 
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
             Presupuesto::where('id', $id)->update(['enviado' => 1]);
