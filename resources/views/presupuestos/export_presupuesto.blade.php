@@ -46,35 +46,60 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            margin-bottom: 10mm; /* Asegura espacio para el footer */
+            margin-bottom: 20mm; /* Asegura espacio para el footer */
         }
+
+        .table-container {
+            page-break-inside: auto;
+            page-break-after: auto;
+        }
+
         .content {
-            margin-bottom: 20mm; /* Deja suficiente espacio antes del footer */
+            margin-bottom: 25mm;
+            /* Espacio para el footer */
         }
         /* Estilos para el footer */
         .footer {
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-size: 10px;
-        line-height: 1.2;
-        border-top: 1px solid #000;
-        padding-top: 5px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.2;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            background-color: #fff;
         }
         @page {
             margin-top: 10mm;
-            margin-bottom: 5mm; /* Deja espacio suficiente para el footer en todas las páginas */
+            margin-bottom: 20mm; /* Deja espacio suficiente para el footer en todas las páginas */
         }
         .page-break {
-            page-break-after: always;
-        }
-
-        .fixed{
-            position: fixed;
+            page-break-before: always;
         }
     </style>
 </head>
+
+<div class="footer" style="text-align: center; line-height: 1.2;">
+            <br>
+            @if ($firmas->comercializacion == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
+            @endif
+            @if ($firmas->auditoria == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría Médica</div>
+            @endif
+            @if ($firmas->direccion == 1)
+                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
+            @endif
+            <div style="color: black; font-size: 10px; margin-top: 10px">Validado según art. 5 de la Ley 25.506 "Firma Digital"</div>
+            <br>
+            
+            <span>Paso de los Andes 3051, Ciudad de Mendoza</span><br>
+            <span>www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar</span>
+        </div>
     <x-slot name="title">Ver Presupuesto</x-slot>
     <body>
     <form method="GET" action="{{ route('presupuestos.index') }}"
@@ -234,22 +259,8 @@
         @endif
         </form>
     </body>
-    <htmlpagefooter name="page-footer">
-        <div class="footer" style="text-align: center; line-height: 1.2;">
-            <br>
-            @if ($firmas->comercializacion == 1)
-                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_comercializacion) }} - Área de Comercialización</div>
-            @endif
-            @if ($firmas->auditoria == 1)
-                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_auditoria) }} - Auditoría Médica</div>
-            @endif
-            @if ($firmas->direccion == 1)
-                <div>Firmado electrónicamente por {{ Users::getNameById($firmas->firmado_por_direccion) }} - Área de Dirección Administrativa</div>
-            @endif
-            <div style="color: black; font-size: 10px; margin-top: 10px">Validado según art. 5 de la Ley 25.506 "Firma Digital"</div>
-            <br>
-            
-            <span>Paso de los Andes 3051, Ciudad de Mendoza</span><br>
-            <span>www.hospital.uncu.edu.ar / Informes: 261 4494220 / internacion@hospital.uncu.edu.ar</span>
-        </div>
-    </htmlpagefooter>
+
+    
+    
+        
+    
