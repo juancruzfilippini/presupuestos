@@ -195,7 +195,7 @@ class ExportarController extends Controller
             $pdf->save($pdfPath);
         
             $autoEmail1 = 'no-reply@hospital.uncu.edu.ar';
-            $autoEmail2 = 'juancruzfilippini@gmail.com';
+            $autoEmail2 = 'comercializacionhospitaluncuyo@gmail.com';
             $emails = [
                 "Benitez, Laura" => "laura.benitez@hospital.uncu.edu.ar",
                 "Bort, Ana" => "ana.bort@hospital.uncu.edu.ar",
