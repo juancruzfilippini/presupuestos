@@ -20,7 +20,7 @@
         <p></p>
 
         <label for="file_1">Subir archivo (PDF o Imagen)</label>
-        <input type="file" name="file[]" id="file_1" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
+        <input type="file" name="file[]" id="file_1" class="form-control" accept=".pdf, .jpg, .jpeg, .png" required>
         <p></p>
         <button type="button" class="btn btn-primary btn-sm" id="addFile"><i class="fa fa-plus"></i> Agregar otro
             archivo</button>
