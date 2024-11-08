@@ -314,6 +314,16 @@ use Carbon\Carbon;
     </div>
     @endif
 
+    <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
+            id="delete-form-{{ $presupuesto->id }}">
+            @csrf
+            @method('DELETE')
+            <button style="margin-top: 10px; margin-left: 25px" type="button" class="btn btn-danger"
+                onclick="confirmDelete({{ $presupuesto->id }})"><i class="fa-solid fa-ban"></i>
+                Anular Presupuesto
+            </button>
+        </form>
+
     <!-- Modal para subir archivo -->
     <div class="modal fade" id="archivoModal" tabindex="-1" aria-labelledby="archivoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -343,6 +353,7 @@ use Carbon\Carbon;
         </div>
     </div>
 
+    
 
 
 
@@ -555,6 +566,23 @@ use Carbon\Carbon;
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('sign-form-' + id).submit();
+            }
+        });
+    }
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
             }
         });
     }
