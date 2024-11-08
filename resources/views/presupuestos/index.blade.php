@@ -9,6 +9,7 @@
 @endphp
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Bootstrap 4 y 5 (Elige una versión, usualmente no se usan ambas juntas) -->
 <!-- jQuery UI -->
@@ -253,12 +254,14 @@
                                                 </a>
                                             @endif
                                             @if (($presupuesto->estado == 4) && (Auth::user()->rol_id == 4))
-                                                <a href="{{ route('enviar.datos', ['id' => $presupuesto->id]) }}" 
+                                                <a href="javascript:void(0);" 
+                                                    onclick="confirmarEnvio('{{ route('enviar.datos', ['id' => $presupuesto->id]) }}')" 
                                                     class="btn btn-secondary btn-sm {{ $presupuesto->enviado == 1 ? 'disabled' : '' }}" 
                                                     {{ $presupuesto->enviado == 1 ? 'aria-disabled=true' : '' }}>
                                                     <i class="fas fa-envelope"></i>
                                                 </a>
                                             @endif
+
                                         </td>
                                     </tr>
                     @endforeach
@@ -281,6 +284,8 @@
 
     </div>
 </x-app-layout>
+
+
 
 <style>
     .form-group .input-group {
@@ -401,4 +406,22 @@
             }
         });
     })
+
+    function confirmarEnvio(url) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas enviar este presupuesto?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, enviar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
+
 </script>
