@@ -163,6 +163,13 @@
                 {{ session('success') }}
             </div>
         @endif
+        
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
 
 
         <div class="table-responsive" style="overflow: hidden !important;">

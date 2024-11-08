@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail; // Añadir esta línea
+use Illuminate\Support\Facades\Validator;
 use App\Models\Presupuesto; // Importamos el modelo correcto
 use App\Models\Prestaciones; // Importamos el modelo correcto
 use App\Models\Prestacion; // Importamos el modelo correcto
@@ -171,16 +172,28 @@ class ExportarController extends Controller
             'today' => $today
         ];
         // Verificar si el contacto es nulo o si el email es nulo
+        
+
         if ($presupuesto->email) {
+            // Validar el email del paciente
+            $validator = Validator::make(
+                ['email' => $presupuesto->email],
+                ['email' => 'email']
+            );
+        
+            if ($validator->fails()) {
+                // Redirigir con un mensaje de error si el email no es válido
+                return redirect()->route('presupuestos.index')->with('error', 'El email del paciente no es válido');
+            }
+        
             // Generar el PDF
             $pdf = PDF::loadView('presupuestos.export_presupuesto', $data1);
-
-
+        
             // Definir el nombre del archivo
             $pdfFilename = 'Presupuesto HU. ' . $presupuesto->paciente . '.pdf';
             $pdfPath = storage_path('app/public/' . $pdfFilename);
             $pdf->save($pdfPath);
-
+        
             $autoEmail1 = 'no-reply@hospital.uncu.edu.ar';
             $autoEmail2 = 'comercializacionhospitaluncuyo@gmail.com';
             $emails = [
@@ -205,25 +218,23 @@ class ExportarController extends Controller
                 "Ulloa, Ana" => "ana.ulloa@hospital.uncu.edu.ar",
                 "Vendrell, Lucas" => "lucas.vendrell@hospital.uncu.edu.ar"
             ];
-
+        
             // Asigna el email correspondiente a $autoEmail3
             $autoEmail3 = $emails[$presupuesto->medico_tratante] ?? '';
-
-
-            // Enviar el PDF por correo al paciente y asi mismo
+        
+            // Enviar el PDF por correo al paciente y así mismo
             Mail::to([$presupuesto->email, $autoEmail1, $autoEmail2, $autoEmail3])->send(new mailPresupuesto($data1, $pdfPath));
-
+        
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
             Presupuesto::where('id', $id)->update(['enviado' => 1]);
-
+        
             // Eliminar el archivo temporal después de enviar
             unlink($pdfPath);
-            //Obtener la posicion mediante una consulta para redireccionar
-
+        
             return redirect()->route('presupuestos.index')->with('success', 'Presupuesto enviado por correo con éxito');
         } else {
             // Redirigir con un mensaje de error si no hay email
-            return redirect()->route('estudios.index')->with('error', 'El paciente no cuenta con un email registrado');
+            return redirect()->route('presupuestos.index')->with('error', 'El paciente no cuenta con un email registrado');
         }
     }
 }
