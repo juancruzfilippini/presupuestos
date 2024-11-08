@@ -253,7 +253,7 @@
                     <input type="hidden" name="cantidad_${prestacionCount}" value="1">
                 </td>
                 <td class="border px-4 py-2 text-center">
-                    <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
+                    <input class="w-full border h-10 text-center moduloTotal" name="modulo_total_${prestacionCount}" oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();"/>
                 </td>
             </tr>
         `;
@@ -320,39 +320,6 @@
             var selectedOption = $(this).find('option:selected');
             var codigo = selectedOption.data('codigo');
             $(this).closest('tr').find('input[name^="codigo"]').val(codigo);
-        });
-    });
-
-    $(document).on('change', '.prestacion-select', function () {
-        let selectedOption = $(this).find('option:selected');
-        let codigoPrestacion = selectedOption.data('codigo');
-        let prestacionCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
-        $('#codigo_' + prestacionCount).val(codigoPrestacion);
-        let prestacionId = selectedOption.val();
-
-
-        console.log('prestacionCount ', prestacionCount);
-
-        console.log(convenioId, codigoPrestacion);
-
-        $.ajax({
-            url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
-            method: 'GET',
-            success: function (response) {
-                console.log('obtenerprecioooo');
-                let precio = parseFloat(response[0].PRECIO);
-                // Truncar el precio eliminando la parte decimal
-                let precioTruncado = Math.floor(precio); // También puedes usar parseInt(precio)
-                console.log(precioTruncado);
-                console.log("rowCount:", prestacionCount);
-
-                $('input[name="modulo_total_' + prestacionCount + '"]').val(precioTruncado);
-                updateTotalPresupuesto();
-            },
-            error: function (xhr, status, error) {
-                console.error('Error en la consulta AJAX:', error);
-
-            }
         });
     });
     
