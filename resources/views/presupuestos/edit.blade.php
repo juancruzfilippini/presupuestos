@@ -56,15 +56,20 @@
                         Ana</option>
                     <option value="Carral, Pablo" <?= $presupuesto->medico_tratante === "Carral, Pablo" ? 'selected' : '' ?>>Carral, Pablo</option>
                     <option value="Cinca, Leticia" <?= $presupuesto->medico_tratante === "Cinca, Leticia" ? 'selected' : '' ?>>Cinca, Leticia</option>
+                    <option value="Coll, Roberto" <?= $presupuesto->medico_tratante === "Coll, Roberto" ? 'selected' : '' ?>>Coll, Roberto</option>
                     <option value="Correa, Agustin" <?= $presupuesto->medico_tratante === "Correa, Agustin" ? 'selected' : '' ?>>Correa, Agustin</option>
                     <option value="Cremaschi, Fabian" <?= $presupuesto->medico_tratante === "Cremaschi, Fabian" ? 'selected' : '' ?>>Cremaschi, Fabian</option>
                     <option value="Diaz, Jose" <?= $presupuesto->medico_tratante === "Diaz, Jose" ? 'selected' : '' ?>>
                         Diaz, Jose</option>
+                    <option value="Diz, Gonzalo" <?= $presupuesto->medico_tratante === "Diz, Gonzalo" ? 'selected' : '' ?>>
+                        Diz, Gonzalo</option>
                     <option value="Di Cicco, Marcelo" <?= $presupuesto->medico_tratante === "Di Cicco, Marcelo" ? 'selected' : '' ?>>
                         Di Cicco, Marcelo</option>
                     <option value="Dutto, Carolina" <?= $presupuesto->medico_tratante === "Dutto, Carolina" ? 'selected' : '' ?>>Dutto, Carolina</option>
                     <option value="Erice, Maria" <?= $presupuesto->medico_tratante === "Erice, Maria" ? 'selected' : '' ?>>
                         Erice, Maria</option>
+                    <option value="Funes, Gonzalo" <?= $presupuesto->medico_tratante === "Funes, Gonzalo" ? 'selected' : '' ?>>
+                        Funes, Gonzalo</option>
                     <option value="Gonzalez, Diego" <?= $presupuesto->medico_tratante === "Gonzalez, Diego" ? 'selected' : '' ?>>Gonzalez, Diego</option>
                     <option value="Gonzalez, Martin" <?= $presupuesto->medico_tratante === "Gonzalez, Martin" ? 'selected' : '' ?>>Gonzalez, Martin</option>
                     <option value="Gonzalez, Pablo" <?= $presupuesto->medico_tratante === "Gonzalez, Pablo" ? 'selected' : '' ?>>Gonzalez, Pablo</option>

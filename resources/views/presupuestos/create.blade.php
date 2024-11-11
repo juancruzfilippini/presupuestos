@@ -48,12 +48,15 @@
                     <option value="Bort, Ana">Bort, Ana</option>
                     <option value="Carral, Pablo">Carral, Pablo</option>
                     <option value="Cinca, Leticia">Cinca, Leticia</option>
+                    <option value="Coll, Roberto">Coll, Roberto</option>
                     <option value="Correa, Agustin">Correa, Agustin</option>
                     <option value="Cremaschi, Fabian">Cremaschi, Fabian</option>
                     <option value="Diaz, Jose">Diaz, Jose</option>
+                    <option value="Diz, Gonzalo">Diz, Gonzalo</option>
                     <option value="Di Cicco, Marcelo">Di Cicco, Marcelo</option>
                     <option value="Dutto, Carolina">Dutto, Carolina</option>
                     <option value="Erice, Maria">Erice, Maria</option>
+                    <option value="Funes, Gonzalo">Funes, Gonzalo</option>
                     <option value="Gonzalez, Diego">Gonzalez, Diego</option>
                     <option value="Gonzalez, Martin">Gonzalez, Martin</option>
                     <option value="Gonzalez, Pablo">Gonzalez, Pablo</option>
