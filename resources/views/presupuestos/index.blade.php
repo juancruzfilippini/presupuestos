@@ -259,6 +259,12 @@
                                                     <i class="fas fa-envelope"></i>
                                                 </a>
                                             @endif
+                                            @if(Auth::user()->rol_id == 7 && ($presupuesto->estado == 4 || $presupuesto->estado == 3))
+                                                <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
+                                                    class="btn btn-success btn-sm">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                            @endif
 
                                         </td>
                                     </tr>

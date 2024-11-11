@@ -270,9 +270,11 @@ use Carbon\Carbon;
                     <i class="fa-solid fa-arrow-left-long"></i>
                     Volver
                 </button>
+                @if(Auth::user()->rol_id != 7)
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
                     Ver Historial de Cambios
                 </button>
+                @endif
                 @if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 2)
                     @if($presupuesto->estado != 4 && $presupuesto->estado != 3 && $presupuesto->estado != 9 && $presupuesto->estado != 10)
                         <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-danger"><i class="fa-solid fa-edit"></i>
@@ -281,27 +283,29 @@ use Carbon\Carbon;
                     @endif
                 @endif
                 <!-- Lógica para mostrar el botón correcto (subir o ver archivo) -->
-                @if($firmas->direccion == 1 && ($firmas->comercializacion == 1 || $firmas->auditoria == 1))
-                <div class="d-inline-block float-end">
-                    <a href="{{ route('presupuestos.exportarDatos', $presupuesto->id) }}" target="_blank" class="btn btn-primary">
-                        Generar Presupuesto
-                    </a>
-                    @if($presupuestoAprobado) <!-- Comprobar si hay un archivo subido -->
-                    <!-- Botón para ver el archivo subido -->
-                    <a href="{{ asset('storage/' . $presupuestoAprobado->file_path) }}" target="_blank" class="btn btn-secondary">
-                        Ver Presupuesto Aprobado
-                    </a>
-                    <span class="input-group-text" style="margin-top: 5px; display: block; text-align: center;">
-                        Aprobado por $ {{number_format($presupuestoAprobado->valor_aprobado, 2, ',', '.')}}
-                    </span>
+                 @if(Auth::user()->rol_id != 7)
+                    @if($firmas->direccion == 1 && ($firmas->comercializacion == 1 || $firmas->auditoria == 1))
+                        <div class="d-inline-block float-end">
+                            <a href="{{ route('presupuestos.exportarDatos', $presupuesto->id) }}" target="_blank" class="btn btn-primary">
+                                Generar Presupuesto
+                            </a>
+                            @if($presupuestoAprobado) <!-- Comprobar si hay un archivo subido -->
+                            <!-- Botón para ver el archivo subido -->
+                            <a href="{{ asset('storage/' . $presupuestoAprobado->file_path) }}" target="_blank" class="btn btn-secondary">
+                                Ver Presupuesto Aprobado
+                            </a>
+                            <span class="input-group-text" style="margin-top: 5px; display: block; text-align: center;">
+                                Aprobado por $ {{number_format($presupuestoAprobado->valor_aprobado, 2, ',', '.')}}
+                            </span>
 
-                    @else
-                    <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
-                        Subir Presupuesto Aprobado
-                    </button>
+                            @else
+                            <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
+                                Subir Presupuesto Aprobado
+                            </button>
+                            @endif
+                        </div>
                     @endif
-                </div>
                 @endif
             </div>
     </form>
@@ -344,6 +348,7 @@ use Carbon\Carbon;
     </div>
     @endif
 
+    @if(Auth::user()->rol_id == 4)
     <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
             id="delete-form-{{ $presupuesto->id }}">
             @csrf
@@ -353,7 +358,7 @@ use Carbon\Carbon;
                 Anular Presupuesto
             </button>
         </form>
-
+    @endif
     <!-- Modal para subir archivo -->
     <div class="modal fade" id="archivoModal" tabindex="-1" aria-labelledby="archivoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
