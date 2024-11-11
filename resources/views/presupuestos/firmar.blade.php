@@ -154,6 +154,9 @@ use Carbon\Carbon;
                         <th class="px-4 py-2 border-b-2 border-gray-300 text-left">TIPO</th>
                         <th class="px-4 py-2 border-b-2 border-gray-300 text-left">COMPLEJIDAD</th>
                         <th class="px-4 py-2 border-b-2 border-gray-300 text-left">PRECIO</th>
+                        @if ($presupuesto->edad >65 || $presupuesto->edad <3)
+                            <th class="px-4 py-2 border-b-2 border-gray-300 text-left">ADICIONAL</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -182,14 +185,21 @@ use Carbon\Carbon;
                         </td>
                         <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
                         @if(($presupuesto->edad>65) || ($presupuesto->edad<3))
-                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio*1.2, 2, ',', '.');}} </td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}} </td>
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format(($anestesia->precio*1.2)-($anestesia->precio), 2, ',', '.');}} </td>
                         @else
                             <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}} </td>
                         @endif
+                        
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+            @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
+                    <div style="text-align: left; margin-left: 10px">
+                        <label id="adicional_anestesia" style="color: red;">*Adicional: 20% de recargo de anestesia por riesgo de edad*</label>
+                    </div>
+                @endif
             @endif
             
                 
@@ -205,11 +215,7 @@ use Carbon\Carbon;
                 <p style="text-align: center;">
                     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
                 </p>
-                @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
-                    <div style="text-align: center;">
-                        <label id="adicional_anestesia" style="color: red;">*Incluye 20% de recargo al total de anestesia por riesgo de edad*</label>
-                    </div>
-                @endif
+                
             </div>
 
 
