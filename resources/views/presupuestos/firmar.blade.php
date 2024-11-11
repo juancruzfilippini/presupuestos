@@ -348,7 +348,7 @@ use Carbon\Carbon;
     </div>
     @endif
 
-    @if(Auth::user()->rol_id == 4)
+    @if(Auth::user()->rol_id == 4 && $presupuesto->estado != 10)
     <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
             id="delete-form-{{ $presupuesto->id }}">
             @csrf
