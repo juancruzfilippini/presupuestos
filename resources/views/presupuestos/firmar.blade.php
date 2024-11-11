@@ -174,19 +174,26 @@ use Carbon\Carbon;
                             Sedación Superficial
                             @break
                             @case(4)
-                            General
+                            Anestesia General
                             @break
                             @default
                             No especificado
                             @endswitch
                         </td>
                         <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
-                        <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}}</td>
+                        @if(($presupuesto->edad>65) || ($presupuesto->edad<3))
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio*1.2, 2, ',', '.');}} </td>
+                        @else
+                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}} </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
             </table>
             @endif
+            
+                
+            
 
             <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 

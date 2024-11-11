@@ -194,13 +194,14 @@
     let prestacionCount = {{ count($prestaciones) }};
 
     let addedPrestaciones = 0;
-    let edad;
+    let edad ={{$presupuesto->edad}};
 
     updateTotalPresupuesto();
 
     function updateTotalPresupuesto() {
         let totalPresupuesto = 0;
         let totalAnestesia = 0;
+        console.log({{$presupuesto->edad}});
 
         // Sumar todos los valores de los campos de presupuesto
         $('input[name^="modulo_total_"]').each(function () {
@@ -212,7 +213,7 @@
 
         $('input[name^="precio_anestesia"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
-            console.log(value);
+            console.log('asd', value);
             totalAnestesia += value;
         });
 

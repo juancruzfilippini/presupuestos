@@ -189,34 +189,40 @@
                         <tr>
                             <td class="px-4 py-2 border-b border-gray-300">
                             @switch($anestesia->anestesia_id)
-                    @case(0)
-                        Sin especificar
-                        @break
-                    @case(1)
-                        Local
-                        @break
-                    @case(2)
-                        Sedación
-                        @break
-                    @case(3)
-                        Raquídea central
-                        @break
-                    @case(4)
-                        Periférica
-                        @break
-                    @case(5)
-                        General
-                        @break
-                    @default
-                        No especificado
-                @endswitch
+                            @case(0)
+                            Sin especificar
+                            @break
+                            @case(1)
+                            Anestesia Local
+                            @break
+                            @case(2)
+                            Anestesia Regional
+                            @break
+                            @case(3)
+                            Sedación Superficial
+                            @break
+                            @case(4)
+                            Anestesia General
+                            @break
+                            @default
+                            No especificado
+                            @endswitch
                             </td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
-                            <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}}</td>
+                            @if (($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
+                                <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio*1.2, 2, ',', '.');}}</td>
+                            @else
+                                <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}}</td>
+                            @endif
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
+                @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
+                    <div style="margin-bottom: 5px; text-align: center;">
+                            <label id="adicional_anestesia" style="font-size: 12px; color: red;">*20% adicional de recargo incluido al total de anestesia por riesgo de edad*</label>
+                    </div>
+                @endif
         @endif
 
     <div style="font-size: 1.1rem; font-weight: 600; text-align: center; margin-bottom: 5px; margin-top: 7px;">
@@ -225,11 +231,6 @@
     <p style="text-align: center; margin-top: 0;">
     {{ NumberToWordsHelper::convertir($presupuesto['total_presupuesto']) }}
     </p>
-    @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
-        <div style="margin-bottom: 5px; text-align: center;">
-                <label id="adicional_anestesia" style="font-size: 12px; color: red;">*Incluye 20% de recargo al total de anestesia por riesgo de edad*</label>
-        </div>
-    @endif
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
         @if($presupuesto['condicion'])
