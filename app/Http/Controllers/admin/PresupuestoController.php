@@ -180,6 +180,7 @@ class PresupuestoController extends Controller
             'input_especialidad' => 'nullable|string',
             'convenio' => 'nullable',
             'convenio_id' => 'nullable',
+            'descripcion' => 'nullable|string',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
             'excluye' => 'nullable|string',
@@ -208,7 +209,10 @@ class PresupuestoController extends Controller
             // Si no hay presupuesto_id, crea uno nuevo
             $presupuesto = new Presupuesto();
         }
-        // Verificar si el toggle de 'condicion' está activado antes de asignar
+        if ($request->has('toggleDescripcion')) {
+            $presupuesto->descripcion = $validatedData['descripcion'];
+        }
+
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];
         }
@@ -380,6 +384,7 @@ class PresupuestoController extends Controller
             'input_obrasocial' => 'nullable|string',
             'especialidad' => 'nullable|string',
             'input_especialidad' => 'nullable|string',
+            'descripcion' => 'nullable|string',
             'condicion' => 'nullable|string',
             'incluye' => 'nullable|string',
             'excluye' => 'nullable|string',
@@ -410,6 +415,11 @@ class PresupuestoController extends Controller
             $presupuesto->obra_social = $validatedData['obra_social'];  // Guarda el ID de la obra social
         } else {
             $presupuesto->obra_social = $validatedData['input_obrasocial'];  // Guarda el Nombre de la obra social
+        }
+        if ($request->has('toggleDescripcion')) {
+            $presupuesto->descripcion = $validatedData['descripcion'];
+        } else {
+            $presupuesto->descripcion = "";
         }
         if ($request->has('toggleCondicion')) {
             $presupuesto->condicion = $validatedData['condicion'];

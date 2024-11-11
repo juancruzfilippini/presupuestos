@@ -108,12 +108,18 @@ use Carbon\Carbon;
             <p></p>
             <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
-
         <div class="d-flex justify-content-between align-items-center">
-            Obra Social: {{ $presupuesto->obra_social }} @if(!empty($presupuesto->nro_afiliado))- Nro Afiliado: {{$presupuesto->nro_afiliado}} @endif
+            
+            <h6>Obra Social: {{ $presupuesto->obra_social }} @if(!empty($presupuesto->nro_afiliado))- Nro Afiliado: {{$presupuesto->nro_afiliado}} @endif </h6>
         </div>
+        <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
 
-
+        @if(!empty($presupuesto->detalle))
+        <h6>Diagnóstico/Asunto:</h6>
+        <p>
+        {{$presupuesto->detalle}}
+        </p>
+        @endif
         <p></p>
         <p></p>
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
@@ -196,7 +202,7 @@ use Carbon\Carbon;
                 </tbody>
             </table>
             @if ($presupuesto->edad< 3 || $presupuesto->edad>65 )
-                    <div style="text-align: left; margin-left: 10px">
+                    <div style="text-align: left; margin-left: ">
                         <label id="adicional_anestesia" style="color: red;">*Adicional: 20% de recargo de anestesia por riesgo de edad*</label>
                     </div>
                 @endif
@@ -221,6 +227,17 @@ use Carbon\Carbon;
 
             <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 
+            @if($presupuesto->descripcion != '')
+            <label class="ml-4 p-2 font-semibold">Cirugía Propuesta: </label>
+            <ul class="ml-8 list-none"> <!-- Eliminamos los discos y agregamos asteriscos manualmente -->
+                @foreach(explode('*', $presupuesto->descripcion) as $item)
+                @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
+                <li class="font-semibold">* {{ trim($item) }}</li>
+                @endif
+                @endforeach
+            </ul>
+            <div style="border-top: 1px solid #ddd; margin-top: 10px;"></div>
+            @endif
             @if($presupuesto->condicion != '')
             <label class="ml-4 p-2 font-semibold">Condición: </label>
             <label class="ml-4 p-2">{{$presupuesto->condicion}}</label>

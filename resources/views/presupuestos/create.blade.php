@@ -151,7 +151,7 @@
             <div class="form-row">
                 <div class="form-groupp">
                     <input type="text" id="detalle" name="detalle" class="form-control"
-                        placeholder="Asunto: Prestaciones quirurgicas">
+                        placeholder="Diagnóstico...">
                 </div>
                 <div class="form-groupp">
                     <input type="text" name="convenio" class="form-control"
@@ -218,6 +218,34 @@
         </div>
 
 
+
+        <div class="mb-6">
+            <div class="items-center ">
+                <div class="flex items-center">
+                    <label for="descripcion" class="font-semibold mr-2">DESCRIPCIÓN:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleDescripcion" name="toggleDescripcion">
+                        <span class="slider round"></span>
+
+                    </label>
+                </div>
+            </div>
+            <p></p>
+            <textarea id="descripcion" name="descripcion"
+                class="border rounded p-2 w-full">* 1) RESECCIÓN DE TUMOR MEDIANTE CIRUGÍA MICROGRÁFICA DE MOHS
+* 2) CONGELACIÓN INTRAOPERATORIA CON CRIOSTATO SEGÚN TÉCNICA DE MOHS
+* 3) CIERRE PLÁSTICO DE HERIDA QUIRÚRGICA MEDIANTE COLGAJO LOCAL (CIRUGÍA PLÁSTICA REPARADORA).
+* DESCRIPCION DEL PROCEDIMIENTO:
+* La Cirugía Micrográfica de Mohs (CMM) es la técnica quirúrgica más precisa que existe para tratar el cáncer de piel.
+* Consiste en extraer progresivamente capas delgadas de la piel que contienen al carcinoma y el médico Patólogo las examina con un CRIOSTATO mediante cortes de 5 micrones permitiendo evaluar el 100% del tumor y sus márgenes en el mismo acto quirúrgico hasta que solo queda tejido libre de tumor (cirugía microscópica controlada) reduciendo al mínimo el daño de la piel sana que lo rodea.
+* Una vez logrado el OBJETIVO de extirpar la totalidad del carcinoma, se culmina con una cirugía plástica reconstructiva. Debido a su precisión, la CMM es una MEJORA de la cirugía estándar (escisión local con o sin control de márgenes).
+* Este procedimiento les permite a los cirujanos verificar que se haya extraído la TOTALIDAD del tumor al momento de la cirugía, por lo que aumenta al máximo las posibilidades de curarse y reduce al mínimo posible la necesidad de recurrir a tratamientos adicionales u otra cirugía.
+* El módulo incluye honorarios de 3 profesionales:
+* Equipo tratante:
+* 1) Dr. Gonzalo Funes: Especialista en Cirugía de Cabeza y Cuello. Cirugía Oncológica de piel.
+* 2) Dra. Contreras Fernanda: Especialista en Anatomía Patológica. Estudio histológico micrográfico de MOHS por congelación.
+* 3) Dr. Gonzalo Diz: Especialista en cirugía plástica y reparadora)</textarea>
+        </div>
 
         <div class="mb-6">
             <div class="items-center ">
@@ -723,6 +751,10 @@
                 // Manejar el cambio de estado del switch de convenida/no convenida
 
 
+                document.getElementById('toggleDescripcion').addEventListener('change', function () {
+                    var textareaDescripcion = document.getElementById('descripcion');
+                    textareaDescripcion.style.display = this.checked ? 'block' : 'none';
+                });
                 document.getElementById('toggleCondicion').addEventListener('change', function () {
                     var textareaCondicion = document.getElementById('condicion');
                     textareaCondicion.style.display = this.checked ? 'block' : 'none';
@@ -743,6 +775,7 @@
                     textareaAdicionales.style.display = this.checked ? 'block' : 'none';
                 });
 
+                
 
                 let fileCount = 1;
 

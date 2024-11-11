@@ -145,6 +145,12 @@
         
             <br>
         </div>
+        @if(!empty($presupuesto['detalle']))
+        <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
+        <div style="margin-bottom: 5px;">
+            Diagnóstico:   {{$presupuesto['detalle']}}
+        </div>
+        @endif
         <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
 
         <div class="" style="font-size: 1rem; font-weight: 600; text-align: center;">PRESTACIONES</div>
@@ -228,7 +234,7 @@
                     </div>
                 @endif
         @endif
-
+        
     <div style="font-size: 1.1rem; font-weight: 600; text-align: center; margin-bottom: 5px; margin-top: 7px;">
         TOTAL PRESUPUESTO: $ {{ number_format($presupuesto['total_presupuesto'], 2, ',', '.') }}
     </div>
@@ -237,6 +243,18 @@
     </p>
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
+        @if($presupuesto['descripcion'] != '')
+            <label class="ml-4 p-2" style="font-size: 14px; font-weight: bold;">Cirugía propuesta: </label>
+            <ul class="ml-4 list-none" style="font-size: 10px; line-height: 1.5; "> <!-- Aplicamos el mismo tamaño de fuente -->
+                @foreach(explode('*',$presupuesto['descripcion']) as $item)
+                    @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
+                        <li class="font-semibold" style="font-size: 11px; font-weight: semibold;">* {{ trim($item) }}</li> <!-- Negrita y tamaño -->
+                    @endif
+                @endforeach
+            </ul>
+            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
+        @endif
+        
         @if($presupuesto['condicion'])
             <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Condición: </label> 
             <label class="ml-4 p-2" style="font-size: 10px;">{{$presupuesto['condicion']}}</label> 
