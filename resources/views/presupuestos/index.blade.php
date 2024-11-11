@@ -183,7 +183,6 @@
                         <th class="servicio">Medico Tratante</th>
                         <th style="width: 10%;">Fecha</th>
                         <th style="width: 10%;">Estado</th>
-                        <th>Detalle</th>
                         <th style="width: 12%;">Total Presupuesto</th>
                         <th>Obra Social</th>
                         <th style="width: 15%;">Acciones</th>
@@ -205,7 +204,6 @@
 
                                         </td>
 
-                                        <td class="detalle">{{ $presupuesto->detalle }}</td>
                                         <td class="text-end">
                                             @if($presupuesto->estado == 9)
                                                 ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}<br>
