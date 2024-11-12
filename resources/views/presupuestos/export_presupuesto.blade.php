@@ -244,16 +244,24 @@
         <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
 
         @if($presupuesto['descripcion'] != '')
-            <label class="ml-4 p-2" style="font-size: 14px; font-weight: bold;">Cirugía propuesta: </label>
-            <ul class="ml-4 list-none" style="font-size: 10px; line-height: 1.5; "> <!-- Aplicamos el mismo tamaño de fuente -->
-                @foreach(explode('*',$presupuesto['descripcion']) as $item)
-                    @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
-                        <li class="font-semibold" style="font-size: 11px; font-weight: semibold;">* {{ trim($item) }}</li> <!-- Negrita y tamaño -->
+    <label class="ml-4 p-2" style="font-size: 14px; font-weight: bold;">Cirugía propuesta: </label>
+    <ul class="ml-4 list-none" style="font-size: 10px; line-height: 1.5;">
+        @foreach(explode('*', $presupuesto['descripcion']) as $item)
+            @if(trim($item) != '') {{-- Evitar ítems vacíos --}}
+                <li class="font-semibold" style="font-size: 11px; font-weight: semibold;">
+                    @if(str_contains($item, 'DESCRIPCION DEL PROCEDIMIENTO:'))
+                        <br><strong>* {{ trim($item) }}</strong> <!-- Salto de línea y negrita para "DESCRIPCION DEL PROCEDIMIENTO:" -->
+                    @else
+                        * {{ trim($item) }}
                     @endif
-                @endforeach
-            </ul>
-            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
-        @endif
+                </li>
+            @endif
+        @endforeach
+    </ul>
+    <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 5px;"></div>
+@endif
+
+
         
         @if($presupuesto['condicion'])
             <label class="ml-4 p-2 font-semibold" style="font-size: 10px;">Condición: </label> 

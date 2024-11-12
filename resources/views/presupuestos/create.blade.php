@@ -244,7 +244,7 @@
 * Equipo tratante:
 * 1) Dr. Gonzalo Funes: Especialista en Cirugía de Cabeza y Cuello. Cirugía Oncológica de piel.
 * 2) Dra. Contreras Fernanda: Especialista en Anatomía Patológica. Estudio histológico micrográfico de MOHS por congelación.
-* 3) Dr. Gonzalo Diz: Especialista en cirugía plástica y reparadora)</textarea>
+* 3) Dr. Gonzalo Diz: Especialista en cirugía plástica y reparadora</textarea>
         </div>
 
         <div class="mb-6">

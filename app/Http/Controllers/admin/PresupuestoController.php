@@ -245,15 +245,18 @@ class PresupuestoController extends Controller
         $presupuesto->nro_afiliado = $validatedData['nro_afiliado'];
         $presupuesto->telefono = $validatedData['telefono'];
         $presupuesto->email = $validatedData['email'];
-        if ($request->has('anestesia')) {
-            if (in_array("0", $request->input('anestesia_id', []))) {
-                $presupuesto->estado = 5;
+
+        if (!$request->has('toggleDescripcion')) {
+            if ($request->has('anestesia')) {
+                if (in_array("0", $request->input('anestesia_id', []))) {
+                    $presupuesto->estado = 5;
+                } else {
+                    $presupuesto->estado = 8;
+                }
             } else {
                 $presupuesto->estado = 8;
             }
-        } else {
-            $presupuesto->estado = 8;
-        }
+        } else {$presupuesto->estado = 6;}
 
 
 
