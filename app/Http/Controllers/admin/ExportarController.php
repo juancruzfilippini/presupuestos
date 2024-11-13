@@ -141,6 +141,7 @@ class ExportarController extends Controller
             'paciente' => $presupuesto->paciente,
             'obra_social' => $os,
             'convenio' => $conv,
+            'edad' => $presupuesto->edad,
             'especialidad' => $presupuesto->especialidad,
             'total_presupuesto' => $presupuesto->total_presupuesto,
             'email' => $presupuesto->email,

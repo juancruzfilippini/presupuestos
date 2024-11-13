@@ -17,6 +17,7 @@ class Paciente extends Model
         'apellidos',
         'nombres',
         'fecha_nacimiento',
+        'contacto_email_direccion',
         'genero',
     ];
 
@@ -32,6 +33,7 @@ class Paciente extends Model
                             'persona.apellidos as apellidos',
                             'persona.genero as genero',
                             'persona.fecha_nacimiento as fecha_nacimiento',
+                            'persona.contacto_email_direccion as contacto_email_direccion',
                             'obra_social.nombre as obra_social')
             ->join('persona_plan as pp', 'persona.id', '=', 'pp.persona_id')
             ->join('plan as pl', 'pp.plan_id', '=', 'pl.id')

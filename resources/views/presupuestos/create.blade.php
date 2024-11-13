@@ -616,6 +616,7 @@
                                     resultHtml += '<p><strong>DNI:</strong> ' + patient.documento + '</p>';
                                     resultHtml += '<p><strong>Fecha de Nacimiento:</strong> ' + patient.fecha_nacimiento + '</p>';
                                     resultHtml += '<p><strong>Edad:</strong> ' + edad + ' años</p>';
+                                    resultHtml += '<p><strong>Email:</strong> ' + patient.contacto_email_direccion + '</p>';
                                     resultHtml += '<button type="button" class="btn btn-primary select-button"  data-edad="' + edad + '" data-id="' + patient.id + '" data-name="' + patient.nombres + ' ' + patient.apellidos + '">Seleccionar</button>';
                                     resultHtml += '</div><hr>';
                                 });
