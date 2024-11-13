@@ -218,7 +218,7 @@
         });
 
 
-        if (edad < 3 || edad > 65) {
+        if (edad <= 3 || edad >= 65) {
             totalAnestesia = totalAnestesia * 1.2;
 
             // Mostrar el label oculto

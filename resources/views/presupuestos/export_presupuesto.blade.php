@@ -187,7 +187,7 @@
                         <tr>
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-center">COMPLEJIDAD</th>
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-center">PRECIO</th>
-                            @if ($presupuesto['edad'] >65 || $presupuesto['edad'] <3)
+                            @if ($presupuesto['edad'] >= 65 || $presupuesto['edad'] <= 3)
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-center">ADICIONAL</th>
                             @endif
                         </tr>
@@ -196,7 +196,7 @@
                     @foreach($anestesias as $anestesia)
                         <tr>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
-                            @if(($presupuesto['edad']>65) || ($presupuesto['edad']<3))
+                            @if(($presupuesto['edad'] >= 65) || ($presupuesto['edad']<= 3))
                             <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}} </td>
                             <td class="px-4 py-2 border-b border-gray-300">$ {{number_format(($anestesia->precio*1.2)-($anestesia->precio), 2, ',', '.');}} </td>
                         @else
@@ -206,7 +206,7 @@
                     @endforeach
                     </tbody>
                 </table>
-                @if (isset($presupuesto['edad']) && ($presupuesto['edad'] < 3 || $presupuesto['edad'] > 65))
+                @if (isset($presupuesto['edad']) && ($presupuesto['edad'] <= 3 || $presupuesto['edad'] >= 65))
                     <div style="margin-bottom: 5px; text-align: center;">
                             <label id="adicional_anestesia" style="font-size: 12px; color: red;">*Adicional: 20% de recargo de anestesia por riesgo de edad*</label>
                     </div>
