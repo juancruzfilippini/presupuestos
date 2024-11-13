@@ -185,7 +185,7 @@
                         <th style="width: 10%;">Estado</th>
                         <th style="width: 12%;">Total Presupuesto</th>
                         <th>Obra Social</th>
-                        <th style="width: 15%;">Acciones</th>
+                        <th style="width: 1px; white-space: nowrap;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -220,7 +220,7 @@
                                                 {{ $presupuesto->obra_social }}
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="width: 1px; white-space: nowrap;">
                                             @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
                                                 <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
                                                     class="btn btn-success btn-sm">
@@ -265,7 +265,6 @@
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
                                             @endif
-
                                         </td>
                                     </tr>
                     @endforeach

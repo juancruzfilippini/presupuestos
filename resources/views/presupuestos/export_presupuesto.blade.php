@@ -158,7 +158,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>CÓDIGO</th>
+                        <th style="white-space: nowrap">CÓDIGO</th>
                         <th>DETALLE</th>
                         <th>MÓDULO TOTAL</th>
                     </tr>
@@ -166,7 +166,7 @@
                 <tbody>
                     @foreach($prestaciones as $prestacion)
                         <tr>
-                            <td>{{ $prestacion->codigo_prestacion }}</td>
+                            <td style="white-space: nowrap">{{ $prestacion->codigo_prestacion }}</td>
                             <td class="text-left">
                                 {{ $prestacion->nombre_prestacion }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif
                             </td>
@@ -185,7 +185,6 @@
             <table class="min-w-full bg-white border border-gray-200">
                     <thead>
                         <tr>
-                            <th class="px-4 py-2 border-b-2 border-gray-300 text-center">TIPO</th>
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-center">COMPLEJIDAD</th>
                             <th class="px-4 py-2 border-b-2 border-gray-300 text-center">PRECIO</th>
                             @if ($presupuesto['edad'] >65 || $presupuesto['edad'] <3)
@@ -196,27 +195,6 @@
                     <tbody>
                     @foreach($anestesias as $anestesia)
                         <tr>
-                            <td class="px-4 py-2 border-b border-gray-300">
-                            @switch($anestesia->anestesia_id)
-                            @case(0)
-                            Sin especificar
-                            @break
-                            @case(1)
-                            Anestesia Local
-                            @break
-                            @case(2)
-                            Anestesia Regional
-                            @break
-                            @case(3)
-                            Sedación Superficial
-                            @break
-                            @case(4)
-                            Anestesia General
-                            @break
-                            @default
-                            No especificado
-                            @endswitch
-                            </td>
                             <td class="px-4 py-2 border-b border-gray-300">{{ $anestesia->complejidad }}</td>
                             @if(($presupuesto['edad']>65) || ($presupuesto['edad']<3))
                             <td class="px-4 py-2 border-b border-gray-300">$ {{number_format($anestesia->precio, 2, ',', '.');}} </td>
