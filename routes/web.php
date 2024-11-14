@@ -86,3 +86,6 @@ Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class,
 
 Route::get('/presupuestos/enviar-datos/{id}', [ExportarController::class, 'enviarDatosPorCorreo'])->name('enviar.datos');
 
+Route::delete('/deletePrestacion/{id}', [PresupuestoController::class, 'deletePrestacion'])->name('deletePrestacion');
+
+

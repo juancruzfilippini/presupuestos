@@ -6,6 +6,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
 <title>Sistema de Presupuestos</title>
 <x-app-layout>
     <x-slot name="title">Editar Presupuesto</x-slot>
@@ -158,47 +160,45 @@
             <table class="table-auto w-full mb-4">
                 <thead>
                     <tr>
+                        <th class="px-4 py-2 text-center" style="width: 1px; white-space: nowrap"></th>
                         <th class="codigo border px-4 py-2 text-center">CÓDIGO</th>
                         <th class="fixed-width border px-4 py-2 text-center">DETALLE</th>
                         <th class="border px-4 py-2 text-center">MÓDULO TOTAL (A)</th>
                     </tr>
                     <input type="hidden" id="especialidad" name="especialidad" value="">
-
                 </thead>
-                <tbody>
-
+                <tbody id="prestacionesTableBody">
                     @foreach($prestaciones as $prestacion)
                         <input class="h-10 border" type="hidden" id="prestacion_id"
-                            name="prestacion_id_{{ $loop->iteration }}" value="{{$prestacion->id}}">
+                            name="prestacion_id_{{ $loop->iteration }}" value="{{ $prestacion->id }}">
                         <input class="h-10 border" type="hidden" id="prestacion_salutte_id"
                             name="prestacion_salutte_id_{{ $loop->iteration }}"
-                            value="{{$prestacion->prestacion_salutte_id}}">
+                            value="{{ $prestacion->prestacion_salutte_id }}">
 
-
-                        <tr>
+                        <tr data-row="{{ $loop->iteration }}" class="prestacion-row">
+                            <td class="px-4 py-2 text-center">
+                                <button style="width: 1px; white-space: nowrap" type="button" class="delete-prestacion-btn"
+                                    data-id="{{ $prestacion->id }}"><i class="fa fa-trash"></i></button>
+                            </td>
                             <td class="border px-4 py-2 text-center">
                                 <input class="w-full text-center border h-10" name="codigo_{{ $loop->iteration }}"
-                                    value="{{ $prestacion->codigo_prestacion }}" />
+                                    value="{{ $prestacion->codigo_prestacion }}" readonly />
                             </td>
-                            @if(is_null($prestacion->nombre_prestacion))
-                                <td class="border px-4 py-2 text-center">
-                                    <input class="w-full text-center border h-10" name="prestacion_{{ $loop->iteration }}"
-                                        value="{{ Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }}" />
-                                </td>
-                            @else
-                                <td class="border px-4 py-2 text-center">
-                                    <input class="w-full text-center border h-10" name="prestacion_{{ $loop->iteration }}"
-                                        value="{{ $prestacion->nombre_prestacion }}" />
-                                </td>
-                            @endif
+                            <td class="border px-4 py-2 text-center">
+                                <input name="prestacion_{{ $loop->iteration }}" value="{{ $prestacion->nombre_prestacion }}"
+                                    class="w-full text-center border h-10" data-row="{{ $loop->iteration }}">
+                                <!-- Las opciones de prestaciones se cargarán con AJAX -->
+
+                                <input type="hidden" name="cantidad_{{ $loop->iteration }}"
+                                    value="{{ $prestacion->cantidad }}">
+                            </td>
                             <td class="border px-4 py-2 text-center">
                                 <div style="display: flex;">
                                     <select name="cantidad_{{ $loop->iteration }}"
                                         class="border w-full text-center h-10 cantidad-select"
                                         style="max-width: 80px; margin-right: 10px;">
                                         @for ($i = 1; $i <= 20; $i++)
-                                            <option value="{{ $i }}" {{ $i == $prestacion->cantidad ? 'selected' : '' }}>
-                                                {{ $i }}
+                                            <option value="{{ $i }}" {{ $i == $prestacion->cantidad ? 'selected' : '' }}>{{ $i }}
                                             </option>
                                         @endfor
                                     </select>
@@ -211,6 +211,14 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <!-- Botón para agregar nueva prestación -->
+            <div class="text-left mt-4">
+                <button type="button" id="addPrestacionBtn" class="px-2 py-2 bg-green-700 text-white rounded"><i
+                        class="fa fa-plus mr-2"></i>Agregar
+                    Prestación</button>
+            </div>
+
 
 
             @if (count($anestesias) > 0)
@@ -681,6 +689,8 @@
         const initialTotal = parseFloat(moduloTotalInput.value);
         const cantidadInicial = parseInt(select.value);
 
+        console.log('cantidad select. modulototal: ' + moduloTotalInput + 'initialTotal: ' + initialTotal + 'cantidadInicial: ' + cantidadInicial);
+
         // Calculamos el valor unitario inicial y lo guardamos como data-attribute.
         const valorUnitarioInicial = initialTotal / cantidadInicial;
         select.setAttribute('data-valor-unitario', valorUnitarioInicial.toFixed(2));
@@ -695,6 +705,179 @@
             recalibrateUnitPrice(this);
         });
     });
+
+    function initCantidadSelect() {
+
+        document.querySelectorAll('.cantidad-select').forEach(select => {
+            const moduloTotalInput = select.closest('td').querySelector('input[name^="modulo_total_"]');
+            const initialTotal = parseFloat(moduloTotalInput.value);
+            const cantidadInicial = parseInt(select.value);
+
+            console.log('cantidad select. modulototal: ' + moduloTotalInput + 'initialTotal: ' + initialTotal + 'cantidadInicial: ' + cantidadInicial);
+
+            // Calculamos el valor unitario inicial y lo guardamos como data-attribute.
+            const valorUnitarioInicial = initialTotal / cantidadInicial;
+            select.setAttribute('data-valor-unitario', valorUnitarioInicial.toFixed(2));
+
+            // Evento de cambio para recalcular el módulo total al cambiar la cantidad.
+            select.addEventListener('change', function () {
+                updateModuloTotal(this, parseFloat(moduloTotalInput.value));
+            });
+
+            // Evento blur para recalibrar el valor unitario al cambiar el módulo total manualmente.
+            moduloTotalInput.addEventListener('blur', function () {
+                recalibrateUnitPrice(this);
+            });
+        });
+    }
+    let prestacionCount = {{ count($prestaciones) }}; // El contador de prestaciones inicial, basado en las prestaciones existentes.
+    let convenioId = {{$presupuesto->convenio}}; // Asegúrate de que esta variable contenga el ID del convenio.
+
+    $('#addPrestacionBtn').on('click', function () {
+        prestacionCount++; // Incrementar el contador de prestaciones
+
+
+        // Crear nueva fila con inputs y un select para la prestación
+        let newRow = `
+        <tr data-row="${prestacionCount}" class="prestacion-row">
+            <td class="px-4 py-2 text-center">
+                
+            </td>
+            <td class="border px-4 py-2 text-center">
+                <input class="w-full text-center border h-10" name="codigo_${prestacionCount}"/>
+            </td>
+            <td class="border px-4 py-2 text-center">
+                <select name="prestacion_${prestacionCount}" class="w-full text-center border h-10 prestacion-select" data-row="${prestacionCount}"></select>
+                <input type="hidden" name="cantidad_${prestacionCount}" value="1">
+            </td>
+            <td class="border px-4 py-2 text-center">
+                <div style="display: flex;">
+                    <select name="cantidad_${prestacionCount}" class="border w-full text-center h-10 cantidad-select" style="max-width: 80px; margin-right: 10px;">
+                        ${Array.from({ length: 20 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('')}
+                    </select>
+                    <input class="w-full text-center border h-10" name="modulo_total_${prestacionCount}" oninput="this.value = this.value.replace(',', '.'); updateTotalPresupuesto();" />
+                </div>
+            </td>
+            
+        </tr>
+    `;
+        // Añadir la nueva fila al cuerpo de la tabla
+        $('#prestacionesTableBody').append(newRow);
+
+        // Inicializar select2 en el nuevo select de la fila
+        let selectElement = $(`select[name="prestacion_${prestacionCount}"]`);
+        initializeSelect2(selectElement);
+
+        // Cargar prestaciones en el nuevo select
+        console.log(convenioId);
+
+        loadPrestaciones(convenioId, selectElement);
+
+        // Actualizar automáticamente el campo de código cuando se selecciona una prestación
+        selectElement.on('change', function () {
+            let selectedOption = $(this).find('option:selected');
+            let codigo = selectedOption.data('codigo');
+            let rowId = $(this).data('row');
+            $(`input[name="codigo_${rowId}"]`).val(codigo); // Actualizar el campo de código
+        });
+
+    });
+
+    // Función para cargar prestaciones desde el backend
+    function loadPrestaciones(convenioId, selectElement) {
+        $.ajax({
+            url: '{{ url("/getPrestaciones") }}/' + convenioId,
+            type: 'GET',
+            success: function (data) {
+                selectElement.empty();
+                selectElement.append('<option value="">Seleccione Prestación</option>');
+                $.each(data, function (key, value) {
+                    selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
+                });
+            }
+        });
+    }
+
+    $(document).on('change', '.prestacion-select', function () {
+        let selectedOption = $(this).find('option:selected');
+        let codigoPrestacion = selectedOption.data('codigo');
+        let rowCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
+        $('#codigo_' + rowCount).val(codigoPrestacion);
+        let prestacionId = selectedOption.val();
+
+        let convenioId = {{$presupuesto->convenio}}
+
+            console.log(convenioId, codigoPrestacion, 'aaaaaaaaaaasdddddddd');
+
+        $.ajax({
+            url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
+            method: 'GET',
+            success: function (response) {
+                console.log('obtenerprecioooo');
+                let precio = parseFloat(response[0].PRECIO);
+                let precioConDecimales = precio.toFixed(2); // Mantiene dos decimales
+                console.log(precioConDecimales);
+                console.log("rowCount:", rowCount);
+
+                $('input[name="modulo_total_' + rowCount + '"]').val(precioConDecimales);
+                updateTotalPresupuesto();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la consulta AJAX:', error);
+            }
+        });
+        setTimeout(function () {
+            initCantidadSelect();
+        }, 1000);
+
+    });
+
+    $(document).on('click', '.delete-prestacion-btn', function () {
+        let prestacionEliminada = $(this).data('id');
+        const rowElement = $(this).closest('tr'); // Guardar la fila para eliminarla tras la respuesta
+
+        console.log(prestacionEliminada);
+        // Confirmación antes de eliminar
+        if (confirm('¿Estás seguro de que quieres eliminar esta prestación?')) {
+            $.ajax({
+                url: '{{ route("deletePrestacion", "") }}/' + prestacionEliminada, // Genera la URL correctamente
+                type: 'POST',
+                data: {
+                    _method: 'DELETE',  // Indica a Laravel que se trata de un DELETE
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    alert('Prestación eliminada correctamente');
+                    rowElement.remove(); // Remover la fila de la vista
+                    updateTotalPresupuesto();
+
+                },
+                error: function (xhr) {
+                    alert('Error al eliminar la prestación');
+                }
+            });
+
+        }
+        prestacionEliminada = '';
+        console.log(prestacionEliminada);
+    });
+
+
+    // Función para inicializar select2 en un select dado
+    function initializeSelect2(selectElement) {
+        selectElement.select2({
+            tags: true, // Esto permite que el usuario edite las opciones.
+            placeholder: 'Seleccione una prestación',
+            allowClear: true,
+            width: '100%', // Para ajustar el ancho
+            language: {
+                noResults: function () {
+                    return "Seleccione un convenio.";
+                }
+            }
+        });
+    }
+
 
 </script>
 
@@ -763,5 +946,47 @@
     .form-groupp label {
         margin-bottom: 5px;
         /* Espacio entre el label y el input */
+    }
+
+    .select2-container .select2-selection--single {
+        border: 1px solid #d1d5db;
+        /* Aplica el mismo borde que los inputs */
+        height: 38px;
+        /* Altura similar a los inputs */
+        padding: 0.375rem 0.75rem;
+        /* Espaciado interno similar */
+        border-radius: 0.25rem;
+        /* Iguala el borde redondeado */
+        box-sizing: border-box;
+        /* Asegura que los estilos sean consistentes */
+    }
+
+    /* Asegura que el select no tenga un icono de dropdown desalineado */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+        /* Ajusta la altura del icono del dropdown */
+    }
+
+    /* Elimina el fondo azul al enfocar */
+    .select2-container--default .select2-selection--single:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #d1d5db;
+    }
+
+    /* Asegura que el texto esté alineado verticalmente */
+    .select2-selection__rendered {
+        line-height: 38px;
+        /* Igualar la altura */
+    }
+
+    /* Limitar el ancho de la columna de la prestación */
+    .prestacion-select {
+        width: 100%;
+        max-width: 350px;
+        /* Puedes ajustar este valor */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 </style>

@@ -256,7 +256,9 @@ class PresupuestoController extends Controller
             } else {
                 $presupuesto->estado = 8;
             }
-        } else {$presupuesto->estado = 6;}
+        } else {
+            $presupuesto->estado = 6;
+        }
 
 
 
@@ -481,26 +483,59 @@ class PresupuestoController extends Controller
         $presupuesto->save();
 
         // Manejar prestaciones
-        $rowCount = 1;
         //dd($request->all());
+        $rowCount = 1;
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
-            $prestacion = Prestaciones::find($prestacionId);
+            $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
+            $prestacionNombre = $request->input("prestacion_{$rowCount}"); // Nombre de la prestación
 
-            if ($prestacion) {
+            // Si la prestación no existe (nuevo ID o sin ID), se crea una nueva
+            if (!$prestacionId || !Prestaciones::find($prestacionId)) {
+                $prestacion = new Prestaciones();
+                $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
+                if (is_numeric($prestacionNombre)) {
+                    $prestacion->nombre_prestacion = Prestacion::getPrestacionById($prestacionNombre); // Asignar el nombre correctamente
+                    $prestacion->prestacion_salutte_id = $prestacionNombre; // Guardar prestacion_salutte_id en el campo correcto
+                } else {
+                    $prestacion->nombre_prestacion = $prestacionNombre;
+                }
+                $prestacion->cantidad = (int) $request->input("cantidad_{$rowCount}");
+                $prestacion->creado_por = auth()->user()->id;
+                $prestacion->creado_fecha = now();
+
+                // Validación de modulo_total (evitar NaN o valores vacíos)
+                $moduloTotal = $request->input("modulo_total_{$rowCount}");
+                $prestacion->modulo_total = is_numeric($moduloTotal) ? $moduloTotal : 0;
+
+                $prestacion->presupuesto_id = $presupuesto->id; // Asigna el ID del presupuesto actual a la nueva prestación
+                $prestacion->save();
+
+                // Registrar la nueva creación en cambios_prestaciones
+                cambios_prestaciones::create([
+                    'presupuesto_id' => $presupuesto->id,
+                    'campo' => "Nueva prestación {$rowCount}",
+                    'valor_anterior' => null,
+                    'valor_nuevo' => $prestacion->nombre_prestacion,
+                    'fecha_cambio' => now(),
+                    'usuario_id' => auth()->user()->id
+                ]);
+
+            } else {
+                // Actualizar la prestación existente
+                $prestacion = Prestaciones::find($prestacionId);
                 $prestacionOriginal = $prestacion->getOriginal(); // Guardar original
                 $prestacion->codigo_prestacion = $request->input("codigo_{$rowCount}");
-                $prestacionInput = $request->input("prestacion_{$rowCount}");
-                $prestacion->cantidad = $request->input("cantidad_{$rowCount}");
-                $prestacionSalutteId = $request->input("prestacion_salutte_id_{$rowCount}");
-                $prestacion->prestacion_salutte_id = $prestacionSalutteId;
-                $prestacion->nombre_prestacion = $prestacionInput;
+                $prestacion->nombre_prestacion = $prestacionNombre; // Asignar el nombre correctamente
+                $prestacion->cantidad = (int) $request->input("cantidad_{$rowCount}");
+                $prestacion->prestacion_salutte_id = $prestacionSalutteId; // Guardar prestacion_salutte_id en el campo correcto
 
-                $prestacion->modulo_total = $request->input("modulo_total_{$rowCount}");
+                // Validación de modulo_total (evitar NaN o valores vacíos)
+                $moduloTotal = $request->input("modulo_total_{$rowCount}");
+                $prestacion->modulo_total = is_numeric($moduloTotal) ? $moduloTotal : $prestacion->modulo_total;
 
                 // Comparar cambios en las prestaciones
                 $dirtyFieldsPrestacion = $prestacion->getDirty();
-                //dd($dirtyFieldsPrestacion);
                 foreach ($dirtyFieldsPrestacion as $campo => $nuevoValor) {
                     cambios_prestaciones::create([
                         'presupuesto_id' => $presupuesto->id,
@@ -515,6 +550,8 @@ class PresupuestoController extends Controller
             }
             $rowCount++;
         }
+
+
 
 
 
@@ -607,6 +644,26 @@ class PresupuestoController extends Controller
         // Redirige con mensaje de éxito
         return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
     }
+
+    public function deletePrestacion($id)
+    {
+        $prestacion = Prestaciones::findOrFail($id);
+
+        // Opcional: registrar el cambio en cambios_prestaciones
+        cambios_prestaciones::create([
+            'presupuesto_id' => $prestacion->presupuesto_id,
+            'campo' => 'eliminación',
+            'valor_anterior' => $prestacion->nombre_prestacion,
+            'valor_nuevo' => 'Eliminado',
+            'fecha_cambio' => now(),
+            'usuario_id' => auth()->user()->id
+        ]);
+
+        $prestacion->delete();
+
+        return response()->json(['success' => true]);
+    }
+
 
 
 
