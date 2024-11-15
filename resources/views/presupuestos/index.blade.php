@@ -265,6 +265,12 @@
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
                                             @endif
+                                            @if(Auth::user()->rol_id == 3)
+                                                <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
+                                                    class="btn btn-secondary btn-sm">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                     @endforeach
