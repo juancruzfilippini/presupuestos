@@ -372,9 +372,9 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
-        //dd($anestesias);
-
-        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id'));
+        $proceso = Proceso::where('presupuesto_id', $id)->get();
+        $procesoFarmacia = $proceso[0]->farmacia;
+        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id', 'procesoFarmacia'));
     }
 
 
@@ -409,6 +409,7 @@ class PresupuestoController extends Controller
         ]);
 
         $os = $validatedData['obra_social'];
+        $procesoFarmacia = $request['procesoFarmacia'];
 
         // Encontrar el presupuesto por su ID
         $presupuesto = presupuesto::findOrFail($id);
@@ -486,6 +487,7 @@ class PresupuestoController extends Controller
 
         // Manejar prestaciones
         //dd($request->all());
+        $prestacionNuevaSi= 0;
         $rowCount = 1;
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
@@ -522,6 +524,7 @@ class PresupuestoController extends Controller
                     'fecha_cambio' => now(),
                     'usuario_id' => auth()->user()->id
                 ]);
+                $prestacionNuevaSi = 1;
 
             } else {
                 // Actualizar la prestación existente
@@ -610,10 +613,14 @@ class PresupuestoController extends Controller
             $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
             $presupuesto->save();
         } else if ($anestesiaConIdCero == false) {
-            $presupuesto->estado = 8; // Si todas las anestesias tienen IDs diferentes de 0
-            //dd($presupuesto->estado);
+                if ($prestacionNuevaSi == 1){
+                    $presupuesto->estado = 8; // Si todas las anestesias tienen IDs diferentes de 0
+                } else if($procesoFarmacia == 1){
+                    $presupuesto->estado = 6;
+                }else {$presupuesto->estado =8;}
             $presupuesto->save();
         }
+
 
 
 

@@ -270,7 +270,7 @@ use Carbon\Carbon;
                     <i class="fa-solid fa-arrow-left-long"></i>
                     Volver
                 </button>
-                @if(Auth::user()->rol_id != 7 && Auth::user()->rol_id != 3)
+                @if(Auth::user()->rol_id != 7)
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
                     Ver Historial de Cambios
                 </button>

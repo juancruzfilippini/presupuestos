@@ -17,6 +17,7 @@
         @csrf
 
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
+        <input type="hidden" id="procesoFarmacia" name="procesoFarmacia" value="{{$procesoFarmacia}}">
 
         <h1 class="text-2xl font-bold mb-6">EDITAR PRESUPUESTO</h1>
 
