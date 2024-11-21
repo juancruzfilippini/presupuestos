@@ -70,6 +70,8 @@ Route::get('/getConvenios', [ConvenioController::class, 'getConvenios'])->name('
 
 Route::get('/getPrestaciones/{convenioId}', [PrestacionController::class, 'getPrestaciones'])->name('getPrestaciones');
 
+Route::get('/getAnestesias/{convenioId}', [PrestacionController::class, 'getAnestesias'])->name('getAnestesias');
+
 Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionController::class, 'obtenerPrecio'])->name('obtenerPrecio');
 
 Route::get('/presupuestos/firmar/{id}', [PresupuestoController::class, 'firmar'])->name('presupuestos.firmar');

@@ -30,9 +30,8 @@ class PresupuestoController extends Controller
     public function index(Request $request)
     {
         // Inicializa la consulta de los presupuestos
-        $query = Presupuesto::where('borrado_logico', 0)
-            ->orWhere('borrado_logico', 1)
-            ->orWhereNull('borrado_logico');
+        $query = Presupuesto::query(); // Usando Eloquent
+
 
         // Agregar filtros si están presentes en el request
         if ($request->filled('search_nro_presupuesto')) {
@@ -48,11 +47,11 @@ class PresupuestoController extends Controller
         }
 
         if ($request->filled('search_estado')) {
-            $query->select('presupuesto.*')
-                ->join('estado', 'presupuesto.estado', '=', 'estado.id')
-                ->where('estado.nombre', 'like', '%' . $request->input('search_estado') . '%');
+            $query->join('estado', 'presupuesto.estado', '=', 'estado.id')
+                ->where('estado.nombre', 'like', '%' . $request->input('search_estado') . '%')
+                ->select('presupuesto.*') // Selecciona solo las columnas de 'presupuesto'
+                ->distinct(); // Evita duplicados si el join produce más de una coincidencia
         }
-
 
         if ($request->filled('search_detalle')) {
             $query->where('detalle', 'like', '%' . $request->input('search_detalle') . '%');
@@ -80,8 +79,11 @@ class PresupuestoController extends Controller
 
         // Mantener los filtros aplicados en la paginación
         $presupuestos->appends($request->all());
+        $firmas = Firmas::all();
+        //dd($firmas);
 
-        return view('presupuestos.index', compact('presupuestos'));
+
+        return view('presupuestos.index', compact('presupuestos', 'firmas'));
     }
 
 

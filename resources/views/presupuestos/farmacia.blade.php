@@ -2,6 +2,7 @@
 use App\Models\ObraSocial;
 use App\Models\Convenio;
 use App\Models\Prestacion;
+use Carbon\Carbon;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -23,6 +24,19 @@ use App\Models\Prestacion;
         <input type="hidden" id="presupuesto_id" name="presupuesto_id" value="{{$id}}">
 
         <h1 class="text-2xl font-bold mb-6">FARMACIA</h1>
+
+        <h2 class="text-lg font-semibold mb-2">PACIENTE</h2>
+        <div class="form-group">
+            {{$presupuesto->paciente}}
+            <br>
+            Edad: {{ ($presupuesto->edad) }}
+            <br>
+            Email: {{$presupuesto->email}}
+            <br>
+            <p></p>
+            <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center"></div>
 
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>

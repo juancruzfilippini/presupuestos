@@ -270,7 +270,7 @@ use Carbon\Carbon;
                     <i class="fa-solid fa-arrow-left-long"></i>
                     Volver
                 </button>
-                @if(Auth::user()->rol_id != 7)
+                @if(Auth::user()->rol_id != 7 && Auth::user()->rol_id != 3)
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cambiosModal"><i class="fa-solid fa-eye"></i>
                     Ver Historial de Cambios
                 </button>
@@ -298,11 +298,11 @@ use Carbon\Carbon;
                                 Aprobado por $ {{number_format($presupuestoAprobado->valor_aprobado, 2, ',', '.')}}
                             </span>
 
-                            @else
-                            <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
-                                Subir Presupuesto Aprobado
-                            </button>
+                            @elseif(Auth::user()->rol_id != 3)
+                                <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
+                                    Subir Presupuesto Aprobado
+                                </button>
                             @endif
                         </div>
                     @endif

@@ -150,8 +150,7 @@
             </table>
             <div class="form-row">
                 <div class="form-groupp">
-                    <input type="text" id="detalle" name="detalle" class="form-control"
-                        placeholder="Diagnóstico...">
+                    <input type="text" id="detalle" name="detalle" class="form-control" placeholder="Diagnóstico...">
                 </div>
                 <div class="form-groupp">
                     <input type="text" name="convenio" class="form-control"
@@ -186,7 +185,7 @@
 
         <!-- Tabla que debería mostrarse solo cuando el switch está activado -->
         <div class="mb-4" style="display:none;">
-            <div style="margin-left: 30%">
+            <div style="margin-left: 5%">
                 <button type="button" id="addRow"
                     class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-4">
                     <i class="fas fa-plus"></i>
@@ -196,7 +195,7 @@
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-            <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 30%">
+            <table class="table-auto w-2 mb-4" id="anestesia-table" style="margin-left: 5%">
                 <thead>
                     <th class="border px-4 py-2 text-center">Complejidad</th>
                     <th class="border px-4 py-2 text-center">Precio</th>
@@ -231,8 +230,7 @@
                 </div>
             </div>
             <p></p>
-            <textarea id="descripcion" name="descripcion"
-                class="border rounded p-2 w-full">* 1) RESECCIÓN DE TUMOR MEDIANTE CIRUGÍA MICROGRÁFICA DE MOHS
+            <textarea id="descripcion" name="descripcion" class="border rounded p-2 w-full">* 1) RESECCIÓN DE TUMOR MEDIANTE CIRUGÍA MICROGRÁFICA DE MOHS
 * 2) CONGELACIÓN INTRAOPERATORIA CON CRIOSTATO SEGÚN TÉCNICA DE MOHS
 * 3) CIERRE PLÁSTICO DE HERIDA QUIRÚRGICA MEDIANTE COLGAJO LOCAL (CIRUGÍA PLÁSTICA REPARADORA).
 * DESCRIPCION DEL PROCEDIMIENTO:
@@ -335,6 +333,22 @@
         document.addEventListener('DOMContentLoaded', function () {
 
 
+            function loadAnestesias(convenioId, selectElement) {
+                console.log(convenioId + ' anestesia selecttt');
+                $.ajax({
+                    url: '{{ url("/getAnestesias") }}/' + convenioId,
+                    type: 'GET',
+                    success: function (data) {
+                        // Convertir selectElement en un objeto jQuery si no lo es
+                        var $selectElement = $(selectElement);
+                        $selectElement.empty();
+                        $selectElement.append('<option value="">Seleccione Anestesia</option>');
+                        $.each(data, function (key, value) {
+                            $selectElement.append('<option value="' + value.prestacionnombre + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
+                        });
+                    }
+                });
+            }
 
 
 
@@ -375,35 +389,48 @@
                 $('#total_anestesia').val(totalAnestesia.toFixed(2));
             }
 
-
+            let rowCounter = 1
 
             document.getElementById('addRow').addEventListener('click', function () {
                 var tableBody = document.getElementById('anestesia-body');
                 var newRow = document.createElement('tr');
-
+                newRow.setAttribute('data-row', rowCounter);
                 newRow.innerHTML = `
-                    <td class="border px-4 py-2">
-                        <input type="text" name="complejidad[]" class="border w-auto h-10 text-center">
-                    </td>
-                    <td class="border px-4 py-2">
-                        <input type="text" name="precio_anestesia[]" class="border w-auto h-10 text-center" oninput="this.value = this.value.replace(',', '.');">
-                    </td>
-                    <td class="border px-4 py-2">
-                        <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
-                            <option value="0">Sin especificar</option>
-                            <option value="1">Anestesia Local</option>
-                            <option value="2">Anestesia Regional</option>
-                            <option value="3">Sedación Superficial</option>
-                            <option value="4">Anestesia General</option>
-                        </select>
-                    </td>
-                `;
+        <td class="border px-4 py-2">
+            <select name="complejidad[]" class="border w-auto h-10 text-center complejidad-select">
+                <option value="">Seleccione Anestesia</option>
+            </select>
+        </td>
+        <td class="border px-4 py-2">
+            <input type="text" name="precio_anestesia[]" class="border w-auto h-10 text-center" data-row="${rowCounter}" oninput="this.value = this.value.replace(',', '.');">
+        </td>
+        <td class="border px-4 py-2">
+            <select name="anestesia_id[]" class="border rounded h-10" style="min-width: 200px; margin-right: 20px;" readonly>
+                <option value="0">Sin especificar</option>
+                <option value="1">Anestesia Local</option>
+                <option value="2">Anestesia Regional</option>
+                <option value="3">Sedación Superficial</option>
+                <option value="4">Anestesia General</option>
+            </select>
+        </td>
+    `;
 
                 tableBody.appendChild(newRow);
 
+                // Obtener el nuevo select de "complejidad"
+                var complejidadSelect = newRow.querySelector('select[name="complejidad[]"]');
+
+                console.log(complejidadSelect);
+
+                var convenioId = {{$ultimoConvenio->convenio_id}}
+                    // Llamar a la función loadAnestesias para rellenar el select
+                loadAnestesias(convenioId, $(complejidadSelect));
+
                 // Asignar el evento oninput dinámicamente
                 newRow.querySelector('input[name="precio_anestesia[]"]').addEventListener('input', updateTotalPresupuesto);
+                rowCounter++;
             });
+
 
             document.getElementById('removeRow').addEventListener('click', function () {
                 var tableBody = document.getElementById('anestesia-body');
@@ -708,6 +735,8 @@
 
 
 
+
+
                 // Escuchar el cambio en el select de prestaciones
                 $(document).on('change', '.prestacion-select', function () {
                     var selectedOption = $(this).find('option:selected');
@@ -738,6 +767,36 @@
                             console.log("rowCount:", rowCount);
 
                             $('input[name="modulo_total_' + rowCount + '"]').val(precioConDecimales);
+                            updateTotalPresupuesto();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error en la consulta AJAX:', error);
+                        }
+                    });
+                });
+                
+                $(document).on('change', '.complejidad-select', function () {
+                    let selectedOption = $(this).find('option:selected');
+                    let codigoPrestacion = selectedOption.data('codigo');
+                    let rowCount = $(this).closest('tr').data('row'); // Obtenemos el rowCount correcto
+                    $('#codigo_' + rowCount).val(codigoPrestacion);
+                    let prestacionId = selectedOption.val();
+
+                    let convenioId = {{$ultimoConvenio->convenio_id}}
+
+                        console.log(convenioId, codigoPrestacion, 'aaaaaaaaaaasdddddddd');
+
+                    $.ajax({
+                        url: '{{ url("/obtenerPrecio") }}/' + convenioId + '/' + codigoPrestacion,
+                        method: 'GET',
+                        success: function (response) {
+                            console.log('obtenerprecioooo');
+                            let precio = parseFloat(response[0].PRECIO);
+                            let precioConDecimales = precio.toFixed(2); // Mantiene dos decimales
+                            console.log(precioConDecimales);
+                            console.log("rowCount:", rowCount);
+
+                            $('input[name="precio_anestesia[]"][data-row="' + rowCount + '"]').val(precioConDecimales);
                             updateTotalPresupuesto();
                         },
                         error: function (xhr, status, error) {
@@ -776,7 +835,7 @@
                     textareaAdicionales.style.display = this.checked ? 'block' : 'none';
                 });
 
-                
+
 
                 let fileCount = 1;
 

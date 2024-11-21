@@ -6,7 +6,7 @@
     use App\Helpers\NumberToWordsHelper;
 @endphp
 
-<header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+<header style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;"> 
     <img src="{{ public_path('storage/img/header.jpg') }}" alt="Logo" style="width: 200px;">
     <h2 style="flex-grow: 1; text-align: center; margin: 0;">PRESUPUESTO</h2>
 </header>
@@ -266,7 +266,7 @@
                 @endforeach
             </ul>
         @endif
-        </form>
+        </form> 
     </body>
 
     

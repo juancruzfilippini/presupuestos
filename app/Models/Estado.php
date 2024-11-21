@@ -53,6 +53,9 @@ class Estado extends Model
         if ($estado = 'firmando') {
             return 3;
         }
+        if ($estado = 'anulado') {
+            return 10;
+        }
     }
 
 }

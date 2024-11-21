@@ -33,9 +33,33 @@ class PrestacionController extends Controller
             return response()->json(['error' => 'Error al obtener las prestaciones'], 500);
         }
     }
+    public function getAnestesias($convenioId)
+    {
+        try {
+            $prestaciones = DB::connection('db2')->select("
+            SELECT 
+                p.id AS prestacionid,
+                p.codigo AS prestacioncodigo,
+                p.nombre AS prestacionnombre,
+                c.nombre AS convenionombre,
+                p.root AS preroot
+            FROM convenio c
+            INNER JOIN nomenclador n ON c.id=n.convenio_id
+            INNER JOIN prestacion p ON n.prestacion_raiz_id=p.root
+            WHERE p.lvl = 3 AND p.activo = 1 AND c.id = :convenioId AND p.nombre like '% AMA %'
+            ORDER BY p.id", ['convenioId' => $convenioId]);
+
+            return response()->json($prestaciones);
+        } catch (\Exception $e) {
+            // Registrar el error en el log
+            \Log::error('Error en getPrestaciones: ' . $e->getMessage());
+            // Retornar un mensaje de error
+            return response()->json(['error' => 'Error al obtener las prestaciones'], 500);
+        }
+    }
 
 
-    public function obtenerPrecio($convenioId, $codigoPrestacion)
+    public function obtenerPrecio($convenioId, $codigoPrestacion) 
     {
         $sql = "SELECT
     t.convenio AS CONVENIO,

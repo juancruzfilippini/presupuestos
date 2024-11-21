@@ -80,7 +80,7 @@ class ExportarController extends Controller
             'fdirec' => $presupuesto->fdirec,
         ];
 
-        // Obtener las prestaciones asociadas al presupuesto
+        // Obtener las prestaciones asociadas al presupuesto.
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $firmas = Firmas::where('presupuesto_id', $id)->first();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
