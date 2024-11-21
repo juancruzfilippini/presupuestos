@@ -190,37 +190,54 @@
                 </thead>
                 <tbody>
                     @foreach ($presupuestos as $presupuesto)
-                                    <tr>
-                                        <td>{{ $presupuesto->id }}</td>
-                                        <td class="paciente">{{ $presupuesto->paciente }}</td>
-                                        <td class="paciente">{{ $presupuesto->paciente_salutte_id }}</td>
-                                        <td class="servicio">{{ $presupuesto->medico_tratante }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
-                                        <td class="estado">
-                                        <span class="badge 
-                                            {{ $presupuesto->estado == 10 ? 'bg-danger' : ($presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary')) }}">
-                                            {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
-                                        </span>
+                    @php
+                        // Encuentra la firma relacionada con el presupuesto actual
+                        $firma = $firmas->firstWhere('presupuesto_id', $presupuesto->id);
 
-                                        </td>
+                        // Resalta la fila si se cumple alguna de las siguientes condiciones:
+                        // 1. El rol es comercialización (2) y ya se firmó por comercialización.
+                        // 2. El rol es auditoría (1) y ya se firmó por auditoría.
+                        $resaltado = '';
+                        if ($firma) {
+                            if (Auth::user()->rol_id == 2 && $firma->comercializacion == 1) {
+                                $resaltado = 'bg-blue-100'; 
+                            } elseif (Auth::user()->rol_id == 1 && $firma->auditoria == 1) {
+                                $resaltado = 'bg-blue-100'; 
+                            } elseif (Auth::user()->rol_id == 6 && $firma->direccion == 1)
+                            $resaltado = 'bg-blue-100';
+                        }
+                    @endphp
 
-                                        <td class="text-end">
-                                            @if($presupuesto->estado == 9)
-                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}<br>
-                                                <small>Aprobado por:
-                                                    ${{ number_format(Presupuestos_aprobados::getAprobadoById($presupuesto->id), 2, ',', '.') }}</small>
-                                            @else
-                                                ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if (is_numeric($presupuesto->obra_social))
-                                                {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
-                                            @else
-                                                {{ $presupuesto->obra_social }}
-                                            @endif
-                                        </td>
-                                        <td class="text-center" style="width: 1px; white-space: nowrap;">
+                                        <tr class="{{ $resaltado }}">
+                                            <td>{{ $presupuesto->id }}</td>
+                                            <td class="paciente">{{ $presupuesto->paciente }}</td>
+                                            <td class="paciente">{{ $presupuesto->paciente_salutte_id }}</td>
+                                            <td class="servicio">{{ $presupuesto->medico_tratante }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') }}</td>
+                                            <td class="estado">
+                                                <span
+                                                    class="badge 
+                                                            {{ $presupuesto->estado == 10 ? 'bg-danger' : ($presupuesto->estado == 9 ? 'bg-success' : ($presupuesto->estado == 4 ? 'bg-primary' : 'bg-secondary')) }}">
+                                                    {{ Estado::find($presupuesto->estado)->nombre ?? "Estado no asignado" }}
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                @if($presupuesto->estado == 9)
+                                                    ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}<br>
+                                                    <small>Aprobado por:
+                                                        ${{ number_format(Presupuestos_aprobados::getAprobadoById($presupuesto->id), 2, ',', '.') }}</small>
+                                                @else
+                                                    ${{ number_format($presupuesto->total_presupuesto, 2, ',', '.') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (is_numeric($presupuesto->obra_social))
+                                                    {{ ObraSocial::getObraSocialById($presupuesto->obra_social) }}
+                                                @else
+                                                    {{ $presupuesto->obra_social }}
+                                                @endif
+                                            </td>
+                                            <td class="text-center" style="width: 1px; white-space: nowrap;">
                                             @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 6 || Auth::user()->rol_id == 2 || Auth::user()->rol_id == 4)
                                                 <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
                                                     class="btn btn-success btn-sm">
@@ -272,7 +289,7 @@
                                                 </a>
                                             @endif
                                         </td>
-                                    </tr>
+                                        </tr>
                     @endforeach
                 </tbody>
             </table>

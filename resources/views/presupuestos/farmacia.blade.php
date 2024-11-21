@@ -24,6 +24,18 @@ use App\Models\Prestacion;
 
         <h1 class="text-2xl font-bold mb-6">FARMACIA</h1>
 
+        <h2 class="text-lg font-semibold mb-2">PACIENTE</h2>
+        <div class="form-group">
+            {{$presupuesto->paciente}}
+            <br>
+            Edad: {{ ($presupuesto->edad) }}
+            <br>
+            Email: {{$presupuesto->email}}
+            <br>
+            <p></p>
+            <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
+        </div>
+
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>
 

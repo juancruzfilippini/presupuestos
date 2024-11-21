@@ -78,6 +78,7 @@
                     <option value="Ojeda, Victoria" <?= $presupuesto->medico_tratante === "Ojeda, Victoria" ? 'selected' : '' ?>>Ojeda, Victoria</option>
                     <option value="Rigoni, Nicolas" <?= $presupuesto->medico_tratante === "Rigoni, Nicolas" ? 'selected' : '' ?>>Rigoni, Nicolas</option>
                     <option value="Saenz, Alexander" <?= $presupuesto->medico_tratante === "Saenz, Alexander" ? 'selected' : '' ?>>Saenz, Alexander</option>
+                    <option value="Salinas, Daniela" <?= $presupuesto->medico_tratante === "Salinas, Daniela" ? 'selected' : '' ?>>Salinas, Daniela</option>
                     <option value="Scalia, Gabriela" <?= $presupuesto->medico_tratante === "Scalia, Gabriela" ? 'selected' : '' ?>>Scalia, Gabriela</option>
                     <option value="Torres, Alfredo" <?= $presupuesto->medico_tratante === "Torres, Alfredo" ? 'selected' : '' ?>>Torres, Alfredo</option>
                     <option value="Ulloa, Ana" <?= $presupuesto->medico_tratante === "Ulloa, Ana" ? 'selected' : '' ?>>
