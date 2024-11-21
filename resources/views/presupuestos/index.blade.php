@@ -270,12 +270,13 @@
                                             @endif
                                             @if (($presupuesto->estado == 4) && (Auth::user()->rol_id == 4))
                                                 <a href="javascript:void(0);" 
-                                                    onclick="confirmarEnvio('{{ route('enviar.datos', ['id' => $presupuesto->id]) }}')" 
+                                                    onclick="confirmarEnvio('{{ route('enviar.datos', ['id' => $presupuesto->id, 'email' => $presupuesto->email]) }}', '{{ $presupuesto->email }}')" 
                                                     class="btn btn-secondary btn-sm {{ $presupuesto->enviado == 1 ? 'disabled' : '' }}" 
                                                     {{ $presupuesto->enviado == 1 ? 'aria-disabled=true' : '' }}>
                                                     <i class="fas fa-envelope"></i>
                                                 </a>
                                             @endif
+
                                             @if(Auth::user()->rol_id == 7 && ($presupuesto->estado == 4 || $presupuesto->estado == 3))
                                                 <a href="{{ route('presupuestos.firmar', $presupuesto->id) }}"
                                                     class="btn btn-success btn-sm">
@@ -434,21 +435,22 @@
         });
     })
 
-    function confirmarEnvio(url) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Deseas enviar este presupuesto?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, enviar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = url;
-            }
-        });
-    }
+    function confirmarEnvio(url, email) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Mail registrado en el presupuesto: ${email}\n¿Deseas enviar este presupuesto?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, enviar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    });
+}
+
 
 </script>
