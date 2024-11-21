@@ -36,7 +36,6 @@ use Carbon\Carbon;
             <p></p>
             <div style="border-top: 1px solid #ddd; margin-top: 10px; margin-bottom: 10px;"></div>
         </div>
-        <div class="d-flex justify-content-between align-items-center"></div>
 
         <label for="fecha" class="font-semibold">PEDIDO MÉDICO:</label>
         <p></p>

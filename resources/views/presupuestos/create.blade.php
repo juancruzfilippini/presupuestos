@@ -63,6 +63,7 @@
                     <option value="Ojeda, Victoria">Ojeda, Victoria</option>
                     <option value="Rigoni, Nicolas">Rigoni, Nicolas</option>
                     <option value="Saenz, Alexander">Saenz, Alexander</option>
+                    <option value="Salinas, Daniela">Salinas, Daniela</option>
                     <option value="Scalia, Gabriela">Scalia, Gabriela</option>
                     <option value="Torres, Alfredo">Torres, Alfredo</option>
                     <option value="Ulloa, Ana">Ulloa, Ana</option>

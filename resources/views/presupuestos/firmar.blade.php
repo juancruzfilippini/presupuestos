@@ -299,10 +299,10 @@ use Carbon\Carbon;
                             </span>
 
                             @elseif(Auth::user()->rol_id != 3)
-                                <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
-                                    Subir Presupuesto Aprobado
-                                </button>
+                            <!-- Botón para abrir el modal de subir archivo si no hay archivo -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#archivoModal">
+                                Subir Presupuesto Aprobado
+                            </button>
                             @endif
                         </div>
                     @endif
