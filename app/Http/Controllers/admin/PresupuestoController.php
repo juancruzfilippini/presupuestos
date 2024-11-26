@@ -636,30 +636,31 @@ class PresupuestoController extends Controller
 
 
     // Elimina un presupuesto de la base de datos
-    public function destroy($id)
-    {
-        // Encuentra el presupuesto por ID o falla si no existe
-        $presupuesto = Presupuesto::findOrFail($id);
+    public function destroy(Request $request, $id)
+{
+    // Encuentra el presupuesto por ID o falla si no existe
+    $presupuesto = Presupuesto::findOrFail($id);
 
-        // Obtén el ID del presupuesto para actualizar las prestaciones asociadas
-        $presupuestoId = $presupuesto->id;
+    // Obtén el ID del presupuesto para actualizar las prestaciones asociadas
+    $presupuestoId = $presupuesto->id;
 
-        // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
-        Prestaciones::where('presupuesto_id', $presupuestoId)
-            ->update(['borrado_logico' => 1]);
+    // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
+    Prestaciones::where('presupuesto_id', $presupuestoId)
+        ->update(['borrado_logico' => 1]);
 
-        Archivo::where('presupuesto_id', $presupuestoId)
-            ->update(['borrado_logico' => 1]);
+    Archivo::where('presupuesto_id', $presupuestoId)
+        ->update(['borrado_logico' => 1]);
 
-        // Actualiza la columna 'borrado_logico' a 1 en el presupuesto
-        $presupuesto->borrado_logico = 1;
-        $presupuesto->estado = 10;
-        $presupuesto->save();
+    // Actualiza la columna 'borrado_logico' y el estado en el presupuesto
+    $presupuesto->borrado_logico = 1;
+    $presupuesto->estado = 10;
+    $presupuesto->especialidad = $request->input('razon'); // Guarda la razón
+    $presupuesto->save();
 
+    // Redirige con mensaje de éxito
+    return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
+}
 
-        // Redirige con mensaje de éxito
-        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
-    }
 
     public function deletePrestacion($id)
     {

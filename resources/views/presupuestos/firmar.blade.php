@@ -50,7 +50,7 @@ use Carbon\Carbon;
 
             @if($presupuesto->estado == 10)
                 <div class="bg-red-500 text-white font-semibold p-2 rounded ml-4">
-                    Este presupuesto fue anulado.
+                    Este presupuesto fue anulado. Razón: {{$presupuesto->especialidad}}
                 </div>
             @endif
         </div>
@@ -613,21 +613,38 @@ use Carbon\Carbon;
     }
 
     function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminarlo',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Por favor, ingrese la razón de la anulación:",
+        icon: 'warning',
+        input: 'text',
+        inputPlaceholder: 'Razón de la anulación',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, anularlo',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Es necesario ingresar una razón.';
             }
-        });
-    }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Agrega la razón al formulario como un campo oculto
+            const form = document.getElementById('delete-form-' + id);
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'razon';
+            input.value = result.value; // Captura la razón ingresada
+            form.appendChild(input);
+
+            // Envía el formulario
+            form.submit();
+        }
+    });
+}
+
 </script>
 
 <style>
