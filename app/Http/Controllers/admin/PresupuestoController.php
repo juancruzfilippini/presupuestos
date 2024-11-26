@@ -608,10 +608,14 @@ class PresupuestoController extends Controller
             // Incrementar el contador para la siguiente anestesia
             $rowCountt++;
         }
+        $firmas = Firmas::where('presupuesto_id', $id)->first();
+
 
         if ($firmaDireccion == 1) {
-            $presupuesto->estado = 4;
+            $presupuesto->estado = 3;
+            $firmas->direccion = 0;
             $presupuesto->save();
+            $firmas->save();
         }else if ($anestesiaConIdCero == true) {
             $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
             $presupuesto->save();
