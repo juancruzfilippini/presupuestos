@@ -370,17 +370,17 @@ class PresupuestoController extends Controller
 
         $presupuesto = Presupuesto::findOrFail($id);
         $archivos = Archivo::where('presupuesto_id', $id)->get();
+        $firmas = firmas::where('presupuesto_id', $id)->get();
+        $firmaDireccion = $firmas[0]->direccion;
+        //dd($firmaDireccion);
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $proceso = Proceso::where('presupuesto_id', $id)->get();
         $procesoFarmacia = $proceso[0]->farmacia;
-        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id', 'procesoFarmacia'));
+        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id', 'procesoFarmacia', 'firmaDireccion'));
     }
 
-
     // Actualiza un presupuesto en la base de datos
-
-
     public function update(Request $request, $id)
     {
         //dd($request->all());
@@ -410,6 +410,7 @@ class PresupuestoController extends Controller
 
         $os = $validatedData['obra_social'];
         $procesoFarmacia = $request['procesoFarmacia'];
+        $firmaDireccion = $request['firmaDireccion'];
 
         // Encontrar el presupuesto por su ID
         $presupuesto = presupuesto::findOrFail($id);
@@ -608,8 +609,10 @@ class PresupuestoController extends Controller
             $rowCountt++;
         }
 
-        //dd($anestesiaConIdCero);
-        if ($anestesiaConIdCero == true) {
+        if ($firmaDireccion == 1) {
+            $presupuesto->estado = 4;
+            $presupuesto->save();
+        }else if ($anestesiaConIdCero == true) {
             $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
             $presupuesto->save();
         } else if ($anestesiaConIdCero == false) {

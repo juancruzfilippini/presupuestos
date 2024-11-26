@@ -282,6 +282,13 @@ use Carbon\Carbon;
                         </a>
                     @endif
                 @endif
+                @if(Auth::user()->rol_id == 2)
+                    @if($presupuesto->estado == 4)
+                        <a href="{{ route('presupuestos.edit', $presupuesto->id) }}" class="btn btn-danger"><i class="fa-solid fa-edit"></i>
+                            Editar presupuesto finalizado
+                        </a>
+                    @endif
+                @endif
                 <!-- Lógica para mostrar el botón correcto (subir o ver archivo) -->
                  @if(Auth::user()->rol_id != 7)
                     @if($firmas->direccion == 1 && ($firmas->comercializacion == 1 || $firmas->auditoria == 1))
