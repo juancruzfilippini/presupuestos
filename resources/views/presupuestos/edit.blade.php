@@ -78,6 +78,7 @@
                     <option value="Gonzalez, Martin" <?= $presupuesto->medico_tratante === "Gonzalez, Martin" ? 'selected' : '' ?>>Gonzalez, Martin</option>
                     <option value="Gonzalez, Pablo" <?= $presupuesto->medico_tratante === "Gonzalez, Pablo" ? 'selected' : '' ?>>Gonzalez, Pablo</option>
                     <option value="Ojeda, Victoria" <?= $presupuesto->medico_tratante === "Ojeda, Victoria" ? 'selected' : '' ?>>Ojeda, Victoria</option>
+                    <option value="Rauek, Sebastian" <?= $presupuesto->medico_tratante === "Rauek, Sebastian" ? 'selected' : '' ?>>Rauek, Sebastian</option>
                     <option value="Rigoni, Nicolas" <?= $presupuesto->medico_tratante === "Rigoni, Nicolas" ? 'selected' : '' ?>>Rigoni, Nicolas</option>
                     <option value="Saenz, Alexander" <?= $presupuesto->medico_tratante === "Saenz, Alexander" ? 'selected' : '' ?>>Saenz, Alexander</option>
                     <option value="Salinas, Daniela" <?= $presupuesto->medico_tratante === "Salinas, Daniela" ? 'selected' : '' ?>>Salinas, Daniela</option>

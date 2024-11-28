@@ -61,6 +61,7 @@
                     <option value="Gonzalez, Martin">Gonzalez, Martin</option>
                     <option value="Gonzalez, Pablo">Gonzalez, Pablo</option>
                     <option value="Ojeda, Victoria">Ojeda, Victoria</option>
+                    <option value="Rauek, Sebastian">Rauek, Sebastian</option>
                     <option value="Rigoni, Nicolas">Rigoni, Nicolas</option>
                     <option value="Saenz, Alexander">Saenz, Alexander</option>
                     <option value="Salinas, Daniela">Salinas, Daniela</option>
