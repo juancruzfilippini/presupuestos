@@ -29,6 +29,12 @@
                         Administrar
                     </a>
                 @endif
+                @if ($rol_id = Auth::user()->rol_id == 4)
+                    <a class="nav-link" href="{{ route('presupuestos.profesionales') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-user-doctor"></i></div>
+                        Gestionar profesional
+                    </a>
+                @endif
 
             </div>
         </div>

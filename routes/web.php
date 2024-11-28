@@ -90,4 +90,8 @@ Route::get('/presupuestos/enviar-datos/{id}', [ExportarController::class, 'envia
 
 Route::delete('/deletePrestacion/{id}', [PresupuestoController::class, 'deletePrestacion'])->name('deletePrestacion');
 
+Route::get('/presupuestos/profesionales', [PresupuestoController::class, 'gestionarProfesionales'])->name('presupuestos.profesionales');
 
+Route::post('/presupuestos/profesionales', [PresupuestoController::class, 'guardarProfesional'])->name('profesionales.guardar');
+
+Route::delete('/presupuestos/profesionales/{id}', [PresupuestoController::class, 'eliminarProfesional'])->name('profesionales.eliminar');

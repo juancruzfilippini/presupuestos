@@ -488,7 +488,7 @@ class PresupuestoController extends Controller
 
         // Manejar prestaciones
         //dd($request->all());
-        $prestacionNuevaSi= 0;
+        $prestacionNuevaSi = 0;
         $rowCount = 1;
         while ($request->has("codigo_{$rowCount}")) {
             $prestacionId = $request->input("prestacion_id_{$rowCount}");
@@ -616,15 +616,17 @@ class PresupuestoController extends Controller
             $firmas->direccion = 0;
             $presupuesto->save();
             $firmas->save();
-        }else if ($anestesiaConIdCero == true) {
+        } else if ($anestesiaConIdCero == true) {
             $presupuesto->estado = 5; // Si alguna anestesia tiene ID 0
             $presupuesto->save();
         } else if ($anestesiaConIdCero == false) {
-                if ($prestacionNuevaSi == 1){
-                    $presupuesto->estado = 8; // Si todas las anestesias tienen IDs diferentes de 0
-                } else if($procesoFarmacia == 1){
-                    $presupuesto->estado = 6;
-                }else {$presupuesto->estado =8;}
+            if ($prestacionNuevaSi == 1) {
+                $presupuesto->estado = 8; // Si todas las anestesias tienen IDs diferentes de 0
+            } else if ($procesoFarmacia == 1) {
+                $presupuesto->estado = 6;
+            } else {
+                $presupuesto->estado = 8;
+            }
             $presupuesto->save();
         }
 
@@ -637,29 +639,29 @@ class PresupuestoController extends Controller
 
     // Elimina un presupuesto de la base de datos
     public function destroy(Request $request, $id)
-{
-    // Encuentra el presupuesto por ID o falla si no existe
-    $presupuesto = Presupuesto::findOrFail($id);
+    {
+        // Encuentra el presupuesto por ID o falla si no existe
+        $presupuesto = Presupuesto::findOrFail($id);
 
-    // Obtén el ID del presupuesto para actualizar las prestaciones asociadas
-    $presupuestoId = $presupuesto->id;
+        // Obtén el ID del presupuesto para actualizar las prestaciones asociadas
+        $presupuestoId = $presupuesto->id;
 
-    // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
-    Prestaciones::where('presupuesto_id', $presupuestoId)
-        ->update(['borrado_logico' => 1]);
+        // Actualiza la columna 'borrado_logico' a 1 en las prestaciones asociadas
+        Prestaciones::where('presupuesto_id', $presupuestoId)
+            ->update(['borrado_logico' => 1]);
 
-    Archivo::where('presupuesto_id', $presupuestoId)
-        ->update(['borrado_logico' => 1]);
+        Archivo::where('presupuesto_id', $presupuestoId)
+            ->update(['borrado_logico' => 1]);
 
-    // Actualiza la columna 'borrado_logico' y el estado en el presupuesto
-    $presupuesto->borrado_logico = 1;
-    $presupuesto->estado = 10;
-    $presupuesto->especialidad = $request->input('razon'); // Guarda la razón
-    $presupuesto->save();
+        // Actualiza la columna 'borrado_logico' y el estado en el presupuesto
+        $presupuesto->borrado_logico = 1;
+        $presupuesto->estado = 10;
+        $presupuesto->especialidad = $request->input('razon'); // Guarda la razón
+        $presupuesto->save();
 
-    // Redirige con mensaje de éxito
-    return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
-}
+        // Redirige con mensaje de éxito
+        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto y prestaciones marcados como eliminados con éxito.');
+    }
 
 
     public function deletePrestacion($id)
@@ -862,4 +864,35 @@ class PresupuestoController extends Controller
 
         return redirect()->back()->with('error', 'No se pudo subir el archivo.');
     }
+
+    public function gestionarProfesionales()
+    {
+        $profesionales = Profesional::all(); // Obtiene todos los profesionales
+        return view('presupuestos.profesionales', compact('profesionales'));
+    }
+
+
+    public function guardarProfesional(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'string|max:255',
+            'email' => 'string|max:255',
+        ]);
+
+        Profesional::create([
+            'nombre' => $request->input('nombre'),
+            'email' => $request->input('email'),
+        ]);
+
+        return redirect()->route('presupuestos.profesionales')->with('success', 'Profesional agregado con éxito.');
+    }
+
+    public function eliminarProfesional($id)
+    {
+        $profesional = Profesional::findOrFail($id);
+        $profesional->delete();
+
+        return redirect()->route('presupuestos.profesionales')->with('success', 'Profesional eliminado con éxito.');
+    }
+
 }
