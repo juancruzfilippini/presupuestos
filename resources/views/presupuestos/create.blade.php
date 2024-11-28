@@ -44,31 +44,9 @@
                 <label for="medico_tratante" class="font-semibold">MEDICO TRATANTE:</label>
                 <select name="medico_tratante" id="medico_tratante" class="border rounded p-2 w-full" required>
                     <option value="">Seleccione un profesional</option>
-                    <option value="Benitez, Laura">Benitez, Laura</option>
-                    <option value="Bort, Ana">Bort, Ana</option>
-                    <option value="Carral, Pablo">Carral, Pablo</option>
-                    <option value="Cinca, Leticia">Cinca, Leticia</option>
-                    <option value="Coll, Roberto">Coll, Roberto</option>
-                    <option value="Correa, Agustin">Correa, Agustin</option>
-                    <option value="Cremaschi, Fabian">Cremaschi, Fabian</option>
-                    <option value="Diaz, Jose">Diaz, Jose</option>
-                    <option value="Diz, Gonzalo">Diz, Gonzalo</option>
-                    <option value="Di Cicco, Marcelo">Di Cicco, Marcelo</option>
-                    <option value="Dutto, Carolina">Dutto, Carolina</option>
-                    <option value="Erice, Maria">Erice, Maria</option>
-                    <option value="Funes, Gonzalo">Funes, Gonzalo</option>
-                    <option value="Gonzalez, Diego">Gonzalez, Diego</option>
-                    <option value="Gonzalez, Martin">Gonzalez, Martin</option>
-                    <option value="Gonzalez, Pablo">Gonzalez, Pablo</option>
-                    <option value="Ojeda, Victoria">Ojeda, Victoria</option>
-                    <option value="Rauek, Sebastian">Rauek, Sebastian</option>
-                    <option value="Rigoni, Nicolas">Rigoni, Nicolas</option>
-                    <option value="Saenz, Alexander">Saenz, Alexander</option>
-                    <option value="Salinas, Daniela">Salinas, Daniela</option>
-                    <option value="Scalia, Gabriela">Scalia, Gabriela</option>
-                    <option value="Torres, Alfredo">Torres, Alfredo</option>
-                    <option value="Ulloa, Ana">Ulloa, Ana</option>
-                    <option value="Vendrell, Lucas">Vendrell, Lucas</option>
+                    @foreach ($profesionales as $profesional)
+                        <option value="{{$profesional->nombre}}">{{$profesional->nombre}}</option>
+                    @endforeach
                 </select>
             </div>
         </div>

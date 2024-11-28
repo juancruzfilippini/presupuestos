@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ConvenioController;
 use App\Models\Paciente;
+use App\Models\Profesional;
 use App\Models\Archivo;
 use App\Models\Convenio;
 use App\Models\Convenio_actual;
@@ -162,13 +163,11 @@ class PresupuestoController extends Controller
     {
         $today = date('Y-m-d');
         $prestaciones = Prestacion::all();
+        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
         $obrasSociales = ObraSocial::getObrasSociales();
-
-        // Obtener todos los convenios
         $ultimoConvenio = Convenio_actual::orderBy('id', 'desc')->first();
-        //dd($ultimoConvenio);
-        // Enviar la variable 'ultimoConvenio' a la vista
-        return view('presupuestos.create', compact('today', 'ultimoConvenio'));
+
+        return view('presupuestos.create', compact('today', 'ultimoConvenio', 'profesionales'));
     }
 
 
@@ -372,12 +371,13 @@ class PresupuestoController extends Controller
         $archivos = Archivo::where('presupuesto_id', $id)->get();
         $firmas = firmas::where('presupuesto_id', $id)->get();
         $firmaDireccion = $firmas[0]->direccion;
-        //dd($firmaDireccion);
         $prestaciones = Prestaciones::where('presupuesto_id', $id)->get();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $proceso = Proceso::where('presupuesto_id', $id)->get();
+        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
         $procesoFarmacia = $proceso[0]->farmacia;
-        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id', 'procesoFarmacia', 'firmaDireccion'));
+
+        return view('presupuestos.edit', compact('presupuesto', 'archivos', 'prestaciones', 'anestesias', 'id', 'procesoFarmacia', 'firmaDireccion', 'profesionales'));
     }
 
     // Actualiza un presupuesto en la base de datos

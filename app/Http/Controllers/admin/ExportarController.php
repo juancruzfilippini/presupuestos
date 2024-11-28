@@ -12,6 +12,7 @@ use App\Models\ObraSocial; // Importamos el modelo correcto
 use App\Models\Firmas; // Importamos el modelo correcto
 use App\Models\Paciente; // Importamos el modelo correcto
 use App\Models\Anestesia_p; // Importamos el modelo correcto
+use App\Models\Profesional; // Importamos el modelo correcto
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Archivo;
@@ -163,6 +164,7 @@ class ExportarController extends Controller
         $firmas = Firmas::where('presupuesto_id', $id)->first();
         $anestesias = Anestesia_p::where('presupuesto_id', $id)->get();
         $paciente = Paciente::findById($presupuesto->paciente_salutte_id);
+        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
         $today = date('Y-m-d');
 
         // Empaquetar ambas variables en un solo array
@@ -175,7 +177,7 @@ class ExportarController extends Controller
             'today' => $today
         ];
         // Verificar si el contacto es nulo o si el email es nulo
-        
+
 
         if ($presupuesto->email) {
             // Validar el email del paciente
@@ -183,62 +185,39 @@ class ExportarController extends Controller
                 ['email' => $presupuesto->email],
                 ['email' => 'email']
             );
-        
+
             if ($validator->fails()) {
                 // Redirigir con un mensaje de error si el email no es válido
                 return redirect()->route('presupuestos.index')->with('error', 'El email del paciente no es válido');
             }
-        
+
             // Generar el PDF
             $pdf = PDF::loadView('presupuestos.export_presupuesto', $data1);
-        
+
             // Definir el nombre del archivo
             $pdfFilename = 'Presupuesto HU. ' . $presupuesto->paciente . '.pdf';
             $pdfPath = storage_path('app/public/' . $pdfFilename);
             $pdf->save($pdfPath);
-        
+
             $autoEmail1 = 'no-reply@hospital.uncu.edu.ar';
             $autoEmail2 = 'patricia.fernandez@hospital.uncu.edu.ar';
-            $emails = [
-                "Benitez, Laura" => "laura.benitez@hospital.uncu.edu.ar",
-                "Bort, Ana" => "ana.bort@hospital.uncu.edu.ar",
-                "Carral, Pablo" => "pablo.carral@hospital.uncu.edu.ar",
-                "Cinca, Leticia" => "leticia.cinca@hospital.uncu.edu.ar",
-                "Coll, Roberto" => "roberto.coll@hospital.uncu.edu.ar",
-                "Correa, Agustin" => "agustin.correa@hospital.uncu.edu.ar",
-                "Cremaschi, Fabian" => "fabian.cremaschi@hospital.uncu.edu.ar",
-                "Diaz, Jose" => "jose.diaz@hospital.uncu.edu.ar",
-                "Diz, Gonzalo" => "gonzalo.diz@hospital.uncu.edu.ar",
-                "Di Cicco, Marcelo" => "marcelo.dicicco@hospital.uncu.edu.ar",
-                "Dutto, Carolina" => "carolina.dutto@hospital.uncu.edu.ar",
-                "Erice, Maria" => "maria.erice@hospital.uncu.edu.ar",
-                "Funes, Gonzalo" => "gonzalo.funes@hospital.uncu.edu.ar",
-                "Gonzalez, Diego" => "diego.gonzalez@hospital.uncu.edu.ar",
-                "Gonzalez, Martin" => "martin.gonzalez@hospital.uncu.edu.ar",
-                "Gonzalez, Pablo" => "pablo.gonzalez@hospital.uncu.edu.ar",
-                "Ojeda, Victoria" => "victoria.ojeda@hospital.uncu.edu.ar",
-                "Rauek, Sebastian" => "sebastian.rauek@hospital.uncu.edu.ar",
-                "Rigoni, Nicolas" => "nicolas.rigoni@hospital.uncu.edu.ar",
-                "Saenz, Alexander" => "alexander.saenz@hospital.uncu.edu.ar",
-                "Salinas, Daniela" => "daniela.salinas@hospital.uncu.edu.ar",
-                "Scalia, Gabriela" => "gabriela.scalia@hospital.uncu.edu.ar",
-                "Torres, Alfredo" => "alfredo.torres@hospital.uncu.edu.ar",
-                "Ulloa, Ana" => "ana.ulloa@hospital.uncu.edu.ar",
-                "Vendrell, Lucas" => "lucas.vendrell@hospital.uncu.edu.ar"
-            ];
-        
+            $emails = [];
+            foreach ($profesionales as $profesional) {
+                $emails[$profesional->nombre] = $profesional->email;
+            }
+
             // Asigna el email correspondiente a $autoEmail3
             $autoEmail3 = $emails[$presupuesto->medico_tratante] ?? '';
-        
+
             // Enviar el PDF por correo al paciente y así mismo
             Mail::to([$presupuesto->email, $autoEmail1, $autoEmail2, $autoEmail3])->send(new mailPresupuesto($data1, $pdfPath));
-        
+
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
             Presupuesto::where('id', $id)->update(['enviado' => 1]);
-        
+
             // Eliminar el archivo temporal después de enviar
             unlink($pdfPath);
-        
+
             return redirect()->route('presupuestos.index')->with('success', 'Presupuesto enviado por correo con éxito');
         } else {
             // Redirigir con un mensaje de error si no hay email
