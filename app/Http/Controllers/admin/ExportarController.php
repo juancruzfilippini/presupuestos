@@ -201,6 +201,7 @@ class ExportarController extends Controller
 
             $autoEmail1 = 'no-reply@hospital.uncu.edu.ar';
             $autoEmail2 = 'patricia.fernandez@hospital.uncu.edu.ar';
+            $autoEmail4 = 'internacionhu@gmail.com';
             $emails = [];
             foreach ($profesionales as $profesional) {
                 $emails[$profesional->nombre] = $profesional->email;
@@ -210,7 +211,7 @@ class ExportarController extends Controller
             $autoEmail3 = $emails[$presupuesto->medico_tratante] ?? '';
 
             // Enviar el PDF por correo al paciente y así mismo
-            Mail::to([$presupuesto->email, $autoEmail1, $autoEmail2, $autoEmail3])->send(new mailPresupuesto($data1, $pdfPath));
+            Mail::to([$presupuesto->email, $autoEmail1, $autoEmail2, $autoEmail3, $autoEmail4])->send(new mailPresupuesto($data1, $pdfPath));
 
             // Actualizar el estado del estudio solo si el email es válido y el envío fue exitoso
             Presupuesto::where('id', $id)->update(['enviado' => 1]);

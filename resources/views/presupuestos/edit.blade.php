@@ -340,15 +340,7 @@
     </form>
 
 
-    <form method="POST" action="{{ route('presupuestos.destroy', $presupuesto->id) }}"
-        id="delete-form-{{ $presupuesto->id }}">
-        @csrf
-        @method('DELETE')
-        <button style="margin-top: 50px" type="button" class="btn btn-danger"
-            onclick="confirmDelete({{ $presupuesto->id }})">
-            Anular Presupuesto
-        </button>
-    </form>
+    
 
 
 </x-app-layout>
@@ -410,22 +402,7 @@
     }
 
 
-    function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminarlo',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
+    
 
 
 
