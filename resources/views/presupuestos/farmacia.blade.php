@@ -1,8 +1,8 @@
 @php
-use App\Models\ObraSocial;
-use App\Models\Convenio;
-use App\Models\Prestacion;
-use Carbon\Carbon;
+    use App\Models\ObraSocial;
+    use App\Models\Convenio;
+    use App\Models\Prestacion;
+    use Carbon\Carbon;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -41,18 +41,18 @@ use Carbon\Carbon;
         <p></p>
 
         @if ($archivos->count() > 0)
-        <div class="mb-4">
-            <label for="download_file" class="font-semibold">Archivo adjunto:</label>
-            @foreach ($archivos as $archivo)
-            <li>
-                <a href="{{ asset('storage/' . $archivo->file_path) }}" target="_blank"
-                    class="text-blue-500 hover:underline">
-                    Ver {{ basename($archivo->file_path) }}
-                </a>
-            </li>
+            <div class="mb-4">
+                <label for="download_file" class="font-semibold">Archivo adjunto:</label>
+                @foreach ($archivos as $archivo)
+                    <li>
+                        <a href="{{ asset('storage/' . $archivo->file_path) }}" target="_blank"
+                            class="text-blue-500 hover:underline">
+                            Ver {{ basename($archivo->file_path) }}
+                        </a>
+                    </li>
 
-            @endforeach
-        </div>
+                @endforeach
+            </div>
         @endif
 
         <div class="flex justify-between mb-4">
@@ -89,26 +89,26 @@ use Carbon\Carbon;
                 </thead>
                 <tbody id="prestacionesBody">
                     @foreach($prestaciones as $prestacion)
-                    <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
-                        value="{{$prestacion->id}}">
-                    <tr class="original-prestacion">
-                        <td class="border px-4 py-2 text-center">
-                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
-                                name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
-                                readonly />
-                        </td>
-                        <td class="border px-4 py-2 text-center" style="max-width: 500px">
-                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
-                                name="prestacion_{{ $loop->iteration }}"
-                                value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif"
-                                Readonly />
-                        </td>
-                        <td class="border px-4 py-2 text-center">
-                            <input class="w-full border h-10 text-center bg-gray-100 text-gray-500 moduloTotal"
-                                name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
-                                oninput="updateTotalPresupuesto()" readonly />
-                        </td>
-                    </tr>
+                        <input type="hidden" id="prestacion_id" name="prestacion_id_{{ $loop->iteration }}"
+                            value="{{$prestacion->id}}">
+                        <tr class="original-prestacion">
+                            <td class="border px-4 py-2 text-center">
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
+                                    name="codigo_{{ $loop->iteration }}" value="{{ $prestacion->codigo_prestacion }}"
+                                    readonly />
+                            </td>
+                            <td class="border px-4 py-2 text-center" style="max-width: 500px">
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500"
+                                    name="prestacion_{{ $loop->iteration }}"
+                                    value="{{ $prestacion->nombre_prestacion ?? Prestacion::getPrestacionById($prestacion->prestacion_salutte_id) }} @if($prestacion->cantidad != 1) (x {{ $prestacion->cantidad }}) @endif"
+                                    Readonly />
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                <input class="w-full border h-10 text-center bg-gray-100 text-gray-500 moduloTotal"
+                                    name="modulo_total_{{ $loop->iteration }}" value="{{ $prestacion->modulo_total }}"
+                                    oninput="updateTotalPresupuesto()" readonly />
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -122,52 +122,55 @@ use Carbon\Carbon;
 
 
             @if (count($anestesias) > 0)
-            <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
-            <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
-            <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
-                <thead>
-                    <th class="border px-4 py-2 text-center">Complejidad</th>
-                    <th class="border px-4 py-2 text-center">Precio</th>
-                    <th class="border px-4 py-2 text-center">Tipo</th>
-                </thead>
-                <tbody id="anestesia-body">
-                    @foreach($anestesias as $anestesia)
-                    <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
-                    <tr>
-                        <td class="border px-4 py-2">
-                            <input type="text" name="complejidad{{ $loop->iteration }}"
-                                value="{{$anestesia->complejidad}}"
-                                class="border h-10 text-center w-full bg-gray-100 text-gray-500" readonly>
-                        </td>
-                        <td class="border px-4 py-2">
-                            <input type="text" name="precio_anestesia{{ $loop->iteration }}"
-                                value="{{$anestesia->precio}}"
-                                class="border h-10 text-center w-full bg-gray-100 text-gray-500"
-                                oninput="updateTotalPresupuesto()" readonly>
-                        </td>
-                        <td class="border px-4 py-2">
-                            <select type="text" name="anestesia_id{{ $loop->iteration }}"
-                                class="border text-center w-full h-10 bg-gray-100 text-gray-500"
-                                style="min-width: 200px;" disabled>
-                                <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
-                                </option>
-                                <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local</option>
-                                <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Anestesia Regional
-                                </option>
-                                <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación Superficial</option>
-                                <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General</option>
-                            </select>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
+                <h2 class="text-lg font-semibold mb-2">ANESTESIA</h2>
+                <table class="table-auto w-auto mb-4" id="anestesia-table" style="margin-left: 30%">
+                    <thead>
+                        <th class="border px-4 py-2 text-center">Complejidad</th>
+                        <th class="border px-4 py-2 text-center">Precio</th>
+                        <th class="border px-4 py-2 text-center">Tipo</th>
+                    </thead>
+                    <tbody id="anestesia-body">
+                        @foreach($anestesias as $anestesia)
+                            <input type="hidden" name="anestesia{{$loop->iteration}}" value="{{$anestesia->id}}">
+                            <tr>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="complejidad{{ $loop->iteration }}"
+                                        value="{{$anestesia->complejidad}}"
+                                        class="border h-10 text-center w-full bg-gray-100 text-gray-500" readonly>
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <input type="text" name="precio_anestesia{{ $loop->iteration }}"
+                                        value="{{$anestesia->precio}}"
+                                        class="border h-10 text-center w-full bg-gray-100 text-gray-500"
+                                        oninput="updateTotalPresupuesto()" readonly>
+                                </td>
+                                <td class="border px-4 py-2">
+                                    <select type="text" name="anestesia_id{{ $loop->iteration }}"
+                                        class="border text-center w-full h-10 bg-gray-100 text-gray-500"
+                                        style="min-width: 200px;" disabled>
+                                        <option value="0" {{ $anestesia->anestesia_id == 0 ? 'selected' : '' }}>Sin especificar
+                                        </option>
+                                        <option value="1" {{ $anestesia->anestesia_id == 1 ? 'selected' : '' }}>Anestesia Local
+                                        </option>
+                                        <option value="2" {{ $anestesia->anestesia_id == 2 ? 'selected' : '' }}>Anestesia Regional
+                                        </option>
+                                        <option value="3" {{ $anestesia->anestesia_id == 3 ? 'selected' : '' }}>Sedación
+                                            Superficial</option>
+                                        <option value="4" {{ $anestesia->anestesia_id == 4 ? 'selected' : '' }}>Anestesia General
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-            </tbody>
-            <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
-            <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
-            <input type="float" id="total_anestesia" name="total_anestesia"
-                class="border rounded p-2 w-auto ml-1 text-center" value="" disabled>
+                </tbody>
+                <label id="adicional_anestesia" style="display: none; color: red;">*20% de recargo por anestesia*</label>
+                <label for="total_anestesia" class="font-semibold">TOTAL ANESTESIA: $</label>
+                <input type="float" id="total_anestesia" name="total_anestesia"
+                    class="border rounded p-2 w-auto ml-1 text-center" value="" disabled>
             @endif
 
 
@@ -182,6 +185,11 @@ use Carbon\Carbon;
                     value="{{$presupuesto->total_presupuesto}}" readonly>
             </div>
 
+            <div>
+                <label for="observacion_farmacia" class="font-semibold">Observacion de cotización:</label>
+                <input type="text" id="observacion_farmacia" name="observacion_farmacia" class="border rounded p-2 w-full mb-4"
+                    value="">
+            </div>
 
             <button type="button" id="guardar-presupuesto" class="btn btn-primary">
                 Guardar Presupuesto
@@ -216,14 +224,14 @@ use Carbon\Carbon;
         let totalAnestesia = 0;
 
         // Sumar todos los valores de los campos de presupuesto
-        $('input[name^="modulo_total_"]').each(function() {
+        $('input[name^="modulo_total_"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
             totalPresupuesto += value;
         });
 
         // Sumar los precios de anestesia
 
-        $('input[name^="precio_anestesia"]').each(function() {
+        $('input[name^="precio_anestesia"]').each(function () {
             let value = parseFloat($(this).val()) || 0;
             console.log('asd', value);
             totalAnestesia += value;
@@ -246,9 +254,9 @@ use Carbon\Carbon;
         $('#total_anestesia').val(totalAnestesia.toFixed(2));
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        $('#addPrestacionBtn').on('click', function() {
+        $('#addPrestacionBtn').on('click', function () {
             prestacionCount++; // Incrementar el contador de prestaciones
             addedPrestaciones++; // Contar las prestaciones agregadas
             console.log(prestacionCount);
@@ -280,7 +288,7 @@ use Carbon\Carbon;
             loadPrestaciones(convenioId, selectElement);
         });
 
-        $('#removePrestacionBtn').on('click', function() {
+        $('#removePrestacionBtn').on('click', function () {
             if (addedPrestaciones > 0) { // Verificar si hay filas añadidas que se puedan eliminar
                 $('#prestacionesBody').find('tr.added-prestacion').last().remove(); // Eliminar la última fila agregada
                 addedPrestaciones--; // Reducir el contador de prestaciones añadidas
@@ -305,7 +313,7 @@ use Carbon\Carbon;
                 allowClear: true,
                 width: '100%', // Para ajustar el ancho
                 language: {
-                    noResults: function() {
+                    noResults: function () {
                         return "Seleccione un convenio.";
                     }
                 }
@@ -317,17 +325,17 @@ use Carbon\Carbon;
             $.ajax({
                 url: '{{ url("/getPrestaciones") }}/' + convenioId,
                 type: 'GET',
-                success: function(data) {
+                success: function (data) {
                     selectElement.empty();
                     selectElement.append('<option value="">Seleccione Prestación</option>');
-                    $.each(data, function(key, value) {
+                    $.each(data, function (key, value) {
                         selectElement.append('<option value="' + value.prestacionid + '" data-codigo="' + value.prestacioncodigo + '" data-nombre="' + value.prestacionnombre + '">' + value.prestacionnombre + '</option>');
                     });
                 }
             });
         }
 
-        $(document).on('change', '.prestacion-select', function() {
+        $(document).on('change', '.prestacion-select', function () {
             var selectedOption = $(this).find('option:selected');
             var codigo = selectedOption.data('codigo');
             $(this).closest('tr').find('input[name^="codigo"]').val(codigo);
@@ -335,7 +343,7 @@ use Carbon\Carbon;
     });
 
     // Cuando se hace clic en el botón de guardar presupuesto
-    $('#guardar-presupuesto').click(function(event) {
+    $('#guardar-presupuesto').click(function (event) {
         // Mostrar alerta de confirmación usando SweetAlert
         Swal.fire({
             title: '¿Estás seguro?',
@@ -354,7 +362,7 @@ use Carbon\Carbon;
     });
 
     // Prevenir el envío del formulario al presionar Enter
-    $('#farmacia-form').on('keydown', function(event) {
+    $('#farmacia-form').on('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault(); // Prevenir el comportamiento por defecto del Enter
         }

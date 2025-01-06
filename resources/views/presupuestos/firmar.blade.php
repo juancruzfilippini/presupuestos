@@ -209,7 +209,10 @@ use Carbon\Carbon;
             @endif
             
                 
-            
+            @if(!empty($presupuesto->observacion_farmacia))
+        <h6 class="mt-4">Observacion de farmacia: <small>{{$presupuesto->observacion_farmacia}}</small></h6>
+        </p>
+        @endif
 
             <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 20px;"></div>
 

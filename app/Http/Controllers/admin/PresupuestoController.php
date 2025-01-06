@@ -792,6 +792,7 @@ class PresupuestoController extends Controller
         // Encontrar el presupuesto
         $presupuesto = presupuesto::findOrFail($id);
         $presupuesto->total_presupuesto = $request->total_presupuesto;
+        $presupuesto->observacion_farmacia = $request->observacion_farmacia;
 
         // Actualizar el proceso
         $proceso = Proceso::where('presupuesto_id', $id)->firstOrFail();

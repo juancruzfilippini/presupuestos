@@ -36,6 +36,7 @@ class Presupuesto extends Model
         'file_path',
         'borrado_logico',
         'enviado',
+        'observacion_farmacia',
     ];
 
     public function estado()
