@@ -142,7 +142,7 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::find($id);
 
         if ($presupuesto) {
-            if ($firmas->direccion == 1 && $firmas->comercializacion == 1 && $firmas->auditoria == 1) {
+            if ($firmas->direccion == 1 && $firmas->comercializacion == 1) {
                 $presupuesto->estado = 4; // Cambia el estado a 4 (completado)
             } elseif ($firmas->direccion == 1 || $firmas->comercializacion == 1 || $firmas->auditoria == 1) {
                 $presupuesto->estado = 3; // Cambia el estado a 3 (firmando)
