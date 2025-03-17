@@ -42,56 +42,59 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-Route::get('/presupuestos', [PresupuestoController::class, 'index'])->name('presupuestos.index');
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::get('/presupuestos/create', [PresupuestoController::class, 'create'])->name('presupuestos.create');
+    Route::get('/presupuestos', [PresupuestoController::class, 'index'])->name('presupuestos.index');
 
-Route::post('/presupuestos', [PresupuestoController::class, 'store'])->name('presupuestos.store');
+    Route::get('/presupuestos/create', [PresupuestoController::class, 'create'])->name('presupuestos.create');
 
-Route::get('/presupuestos/edit/{id}', [PresupuestoController::class, 'edit'])->name('presupuestos.edit');
+    Route::post('/presupuestos', [PresupuestoController::class, 'store'])->name('presupuestos.store');
 
-Route::post('/presupuestos/update/{id}', [PresupuestoController::class, 'update'])->name('presupuestos.update');
+    Route::get('/presupuestos/edit/{id}', [PresupuestoController::class, 'edit'])->name('presupuestos.edit');
 
-Route::get('/presupuestos/farmacia/{id}', [PresupuestoController::class, 'farmacia'])->name('presupuestos.farmacia');
+    Route::post('/presupuestos/update/{id}', [PresupuestoController::class, 'update'])->name('presupuestos.update');
 
-Route::post('/presupuestos/updateFarmacia/{id}', [PresupuestoController::class, 'updateFarmacia'])->name('presupuestos.updateFarmacia');
+    Route::get('/presupuestos/farmacia/{id}', [PresupuestoController::class, 'farmacia'])->name('presupuestos.farmacia');
 
-Route::get('/presupuestos/anestesia/{id}', [PresupuestoController::class, 'anestesia'])->name('presupuestos.anestesia');
+    Route::post('/presupuestos/updateFarmacia/{id}', [PresupuestoController::class, 'updateFarmacia'])->name('presupuestos.updateFarmacia');
 
-Route::post('/presupuestos/updateAnestesia/{id}', [PresupuestoController::class, 'updateAnestesia'])->name('presupuestos.updateAnestesia');
+    Route::get('/presupuestos/anestesia/{id}', [PresupuestoController::class, 'anestesia'])->name('presupuestos.anestesia');
 
-Route::delete('/presupuestos/{id}', [PresupuestoController::class, 'destroy'])->name('presupuestos.destroy');
+    Route::post('/presupuestos/updateAnestesia/{id}', [PresupuestoController::class, 'updateAnestesia'])->name('presupuestos.updateAnestesia');
 
-Route::get('/search-patient', [PresupuestoController::class, 'searchPatient'])->name('presupuestos.searchPatient');
+    Route::delete('/presupuestos/{id}', [PresupuestoController::class, 'destroy'])->name('presupuestos.destroy');
 
-//Route::get('/searchPrestaciones', [PrestacionController::class, 'searchPrestaciones'])->name('searchPrestaciones');
+    Route::get('/search-patient', [PresupuestoController::class, 'searchPatient'])->name('presupuestos.searchPatient');
 
-Route::get('/getConvenios', [ConvenioController::class, 'getConvenios'])->name('getConvenios');
+    //Route::get('/searchPrestaciones', [PrestacionController::class, 'searchPrestaciones'])->name('searchPrestaciones');
 
-Route::get('/getPrestaciones/{convenioId}', [PrestacionController::class, 'getPrestaciones'])->name('getPrestaciones');
+    Route::get('/getConvenios', [ConvenioController::class, 'getConvenios'])->name('getConvenios');
 
-Route::get('/getAnestesias/{convenioId}', [PrestacionController::class, 'getAnestesias'])->name('getAnestesias');
+    Route::get('/getPrestaciones/{convenioId}', [PrestacionController::class, 'getPrestaciones'])->name('getPrestaciones');
 
-Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionController::class, 'obtenerPrecio'])->name('obtenerPrecio');
+    Route::get('/getAnestesias/{convenioId}', [PrestacionController::class, 'getAnestesias'])->name('getAnestesias');
 
-Route::get('/presupuestos/firmar/{id}', [PresupuestoController::class, 'firmar'])->name('presupuestos.firmar');
+    Route::get('/obtenerPrecio/{convenioId}/{codigoPrestacion}', [PrestacionController::class, 'obtenerPrecio'])->name('obtenerPrecio');
 
-Route::get('presupuestos/exportar-datos/{id}', [ExportarController::class, 'exportarDatos'])->name('presupuestos.exportarDatos');
+    Route::get('/presupuestos/firmar/{id}', [PresupuestoController::class, 'firmar'])->name('presupuestos.firmar');
 
-Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 'sign'])->name('presupuestos.sign');
+    Route::get('presupuestos/exportar-datos/{id}', [ExportarController::class, 'exportarDatos'])->name('presupuestos.exportarDatos');
 
-Route::get('/presupuestos/admin', [AdministradorController::class, 'adminView'])->name('presupuestos.admin');
+    Route::get('/presupuestos/sign/{id}/{rol_id}', [PresupuestoController::class, 'sign'])->name('presupuestos.sign');
 
-Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio'])->name('presupuestos.convenio');
+    Route::get('/presupuestos/admin', [AdministradorController::class, 'adminView'])->name('presupuestos.admin');
 
-Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class, 'guardarArchivo'])->name('presupuestos.guardarArchivo');
+    Route::post('/guardarConvenio', [AdministradorController::class, 'updateConvenio'])->name('presupuestos.convenio');
 
-Route::get('/presupuestos/enviar-datos/{id}', [ExportarController::class, 'enviarDatosPorCorreo'])->name('enviar.datos');
+    Route::post('/presupuestos/{id}/guardar-archivo', [PresupuestoController::class, 'guardarArchivo'])->name('presupuestos.guardarArchivo');
 
-Route::delete('/deletePrestacion/{id}', [PresupuestoController::class, 'deletePrestacion'])->name('deletePrestacion');
+    Route::get('/presupuestos/enviar-datos/{id}', [ExportarController::class, 'enviarDatosPorCorreo'])->name('enviar.datos');
 
-Route::get('/presupuestos/profesionales', [PresupuestoController::class, 'gestionarProfesionales'])->name('presupuestos.profesionales');
+    Route::delete('/deletePrestacion/{id}', [PresupuestoController::class, 'deletePrestacion'])->name('deletePrestacion');
 
-Route::post('/presupuestos/profesionales', [PresupuestoController::class, 'guardarProfesional'])->name('profesionales.guardar');
+    Route::get('/presupuestos/profesionales', [PresupuestoController::class, 'gestionarProfesionales'])->name('presupuestos.profesionales');
 
-Route::delete('/presupuestos/profesionales/{id}', [PresupuestoController::class, 'eliminarProfesional'])->name('profesionales.eliminar');
+    Route::post('/presupuestos/profesionales', [PresupuestoController::class, 'guardarProfesional'])->name('profesionales.guardar');
+
+    Route::delete('/presupuestos/profesionales/{id}', [PresupuestoController::class, 'eliminarProfesional'])->name('profesionales.eliminar');
+});

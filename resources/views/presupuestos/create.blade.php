@@ -275,7 +275,7 @@
 
         <div class="mb-6">
             <textarea id="excluye" name="excluye"
-                class="border rounded p-2 w-full">Antibióticos de tercera y cuarta generación, Rx., Ecografías y demás insumos que se encuentran en la ficha de consumo que se facturarán a valores kairos.</textarea>
+                class="border rounded p-2 w-full">Antibióticos de tercera y cuarta generación, Rx., Ecografías y demás insumos que se encuentran en la ficha de consumo que se facturarán a valores Kairos.</textarea>
         </div>
 
         <div class="mb-6">
