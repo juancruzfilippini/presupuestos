@@ -802,7 +802,7 @@
                     alert('Prestación eliminada correctamente');
                     rowElement.remove(); // Remover la fila de la vista
                     updateTotalPresupuesto();
-
+                    location.reload(); // Refrescar la página después de eliminar
                 },
                 error: function (xhr) {
                     alert('Error al eliminar la prestación');
